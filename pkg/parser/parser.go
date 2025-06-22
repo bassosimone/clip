@@ -29,6 +29,8 @@ The parser produces structured [CommandLineItem]:
 
  3. [ArgumentItem]: Positional arguments.
 
+ 4. [SeparatorItem]: Separator items that stop option parsing.
+
 # Parser Behavior
 
 The parser handles various parsing behaviors:
@@ -258,6 +260,22 @@ type ArgumentItem struct {
 
 var _ CommandLineItem = ArgumentItem{}
 
+// SeparatorItem represents a separator token (e.g. "--") on the command line.
+type SeparatorItem struct {
+	// Token is the token associated with the item.
+	Token scanner.Token
+
+	// Separator is the separator value.
+	Separator string
+}
+
+var _ CommandLineItem = SeparatorItem{}
+
+// Strings implements [CommandLineItem].
+func (s SeparatorItem) Strings() []string {
+	return []string{s.Separator}
+}
+
 // Strings implements [CommandLineItem].
 func (a ArgumentItem) Strings() []string {
 	return []string{a.Value}
@@ -320,8 +338,9 @@ func (px *Parser) parse(tokens []scanner.Token, rv []CommandLineItem) ([]Command
 		cur := tokens[0]
 		tokens = tokens[1:]
 
-		// Stop parsing in any case when we encounter a separator
-		if _, ok := cur.(scanner.SeparatorToken); ok {
+		// Add separator to items and stop parsing when we encounter a separator
+		if sep, ok := cur.(scanner.SeparatorToken); ok {
+			rv = append(rv, SeparatorItem{Token: cur, Separator: sep.Separator})
 			parse = false
 			continue
 		}

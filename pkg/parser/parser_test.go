@@ -153,6 +153,32 @@ func TestArgumentItemStrings(t *testing.T) {
 	}
 }
 
+func TestSeparatorItemStrings(t *testing.T) {
+	testCases := []struct {
+		name     string
+		item     SeparatorItem
+		expected []string
+	}{
+		{
+			name: "double dash separator",
+			item: SeparatorItem{
+				Separator: "--",
+				Token:     scanner.SeparatorToken{Separator: "--"},
+			},
+			expected: []string{"--"},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			got := tc.item.Strings()
+			if diff := cmp.Diff(tc.expected, got); diff != "" {
+				t.Errorf("SeparatorItem.Strings() mismatch (-want +got):\n%s", diff)
+			}
+		})
+	}
+}
+
 func TestParserParse(t *testing.T) {
 	testCases := []struct {
 		name    string
@@ -258,6 +284,10 @@ func TestParserParse(t *testing.T) {
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
+				},
+				SeparatorItem{
+					Separator: "--",
+					Token:     scanner.SeparatorToken{Index: 2, Separator: "--"},
 				},
 				ArgumentItem{
 					Value: "-v",
