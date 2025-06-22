@@ -49,13 +49,7 @@ command line tools behavior in their subcommands. For example, the
 
 ## Examples
 
-- [./pkg/flag/example_test.go](pkg/flag/example_test.go).
-
-- [./pkg/getopt/example_test.go](pkg/getopt/example_test.go).
-
-- [./pkg/parser/example_test.go](pkg/parser/example_test.go).
-
-- [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
+The following example shows how to use the [./pkg/flag](pkg/flag) package:
 
 ```Go
 package main
@@ -91,6 +85,16 @@ func main() {
 }
 ```
 
+See also the testable examples:
+
+- [./pkg/flag/example_test.go](pkg/flag/example_test.go).
+
+- [./pkg/getopt/example_test.go](pkg/getopt/example_test.go).
+
+- [./pkg/parser/example_test.go](pkg/parser/example_test.go).
+
+- [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
+
 ## Documentation
 
 - [pkg.go.dev/github.com/bassosimone/clip](https://pkg.go.dev/github.com/bassosimone/clip)
@@ -108,7 +112,8 @@ go get -u -v github.com/bassosimone/clip
 ## API Stability Guarantees
 
 This package is experimental and the API may change in the future. Yet,
-we will not break the API without a compelling reason to do so.
+we will not anticiapte break the existing API without a compelling reason
+to do so (e.g., bugs or significant design flaws).
 
 ## Running Tests
 
