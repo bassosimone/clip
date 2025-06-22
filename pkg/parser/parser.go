@@ -326,6 +326,12 @@ func (px *Parser) Parse(argv []string) ([]CommandLineItem, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// Optionally permute the arguments
+	if (px.Flags & FlagNoPermute) == 0 {
+		rv = px.permute(rv)
+	}
+
 	return rv, nil
 }
 
@@ -538,4 +544,47 @@ func (px *Parser) getOptionValueFromNextToken(tokens []scanner.Token, rv []Comma
 
 	// Return the updated tokens and results
 	return tokens, rv, nil
+}
+
+func (px *Parser) permute(input []CommandLineItem) []CommandLineItem {
+	// Initialize the output slice
+	output := []CommandLineItem{}
+
+	// Ensure the program name comes first
+	assert.True(len(input) >= 1, "input slice is empty")
+	_, ok := input[0].(ProgramNameItem)
+	assert.True(ok, "first item is not a program name")
+	output = append(output, input[0])
+	input = input[1:]
+
+	// Find index of the separator, if any
+	sepindex := len(input)
+	for idx := 0; idx < len(input); idx++ {
+		if _, ok := input[idx].(SeparatorItem); ok {
+			sepindex = idx
+			break
+		}
+	}
+
+	// Walk until the separator and put options first
+	for idx := 0; idx < sepindex; idx++ {
+		if _, ok := input[idx].(OptionItem); ok {
+			output = append(output, input[idx])
+		}
+	}
+
+	// Walk until the separator and put arguments afterwards
+	for idx := 0; idx < sepindex; idx++ {
+		if _, ok := input[idx].(ArgumentItem); ok {
+			output = append(output, input[idx])
+		}
+	}
+
+	// Append after the separator
+	for idx := sepindex; idx < len(input); idx++ {
+		output = append(output, input[idx])
+	}
+
+	// Return the output slice
+	return output
 }

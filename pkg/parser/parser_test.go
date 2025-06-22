@@ -243,13 +243,13 @@ func TestParserParse(t *testing.T) {
 					"file":    OptionTypeString,
 				},
 			},
-			argv: []string{"myprogram", "--verbose", "--file=test.txt"},
+			argv: []string{"myprogram", "target.txt", "--verbose", "--file=test.txt"},
 			want: []CommandLineItem{
 				ProgramNameItem{Name: "myprogram", Token: scanner.ProgramNameToken{Name: "myprogram"}},
 				OptionItem{
 					Name:    "verbose",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "verbose", Prefix: "--"},
+					Token:   scanner.OptionToken{Index: 2, Name: "verbose", Prefix: "--"},
 					IsShort: false,
 					Type:    OptionTypeBool,
 					Prefix:  "--",
@@ -257,10 +257,14 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "file",
 					Value:   "test.txt",
-					Token:   scanner.OptionToken{Index: 2, Name: "file=test.txt", Prefix: "--"},
+					Token:   scanner.OptionToken{Index: 3, Name: "file=test.txt", Prefix: "--"},
 					IsShort: false,
 					Type:    OptionTypeString,
 					Prefix:  "--",
+				},
+				ArgumentItem{
+					Value: "target.txt",
+					Token: scanner.ArgumentToken{Index: 1, Value: "target.txt"},
 				},
 			},
 		},
