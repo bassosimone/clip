@@ -1,5 +1,7 @@
 # clip: Command Line Parser
 
+[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
+
 This repository implements a very flexible command line parser
 written in Go. It provides an intuitive API modeled after the
 standard library's [flag](https://pkg.go.dev/flag) package.
