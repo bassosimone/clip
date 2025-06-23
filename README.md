@@ -94,7 +94,7 @@ flowchart TD
     parser[pkg/parser]
     scanner[pkg/scanner]
 
-    getopt --> flag
+    getopt --> parser
     flag --> parser
     parser --> scanner
 ```
