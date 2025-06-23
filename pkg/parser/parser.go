@@ -98,7 +98,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/bassosimone/clip/internal/assert"
+	"github.com/bassosimone/clip/pkg/assert"
 	"github.com/bassosimone/clip/pkg/scanner"
 )
 

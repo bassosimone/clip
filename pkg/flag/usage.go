@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/bassosimone/clip/pkg/parser"
+	"github.com/bassosimone/clip/pkg/textwrap"
 )
 
 // Options returns all the configured [*Option] in the [*FlagSet].
@@ -105,39 +106,16 @@ func (fx *FlagSet) UsageOptions() string {
 		switch {
 		case opt.ShortName != 0 && opt.LongName != "":
 			fmt.Fprintf(&sb, "  %s%s, %s%s%s\n", spref, string(opt.ShortName), lpref, opt.LongName, value)
-			fmt.Fprintf(&sb, "%s\n\n", wrapText(opt.Usage, 72, "    "))
+			fmt.Fprintf(&sb, "%s\n\n", textwrap.Do(opt.Usage, 72, "    "))
 
 		case opt.ShortName != 0:
 			fmt.Fprintf(&sb, "  %s%s%s\n", spref, string(opt.ShortName), value)
-			fmt.Fprintf(&sb, "%s\n\n", wrapText(opt.Usage, 72, "    "))
+			fmt.Fprintf(&sb, "%s\n\n", textwrap.Do(opt.Usage, 72, "    "))
 
 		case opt.LongName != "":
 			fmt.Fprintf(&sb, "  %s%s%s\n", lpref, opt.LongName, value)
-			fmt.Fprintf(&sb, "%s\n\n", wrapText(opt.Usage, 72, "    "))
+			fmt.Fprintf(&sb, "%s\n\n", textwrap.Do(opt.Usage, 72, "    "))
 		}
 	}
 	return sb.String()
-}
-
-// wrapText wraps text to the given width with the specified indentation
-func wrapText(text string, width int, indent string) string {
-	words := strings.Fields(text)
-	if len(words) <= 0 {
-		return ""
-	}
-
-	var lines []string
-	current := indent + words[0]
-
-	for _, word := range words[1:] {
-		if len(current)+1+len(word) <= width {
-			current += " " + word
-			continue
-		}
-		lines = append(lines, current)
-		current = indent + word
-	}
-	lines = append(lines, current)
-
-	return strings.Join(lines, "\n")
 }
