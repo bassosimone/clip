@@ -86,6 +86,8 @@ func ExampleFlagSet_usage() {
 	//
 	//   -v, --verbose
 	//     enable verbose output mode
+	//
+	// Use 'myprogram --help' to show this help screen.
 }
 
 // ExampleFlagSet_allMethods demonstrates all the different ways to define flags

@@ -79,7 +79,32 @@ func (fx *FlagSet) Usage() string {
 	fmt.Fprintf(&sb, "Options:\n")
 	fmt.Fprintf(&sb, "%s", fx.UsageOptions())
 
+	// Remind the user how to get help
+	if lpref := fx.firstLongOptionsPrefix(); lpref != "" {
+		fmt.Fprintf(&sb, "Use '%s %shelp' to show this help screen.", fx.ProgramName(), lpref)
+	}
 	return strings.TrimSpace(sb.String())
+}
+
+func (fx *FlagSet) firstShortOptionsPrefix() string {
+	if len(fx.parser.ShortOptionPrefixes) > 0 {
+		return fx.parser.ShortOptionPrefixes[0]
+	}
+	return ""
+}
+
+func (fx *FlagSet) firstLongOptionsPrefix() string {
+	if len(fx.parser.LongOptionPrefixes) > 0 {
+		return fx.parser.LongOptionPrefixes[0]
+	}
+	return ""
+}
+
+func (fx *FlagSet) firstSeparator() string {
+	if len(fx.parser.Separators) > 0 {
+		return " [" + fx.parser.Separators[0] + "] "
+	}
+	return ""
 }
 
 // UsageSynopsis returns a string containing the [*FlagSet] usage synopsis.
@@ -87,10 +112,7 @@ func (fx *FlagSet) UsageSynopsis() string {
 	var sb strings.Builder
 
 	// Gather the separator to use (pick the first one for simplicity)
-	var sep string
-	if len(fx.parser.Separators) > 0 {
-		sep = " [" + fx.parser.Separators[0] + "] "
-	}
+	sep := fx.firstSeparator()
 
 	// Print the synopsis string
 	fmt.Fprintf(&sb, "Usage: %s [options]%s[arguments]\n\n", fx.ProgramName(), sep)
@@ -102,16 +124,10 @@ func (fx *FlagSet) UsageOptions() string {
 	var sb strings.Builder
 
 	// Gather the short option prefix (pick the first one for simplicity)
-	var spref string
-	if len(fx.parser.ShortOptionPrefixes) > 0 {
-		spref = fx.parser.ShortOptionPrefixes[0]
-	}
+	spref := fx.firstShortOptionsPrefix()
 
 	// Gather the long option prefix (pick the first one for simplicity)
-	var lpref string
-	if len(fx.parser.LongOptionPrefixes) > 0 {
-		lpref = fx.parser.LongOptionPrefixes[0]
-	}
+	lpref := fx.firstLongOptionsPrefix()
 
 	// Print the options
 	for _, opt := range fx.Options() {
