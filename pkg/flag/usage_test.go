@@ -214,16 +214,16 @@ func TestFlagSet_UsageOptions(t *testing.T) {
 	}
 }
 
-func TestFlagSet_firstSeparator(t *testing.T) {
+func TestFlagSet_formatFirstSeparator(t *testing.T) {
 	fx := NewFlagSet("test", ContinueOnError)
 	fx.parser.Separators = []string{"--"}
 
-	if fx.firstSeparator() != " [--] " {
-		t.Errorf("Expected separator to be ' [--] ', got '%s'", fx.firstSeparator())
+	if fx.formatFirstSeparator() != " [--] " {
+		t.Errorf("Expected separator to be ' [--] ', got '%s'", fx.formatFirstSeparator())
 	}
 
 	fx.parser.Separators = []string{}
-	if fx.firstSeparator() != "" {
-		t.Errorf("Expected no separator, got '%s'", fx.firstSeparator())
+	if fx.formatFirstSeparator() != "" {
+		t.Errorf("Expected no separator, got '%s'", fx.formatFirstSeparator())
 	}
 }

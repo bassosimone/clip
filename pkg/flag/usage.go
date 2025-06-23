@@ -58,6 +58,16 @@ func (fx *FlagSet) Description() string {
 	return fx.description
 }
 
+// ArgsDocs returns the documentation for the arguments.
+func (fx *FlagSet) ArgsDocs() string {
+	return fx.argsdocs
+}
+
+// SetArgsDocs sets the documentation for the arguments.
+func (fx *FlagSet) SetArgsDocs(docs string) {
+	fx.argsdocs = docs
+}
+
 // ProgramName returns the program name configured in the [*FlagSet].
 func (fx *FlagSet) ProgramName() string {
 	return fx.progname
@@ -100,8 +110,8 @@ func (fx *FlagSet) firstLongOptionsPrefix() string {
 	return ""
 }
 
-func (fx *FlagSet) firstSeparator() string {
-	if len(fx.parser.Separators) > 0 {
+func (fx *FlagSet) formatFirstSeparator() string {
+	if len(fx.parser.Separators) > 0 && fx.argsdocs != "" {
 		return " [" + fx.parser.Separators[0] + "] "
 	}
 	return ""
@@ -112,10 +122,13 @@ func (fx *FlagSet) UsageSynopsis() string {
 	var sb strings.Builder
 
 	// Gather the separator to use (pick the first one for simplicity)
-	sep := fx.firstSeparator()
+	sep := fx.formatFirstSeparator()
+
+	// Gather the arguments documentation
+	argsdoc := fx.ArgsDocs()
 
 	// Print the synopsis string
-	fmt.Fprintf(&sb, "Usage: %s [options]%s[arguments]\n\n", fx.ProgramName(), sep)
+	fmt.Fprintf(&sb, "Usage: %s [options]%s%s\n\n", fx.ProgramName(), sep, argsdoc)
 	return sb.String()
 }
 

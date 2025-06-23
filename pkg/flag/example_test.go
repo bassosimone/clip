@@ -50,6 +50,7 @@ func ExampleFlagSet_usage() {
 	// Create FlagSet for showing usage
 	fset := flag.NewFlagSet("myprogram", flag.ContinueOnError)
 	fset.SetDescription("Illustrates how to print the usage information.")
+	fset.SetArgsDocs("[args...]")
 
 	// Define various flags to demonstrate usage formatting
 	fset.Bool("help", 'h', false, "display this help message")
@@ -64,7 +65,7 @@ func ExampleFlagSet_usage() {
 	fmt.Print(usage)
 
 	// Output:
-	// Usage: myprogram [options] [--] [arguments]
+	// Usage: myprogram [options] [--] [args...]
 	//
 	// Illustrates how to print the usage information.
 	//

@@ -37,6 +37,9 @@ type FlagSet struct {
 	// args contains the positional arguments.
 	args []string
 
+	// argsdocs contains the positional arguments documentation.
+	argsdocs string
+
 	// description contains the optional description.
 	description string
 
@@ -71,6 +74,7 @@ func newDefaultParser() *parser.Parser {
 func NewFlagSet(progname string, handling ErrorHandling) *FlagSet {
 	return &FlagSet{
 		args:         []string{},
+		argsdocs:     "[arguments]",
 		handling:     handling,
 		optionsShort: make(map[string]*Option),
 		optionsLong:  make(map[string]*Option),
