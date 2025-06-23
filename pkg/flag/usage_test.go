@@ -227,3 +227,14 @@ func TestFlagSet_formatFirstSeparator(t *testing.T) {
 		t.Errorf("Expected no separator, got '%s'", fx.formatFirstSeparator())
 	}
 }
+
+func TestFlag_SetCustomUsage(t *testing.T) {
+	expect := "usage: tar -x -f file [-z] path..."
+	fx := NewFlagSet("test", ContinueOnError)
+	fx.SetCustomUsage(func(fx *FlagSet) string {
+		return expect
+	})
+	if fx.Usage() != expect {
+		t.Errorf("Expected Usage() to be '%s', got '%s'", expect, fx.Usage())
+	}
+}

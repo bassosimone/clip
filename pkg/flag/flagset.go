@@ -40,6 +40,9 @@ type FlagSet struct {
 	// argsdocs contains the positional arguments documentation.
 	argsdocs string
 
+	// customusage is an optional custom usage function.
+	customusage func(fx *FlagSet) string
+
 	// description contains the optional description.
 	description string
 

@@ -73,11 +73,20 @@ func (fx *FlagSet) ProgramName() string {
 	return fx.progname
 }
 
+// SetCustomUsage sets the custom usage function.
+func (fx *FlagSet) SetCustomUsage(customusage func(fx *FlagSet) string) {
+	fx.customusage = customusage
+}
+
 // Usage returns a string containing the [*FlagSet] usage information.
 func (fx *FlagSet) Usage() string {
-	var sb strings.Builder
+	// Honor the custom usage function if it's set
+	if fx.customusage != nil {
+		return fx.customusage(fx)
+	}
 
 	// Print the usage string
+	var sb strings.Builder
 	fmt.Fprintf(&sb, "%s", fx.UsageSynopsis())
 
 	// If there's a description, print it
