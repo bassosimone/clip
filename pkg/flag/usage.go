@@ -95,8 +95,10 @@ func (fx *FlagSet) Usage() string {
 	}
 
 	// Print the options
-	fmt.Fprintf(&sb, "Options:\n")
-	fmt.Fprintf(&sb, "%s", fx.UsageOptions())
+	if optsusage := fx.UsageOptions(); optsusage != "" {
+		fmt.Fprintf(&sb, "Options:\n")
+		fmt.Fprintf(&sb, "%s", optsusage)
+	}
 
 	// Remind the user how to get help
 	if lpref := fx.firstLongOptionsPrefix(); lpref != "" {

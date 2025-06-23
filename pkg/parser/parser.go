@@ -167,6 +167,10 @@ type Parser struct {
 
 	// ShortOptions is a map of short options to their types.
 	//
+	// While short options MAY theoretically be longer than one character, using
+	// multiple characters is NOT RECOMMENDED since it may lead to ambiguity when
+	// options are grouped together. We RECOMMEND using single-byte options.
+	//
 	// Short options are prefixed with one of the prefixes in [ShortOptionPrefixes].
 	//
 	// Boolean short options are presence-based, meaning their presence indicates
