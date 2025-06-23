@@ -48,7 +48,7 @@ func TestFlagSet_Parse_Errors(t *testing.T) {
 				return fs
 			},
 			args:          []string{"-x"},
-			expectedError: ErrUnknownOption,
+			expectedError: parser.ErrUnknownOption,
 			errorContains: "unknown option: x",
 		},
 
@@ -59,7 +59,7 @@ func TestFlagSet_Parse_Errors(t *testing.T) {
 				return fs
 			},
 			args:          []string{"--unknown"},
-			expectedError: ErrUnknownOption,
+			expectedError: parser.ErrUnknownOption,
 			errorContains: "unknown option: unknown",
 		},
 
@@ -141,8 +141,8 @@ func TestFlagSet_ErrorHandling(t *testing.T) {
 
 		if err == nil {
 			t.Error("Expected error but got nil")
-		} else if !errors.Is(err, ErrUnknownOption) {
-			t.Errorf("FlagSet.Parse() error = %v, want %v", err, ErrUnknownOption)
+		} else if !errors.Is(err, parser.ErrUnknownOption) {
+			t.Errorf("FlagSet.Parse() error = %v, want %v", err, parser.ErrUnknownOption)
 		}
 	})
 

@@ -120,9 +120,6 @@ func (fx *FlagSet) AddOption(opt *Option) {
 	}
 }
 
-// ErrUnknownOption is returned when an option is not defined in the [*FlagSet].
-var ErrUnknownOption = parser.ErrUnknownOption
-
 // errUnexpectedItemType is returned when an unexpected item type is encountered.
 var errUnexpectedItemType = errors.New("unexpected item type")
 
@@ -131,11 +128,14 @@ var errUnexpectedItemType = errors.New("unexpected item type")
 // is configured, this method may call [os.Exit] or panic in
 // case of parsing errors (see [NewFlagSet]).
 //
-// This function returns one of the following errors:
+// When using [ContinueOnError] this function returns:
 //
-//   - [ErrUnknownOption]: when an option is not found in the specification.
+//  1. any error that [*parser.Parser.Parse] may return.
 //
-//   - any error that [*parser.Parser.Parse] may return
+//  2. nil on success.
+//
+// With [ExitOnError] or [PanicOnError] this function does
+// not ever return a non-nil error.
 //
 // This function may panic on internal errors.
 func (fx *FlagSet) Parse(arguments []string) error {
@@ -189,12 +189,15 @@ func (fx *FlagSet) maybeHandleError(err error) error {
 	switch {
 	case err == nil:
 		return nil
+
 	case fx.handling == ContinueOnError:
 		return err
+
 	case fx.handling == ExitOnError:
 		fmt.Fprintf(os.Stderr, "%s: %s\n", fx.progname, err.Error())
 		exitfn(2)
-		fallthrough // make the compiler happy; is there a better way?
+		fallthrough // just in case exitfn does not exit
+
 	default:
 		panic(err) // catches also any unhandled fx.handling value
 	}
