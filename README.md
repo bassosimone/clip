@@ -51,7 +51,7 @@ command line tools behavior in their subcommands. For example, the
 
 [![pkg/flag docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag) [![pkg/flag code](
-https://img.shields.io/badge/github-pkg/flag-blue)](
+https://img.shields.io/badge/github-pkg/flag-blue?logo=github)](
 https://github.com/bassosimone/pkg/flag)
 
 [Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
