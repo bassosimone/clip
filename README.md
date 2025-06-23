@@ -7,10 +7,16 @@ written in Go. It provides an intuitive API modeled after the
 standard library's [flag](https://pkg.go.dev/flag) package.
 
 By default, [clip](https://github.com/bassosimone/clip) implements
-[GNU getopt](https://linux.die.net/man/3/getopt)
-like command line parsing, with short options introduced by `-`,
-long options introduced by `--`, the ability to mix short and long
-options, and `--` to terminate option processing.
+[GNU getopt](https://linux.die.net/man/3/getopt) compatible
+command line parsing:
+
+1. Short options introduced by `-`, long options introduced by `--`.
+
+2. The ability to mix short and long options.
+
+3. Automatic (but configurable) options and arguments permutation.
+
+4. The `--` separator to terminate options processing.
 
 However, what sets [clip](https://github.com/bassosimone/clip) apart is
 the possibility of customizing the prefixes used for short and long
@@ -22,7 +28,7 @@ Go [flag](https://pkg.go.dev/flag) package.
 2. Allow long options to also be introduced by `+` like in the
 [dig](https://linux.die.net/man/1/dig) command line tool.
 
-3. Allow options to be introduced by `/` like Windows tools do.
+3. Have options be introduced by `/`, like Windows tools do.
 
 Therefore, [clip](https://github.com/bassosimone/clip) is suitable
 for writing complex command line tools that require to emulate other
