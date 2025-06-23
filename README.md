@@ -37,6 +37,10 @@ command line tools behavior in their subcommands. For example, the
 
 ## Examples
 
+This section shows how to use the packages in this repository.
+
+### pkg/flag
+
 The following example shows how to use the [./pkg/flag](pkg/flag) package:
 
 ```Go
@@ -73,15 +77,19 @@ func main() {
 }
 ```
 
-See also the testable examples:
+See also the testable examples at [./pkg/flag/example_test.go](pkg/flag/example_test.go).
 
-- [./pkg/flag/example_test.go](pkg/flag/example_test.go).
+### pkg/getopt
 
-- [./pkg/getopt/example_test.go](pkg/getopt/example_test.go).
+See the testable examples at [./pkg/getopt/example_test.go](pkg/getopt/example_test.go).
 
-- [./pkg/parser/example_test.go](pkg/parser/example_test.go).
+### pkg/parser
 
-- [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
+See the testable examples at [./pkg/parser/example_test.go](pkg/parser/example_test.go).
+
+### pkg/scanner
+
+See the testable examples at [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
 
 ## Architecture
 
@@ -128,7 +136,7 @@ https://github.com/bassosimone/clip/tree/main/pkg/parser)
 
 Parser for CLI options (uses the scanner).
 
-### ./pkg/scanner
+### pkg/scanner
 
 [![pkg/scanner docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner) [![pkg/scanner code](
