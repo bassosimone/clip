@@ -37,6 +37,9 @@ type FlagSet struct {
 	// args contains the positional arguments.
 	args []string
 
+	// description contains the optional description.
+	description string
+
 	// handling controls how we handle flag parsing errors.
 	handling ErrorHandling
 

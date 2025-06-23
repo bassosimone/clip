@@ -3,6 +3,8 @@
 
 package flag
 
+import "github.com/bassosimone/clip/pkg/parser"
+
 // Option represents a command-line flag option.
 type Option struct {
 	// LongName is the long option name. Long options are parsed
@@ -18,6 +20,10 @@ type Option struct {
 	// through values provided using the command-line.
 	Modified bool
 
+	// ParamName is the optional parameter name associated with
+	// the option. If not set, we use 'VALUE'.
+	ParamName string
+
 	// ShortName is the short option name. Short options are parsed
 	// together and may be grouped like in GNU getopt.
 	//
@@ -29,4 +35,19 @@ type Option struct {
 
 	// Value is the value of the option.
 	Value Value
+}
+
+// FormatParamName returns the string associated with the [Option] parameter
+// name. The return value is an empty string for boolean options, which are
+// not associated with a parameter name. Instead, for string options, the return
+// value is the ParamName, if set, and otherwise 'VALUE'.
+func (opt *Option) FormatParamName() string {
+	switch {
+	case opt.Value.OptionType() == parser.OptionTypeBool:
+		return ""
+	case opt.ParamName != "":
+		return opt.ParamName
+	default:
+		return "VALUE"
+	}
 }

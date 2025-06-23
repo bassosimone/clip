@@ -8,7 +8,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/bassosimone/clip/pkg/parser"
 	"github.com/bassosimone/clip/pkg/textwrap"
 )
 
@@ -49,6 +48,21 @@ func (fx *FlagSet) Options() []*Option {
 	return options
 }
 
+// SetDescription sets the description of the [*FlagSet].
+func (fx *FlagSet) SetDescription(description string) {
+	fx.description = description
+}
+
+// Description returns the description of the [*FlagSet].
+func (fx *FlagSet) Description() string {
+	return fx.description
+}
+
+// ProgramName returns the program name configured in the [*FlagSet].
+func (fx *FlagSet) ProgramName() string {
+	return fx.progname
+}
+
 // Usage returns a string containing the [*FlagSet] usage information.
 func (fx *FlagSet) Usage() string {
 	var sb strings.Builder
@@ -56,11 +70,16 @@ func (fx *FlagSet) Usage() string {
 	// Print the usage string
 	fmt.Fprintf(&sb, "%s", fx.UsageSynopsis())
 
-	// Print the options
-	fmt.Fprintf(&sb, "options:\n")
-	fmt.Fprintf(&sb, "%s\n", fx.UsageOptions())
+	// If there's a description, print it
+	if desc := fx.Description(); desc != "" {
+		fmt.Fprintf(&sb, "%s\n\n", desc)
+	}
 
-	return sb.String()
+	// Print the options
+	fmt.Fprintf(&sb, "Options:\n")
+	fmt.Fprintf(&sb, "%s", fx.UsageOptions())
+
+	return strings.TrimSpace(sb.String())
 }
 
 // UsageSynopsis returns a string containing the [*FlagSet] usage synopsis.
@@ -74,7 +93,7 @@ func (fx *FlagSet) UsageSynopsis() string {
 	}
 
 	// Print the synopsis string
-	fmt.Fprintf(&sb, "\nusage: %s [options]%s[arguments]\n\n", fx.progname, sep)
+	fmt.Fprintf(&sb, "Usage: %s [options]%s[arguments]\n\n", fx.ProgramName(), sep)
 	return sb.String()
 }
 
@@ -96,13 +115,11 @@ func (fx *FlagSet) UsageOptions() string {
 
 	// Print the options
 	for _, opt := range fx.Options() {
-		// Determine whether the option has a value
-		var value string
-		if opt.Value.OptionType() != parser.OptionTypeBool {
-			value = " VALUE"
-		}
-
 		// Customize formatting depending on how the option is defined
+		value := opt.FormatParamName()
+		if value != "" {
+			value = " " + value
+		}
 		switch {
 		case opt.ShortName != 0 && opt.LongName != "":
 			fmt.Fprintf(&sb, "  %s%s, %s%s%s\n", spref, string(opt.ShortName), lpref, opt.LongName, value)
