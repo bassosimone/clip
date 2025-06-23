@@ -1,6 +1,6 @@
 # clip: Command Line Parser
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
+[![Package-level Go docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
 
 This repository implements a very flexible command line parser
 written in Go. It provides an intuitive API modeled after the
@@ -35,28 +35,11 @@ for writing complex command line tools that require to emulate other
 command line tools behavior in their subcommands. For example, the
 [rbmk](https://github.com/rbmk-project/rbmk) network measurement tool.
 
-## Architecture
-
-```
-    +--------+-------+
-    | getopt | flag  |
-    +--------+-------+
-    |     parser     |
-    +----------------+
-    |     scanner    |
-    +----------------+
-```
-
-- [./pkg/flag](pkg/flag): [flag](https://pkg.go.dev/flag)
-inspired implementation (uses the parser).
-
-- [./pkg/getopt](pkg/getopt): getopt compatible implementation (uses the parser).
-
-- [./pkg/parser](pkg/parser): parser for CLI options (uses the scanner).
-
-- [./pkg/scanner](pkg/scanner): scanner for CLI options.
-
 ## Examples
+
+This section shows how to use the packages in this repository.
+
+### pkg/flag
 
 The following example shows how to use the [./pkg/flag](pkg/flag) package:
 
@@ -94,19 +77,77 @@ func main() {
 }
 ```
 
-See also the testable examples:
+See also the testable examples at [./pkg/flag/example_test.go](pkg/flag/example_test.go).
 
-- [./pkg/flag/example_test.go](pkg/flag/example_test.go).
+### pkg/getopt
 
-- [./pkg/getopt/example_test.go](pkg/getopt/example_test.go).
+See the testable examples at [./pkg/getopt/example_test.go](pkg/getopt/example_test.go).
 
-- [./pkg/parser/example_test.go](pkg/parser/example_test.go).
+### pkg/parser
 
-- [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
+See the testable examples at [./pkg/parser/example_test.go](pkg/parser/example_test.go).
+
+### pkg/scanner
+
+See the testable examples at [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
+
+## Architecture
+
+The following diagram illustrates the package architecture:
+
+```mermaid
+flowchart TD
+    getopt[pkg/getopt]
+    flag[pkg/flag]
+    parser[pkg/parser]
+    scanner[pkg/scanner]
+
+    getopt --> parser
+    flag --> parser
+    parser --> scanner
+```
+
+The following subsections illustrate each package.
+
+### pkg/flag
+
+[![pkg/flag docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag) [![pkg/flag code](
+https://img.shields.io/badge/GitHub-pkg/flag-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/flag)
+
+[Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
+
+### pkg/getopt
+
+[![pkg/getopt docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt) [![pkg/getopt code](
+https://img.shields.io/badge/GitHub-pkg/getopt-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/getopt)
+
+[GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
+
+### pkg/parser
+
+[![pkg/parser docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser) [![pkg/parser code](
+https://img.shields.io/badge/GitHub-pkg/parser-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/parser)
+
+Parser for CLI options (uses the scanner).
+
+### pkg/scanner
+
+[![pkg/scanner docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner) [![pkg/scanner code](
+https://img.shields.io/badge/GitHub-pkg/scanner-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/scanner)
+
+Scanner for CLI options.
 
 ## Documentation
 
-- [pkg.go.dev/github.com/bassosimone/clip](https://pkg.go.dev/github.com/bassosimone/clip)
+Read the package documentation at [pkg.go.dev/github.com/bassosimone/clip](https://pkg.go.dev/github.com/bassosimone/clip)
 
 ## Minimum Supported Go Version
 
