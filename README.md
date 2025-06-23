@@ -51,7 +51,7 @@ command line tools behavior in their subcommands. For example, the
 
 [![pkg/flag docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag) [![pkg/flag code](
-https://img.shields.io/badge/-pkg/flag-blue?logo=github)](
+https://img.shields.io/badge/GitHub-pkg/flag-blue?logo=github)](
 https://github.com/bassosimone/pkg/flag)
 
 [Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
@@ -60,7 +60,7 @@ https://github.com/bassosimone/pkg/flag)
 
 [![pkg/getopt docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt) [![pkg/getopt code](
-https://img.shields.io/badge/github-pkg/getopt-blue)](
+https://img.shields.io/badge/GitHub-pkg/getopt-blue?logo=github)](
 https://github.com/bassosimone/pkg/getopt)
 
 [GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
@@ -69,7 +69,7 @@ https://github.com/bassosimone/pkg/getopt)
 
 [![pkg/parser docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser) [![pkg/parser code](
-https://img.shields.io/badge/github-pkg/parser-blue)](
+https://img.shields.io/badge/GitHub-pkg/parser-blue?logo=github)](
 https://github.com/bassosimone/pkg/parser)
 
 Parser for CLI options (uses the scanner).
@@ -78,7 +78,7 @@ Parser for CLI options (uses the scanner).
 
 [![pkg/scanner docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner) [![pkg/scanner code](
-https://img.shields.io/badge/github-pkg/scanner-blue)](
+https://img.shields.io/badge/GitHub-pkg/scanner-blue?logo=github)](
 https://github.com/bassosimone/pkg/scanner)
 
 Scanner for CLI options.
