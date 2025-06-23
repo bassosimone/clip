@@ -147,7 +147,7 @@ Scanner for CLI options.
 
 ## Documentation
 
-- [pkg.go.dev/github.com/bassosimone/clip](https://pkg.go.dev/github.com/bassosimone/clip)
+Read the package documentation at [pkg.go.dev/github.com/bassosimone/clip](https://pkg.go.dev/github.com/bassosimone/clip)
 
 ## Minimum Supported Go Version
 
