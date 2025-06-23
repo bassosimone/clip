@@ -214,6 +214,9 @@ func (fx *FlagSet) maybeHandleError(err error) error {
 
 	case fx.handling == ExitOnError:
 		fmt.Fprintf(os.Stderr, "%s: %s\n", fx.progname, err.Error())
+		if lpref := fx.firstLongOptionsPrefix(); lpref != "" {
+			fmt.Fprintf(os.Stderr, "Try '%s %shelp' for more help.\n", fx.progname, lpref)
+		}
 		exitfn(2)
 		panic(err) // just in case exitfn does not exit
 
