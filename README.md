@@ -47,14 +47,25 @@ command line tools behavior in their subcommands. For example, the
     +----------------+
 ```
 
-- [./pkg/flag](pkg/flag): [flag](https://pkg.go.dev/flag)
-inspired implementation (uses the parser).
+- [./pkg/flag](pkg/flag):
+[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag)
+[flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
 
-- [./pkg/getopt](pkg/getopt): getopt compatible implementation (uses the parser).
+- [./pkg/getopt](pkg/getopt):
+[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)
+[GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
 
-- [./pkg/parser](pkg/parser): parser for CLI options (uses the scanner).
+- [./pkg/parser](pkg/parser):
+[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser)
+parser for CLI options (uses the scanner).
 
-- [./pkg/scanner](pkg/scanner): scanner for CLI options.
+- [./pkg/scanner](pkg/scanner):
+[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)
+scanner for CLI options.
 
 ## Examples
 
