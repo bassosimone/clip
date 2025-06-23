@@ -1,6 +1,6 @@
 # clip: Command Line Parser
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
+[![Package-level Go docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
 
 This repository implements a very flexible command line parser
 written in Go. It provides an intuitive API modeled after the
@@ -49,29 +49,37 @@ command line tools behavior in their subcommands. For example, the
 
 ### pkg/flag
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag)
+[![pkg/flag docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag) [![pkg/flag code](
+https://img.shields.io/badge/github-pkg/flag-blue)](
+https://github.com/bassosimone/pkg/flag)
 
 [Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
 
 ### ./pkg/getopt
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)
+[![pkg/getopt docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt) [![pkg/getopt code](
+https://img.shields.io/badge/github-pkg/getopt-blue)](
+https://github.com/bassosimone/pkg/getopt)
 
 [GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
 
 ### ./pkg/parser
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser)
+[![pkg/parser docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser) [![pkg/parser code](
+https://img.shields.io/badge/github-pkg/parser-blue)](
+https://github.com/bassosimone/pkg/parser)
 
 Parser for CLI options (uses the scanner).
 
 ### ./pkg/scanner
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)
+[![pkg/scanner docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner) [![pkg/scanner code](
+https://img.shields.io/badge/github-pkg/scanner-blue)](
+https://github.com/bassosimone/pkg/scanner)
 
 Scanner for CLI options.
 
