@@ -35,54 +35,6 @@ for writing complex command line tools that require to emulate other
 command line tools behavior in their subcommands. For example, the
 [rbmk](https://github.com/rbmk-project/rbmk) network measurement tool.
 
-## Architecture
-
-```
-    +--------+-------+
-    | getopt | flag  |
-    +--------+-------+
-    |     parser     |
-    +----------------+
-    |     scanner    |
-    +----------------+
-```
-
-### pkg/flag
-
-[![pkg/flag docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag) [![pkg/flag code](
-https://img.shields.io/badge/GitHub-pkg/flag-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/flag)
-
-[Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
-
-### pkg/getopt
-
-[![pkg/getopt docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt) [![pkg/getopt code](
-https://img.shields.io/badge/GitHub-pkg/getopt-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/getopt)
-
-[GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
-
-### pkg/parser
-
-[![pkg/parser docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser) [![pkg/parser code](
-https://img.shields.io/badge/GitHub-pkg/parser-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/parser)
-
-Parser for CLI options (uses the scanner).
-
-### ./pkg/scanner
-
-[![pkg/scanner docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner) [![pkg/scanner code](
-https://img.shields.io/badge/GitHub-pkg/scanner-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/scanner)
-
-Scanner for CLI options.
-
 ## Examples
 
 The following example shows how to use the [./pkg/flag](pkg/flag) package:
@@ -130,6 +82,60 @@ See also the testable examples:
 - [./pkg/parser/example_test.go](pkg/parser/example_test.go).
 
 - [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
+
+## Architecture
+
+The following diagram illustrates the package architecture:
+
+```mermaid
+flowchart TD
+    getopt[pkg/getopt]
+    flag[pkg/flag]
+    parser[pkg/parser]
+    scanner[pkg/scanner]
+
+    getopt --> flag
+    flag --> parser
+    parser --> scanner
+```
+
+The following subsections illustrate each package.
+
+### pkg/flag
+
+[![pkg/flag docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag) [![pkg/flag code](
+https://img.shields.io/badge/GitHub-pkg/flag-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/flag)
+
+[Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
+
+### pkg/getopt
+
+[![pkg/getopt docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt) [![pkg/getopt code](
+https://img.shields.io/badge/GitHub-pkg/getopt-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/getopt)
+
+[GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
+
+### pkg/parser
+
+[![pkg/parser docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser) [![pkg/parser code](
+https://img.shields.io/badge/GitHub-pkg/parser-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/parser)
+
+Parser for CLI options (uses the scanner).
+
+### ./pkg/scanner
+
+[![pkg/scanner docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner) [![pkg/scanner code](
+https://img.shields.io/badge/GitHub-pkg/scanner-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/scanner)
+
+Scanner for CLI options.
 
 ## Documentation
 
