@@ -138,8 +138,14 @@ func (fx *FlagSet) UsageSynopsis() string {
 	// Gather the arguments documentation
 	argsdoc := fx.ArgsDocs()
 
+	// Determine whether to print options placeholder
+	options := ""
+	if len(fx.Options()) > 0 {
+		options = "[options]"
+	}
+
 	// Print the synopsis string
-	fmt.Fprintf(&sb, "Usage: %s [options]%s%s\n\n", fx.ProgramName(), sep, argsdoc)
+	fmt.Fprintf(&sb, "Usage: %s %s%s%s\n\n", fx.ProgramName(), options, sep, argsdoc)
 	return sb.String()
 }
 
