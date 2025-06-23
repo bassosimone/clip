@@ -6,6 +6,7 @@ package flag
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/bassosimone/clip/pkg/assert"
@@ -60,6 +61,12 @@ type FlagSet struct {
 
 	// progname contains the name of the program.
 	progname string
+
+	// stderr is the output stream for error messages.
+	stderr io.Writer
+
+	// stdout is the output stream for usage messages.
+	stdout io.Writer
 }
 
 func newDefaultParser() *parser.Parser {
@@ -83,6 +90,8 @@ func NewFlagSet(progname string, handling ErrorHandling) *FlagSet {
 		optionsLong:  make(map[string]*Option),
 		parser:       newDefaultParser(),
 		progname:     progname,
+		stderr:       os.Stderr,
+		stdout:       os.Stdout,
 	}
 }
 
@@ -158,7 +167,7 @@ func (fx *FlagSet) parse(arguments []string) error {
 
 	// Handle the user requesting for help
 	if errors.Is(err, parser.ErrHelp) {
-		fmt.Fprintf(os.Stdout, "%s\n", fx.Usage())
+		fmt.Fprintf(fx.stdout, "%s\n", fx.Usage())
 		// fallthrough
 	}
 
@@ -213,9 +222,9 @@ func (fx *FlagSet) maybeHandleError(err error) error {
 		panic(err) // just in case exitfn does not exit
 
 	case fx.handling == ExitOnError:
-		fmt.Fprintf(os.Stderr, "%s: %s\n", fx.progname, err.Error())
+		fmt.Fprintf(fx.stderr, "%s: %s\n", fx.progname, err.Error())
 		if lpref := fx.firstLongOptionsPrefix(); lpref != "" {
-			fmt.Fprintf(os.Stderr, "Try '%s %shelp' for more help.\n", fx.progname, lpref)
+			fmt.Fprintf(fx.stderr, "Try '%s %shelp' for more help.\n", fx.progname, lpref)
 		}
 		exitfn(2)
 		panic(err) // just in case exitfn does not exit
