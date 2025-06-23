@@ -281,11 +281,32 @@ func (a ArgumentItem) Strings() []string {
 	return []string{a.Value}
 }
 
+// ErrHelp is returned by [*Parser.Parse] when and we find help related
+// tokens right after scanning the argv. Upper level consumers should
+// print the help message in response to this error.
+var ErrHelp = errors.New("help requested")
+
 // Parse parses the command line arguments.
 //
 // This method does not mutate [*Parser] and is safe to call concurrently.
 //
 // The argv MUST include the program name as the first argument.
+//
+// Before parsing, this method will preprocess the scanned argv searching
+// for `help` and `h`. The following cases are handled:
+//
+//  1. `help` is a long option in the argv and the programmer has not
+//     defined `help` as a long option in the [*Parser].
+//
+//  2. `h` is a long option in the argv, no short options are defined, and the
+//     programmer has not defined `h` as a long option in the [*Parser].
+//
+//  3. `h` is a short option in the argv, it appears alone in a token, and the
+//     programmer has not defined `h` as a short option in the [*Parser].
+//
+// In all these cases, this method returns [ErrHelp]. We perform this kind of
+// preprocessing before parsing, which allows a user to obtain the help message
+// even if the command line is completely wrong.
 //
 // The possible errors are:
 //
@@ -321,6 +342,11 @@ func (px *Parser) Parse(argv []string) ([]CommandLineItem, error) {
 	rv = append(rv, ProgramNameItem{Name: pname.Name, Token: tokens[0]})
 	tokens = tokens[1:]
 
+	// Automatically intercept help flags
+	if err := px.interceptHelp(tokens); err != nil {
+		return nil, err
+	}
+
 	// Process the options
 	rv, err = px.parse(tokens, rv)
 	if err != nil {
@@ -333,6 +359,55 @@ func (px *Parser) Parse(argv []string) ([]CommandLineItem, error) {
 	}
 
 	return rv, nil
+}
+
+func (px *Parser) interceptHelp(tokens []scanner.Token) error {
+	// Check each possible option token
+	for _, token := range tokens {
+		// Skip everything that is not an option token
+		option, ok := token.(scanner.OptionToken)
+		if !ok {
+			continue
+		}
+
+		// Handle the case of a long option
+		if slices.Contains(px.LongOptionPrefixes, option.Prefix) {
+			// Handle the case of `help` with `help` not being configured.
+			//
+			// This check covers the following cases:
+			//
+			//	- GNU: `--help`
+			//	- Go: `-help`
+			//	- Windows: `/help`
+			if option.Name == "help" && px.LongOptions[option.Name] == optionTypeNull {
+				return ErrHelp
+			}
+
+			// Handle the case of `h` if there are no short options.
+			//
+			// This check covers the following cases:
+			//
+			//	- Go: `-h`
+			//	- Windows: `/h`
+			//
+			// We require no short options because in the GNU case we will
+			// want to use `-h` instead. Conversely, when using the Go or
+			// Windows convention, there are no short options. All options
+			// are long options prefixed by `-` or `/`.
+			if option.Name == "h" && len(px.ShortOptions) <= 0 && px.LongOptions[option.Name] == optionTypeNull {
+				return ErrHelp
+			}
+		}
+
+		// Handle the case of a short option. The `h` option must not be defined
+		// as a short option and the token must be alone as in `-h` (Unix).
+		if slices.Contains(px.ShortOptionPrefixes, option.Prefix) {
+			if option.Name == "h" && px.ShortOptions[option.Name] == optionTypeNull {
+				return ErrHelp
+			}
+		}
+	}
+	return nil
 }
 
 func (px *Parser) parse(tokens []scanner.Token, rv []CommandLineItem) ([]CommandLineItem, error) {

@@ -503,6 +503,72 @@ func TestParserParse(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			name: "ErrHelp with Go style and -help",
+			parser: Parser{
+				LongOptionPrefixes: []string{"-"},
+				LongOptions: map[string]OptionType{
+					"v": OptionTypeBool,
+					"f": OptionTypeString,
+				},
+			},
+			argv:    []string{"myprogram", "-v", "-f", "file.txt", "-k", "-help"},
+			want:    []CommandLineItem{},
+			wantErr: ErrHelp,
+		},
+
+		{
+			name: "ErrHelp with Go style and -h",
+			parser: Parser{
+				LongOptionPrefixes: []string{"-"},
+				LongOptions: map[string]OptionType{
+					"v": OptionTypeBool,
+					"f": OptionTypeString,
+				},
+			},
+			argv:    []string{"myprogram", "-v", "-f", "file.txt", "-k", "-h"},
+			want:    []CommandLineItem{},
+			wantErr: ErrHelp,
+		},
+
+		{
+			name: "ErrHelp with GNU style and --help",
+			parser: Parser{
+				ShortOptionPrefixes: []string{"-"},
+				ShortOptions: map[string]OptionType{
+					"v": OptionTypeBool,
+					"f": OptionTypeString,
+				},
+				LongOptionPrefixes: []string{"--"},
+				LongOptions: map[string]OptionType{
+					"verbose": OptionTypeBool,
+					"file":    OptionTypeString,
+				},
+			},
+			argv:    []string{"myprogram", "--verbose", "-f", "file.txt", "-k", "--help"},
+			want:    []CommandLineItem{},
+			wantErr: ErrHelp,
+		},
+
+		{
+			name: "ErrHelp with GNU style and -h",
+			parser: Parser{
+				ShortOptionPrefixes: []string{"-"},
+				ShortOptions: map[string]OptionType{
+					"v": OptionTypeBool,
+					"f": OptionTypeString,
+				},
+				LongOptionPrefixes: []string{"--"},
+				LongOptions: map[string]OptionType{
+					"verbose": OptionTypeBool,
+					"file":    OptionTypeString,
+				},
+			},
+			argv:    []string{"myprogram", "--verbose", "-f", "file.txt", "-k", "-h"},
+			want:    []CommandLineItem{},
+			wantErr: ErrHelp,
+		},
 	}
 
 	for _, tc := range testCases {

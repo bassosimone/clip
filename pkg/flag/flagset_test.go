@@ -146,7 +146,46 @@ func TestFlagSet_ErrorHandling(t *testing.T) {
 		}
 	})
 
-	t.Run("ExitOnError calls exit", func(t *testing.T) {
+	t.Run("ExitOnError calls exit with parser.ErrHelp", func(t *testing.T) {
+		var exitCalled bool
+		var exitCode int
+
+		// Mock the exit function to simulate os.Exit behavior
+		exitfn = func(code int) {
+			exitCalled = true
+			exitCode = code
+			// Use panic to simulate exit stopping execution
+			// In real usage, `os.Exit` would stop the program
+			panic("simulated exit")
+		}
+
+		fs := NewFlagSet("test", ExitOnError)
+
+		// Expect the simulated exit panic
+		defer func() {
+			if r := recover(); r == nil {
+				t.Error("Expected simulated exit panic but none occurred")
+			} else if r != "simulated exit" {
+				t.Errorf("Expected simulated exit panic, got %v", r)
+			} else {
+				// Check that exit was called with correct code
+				if !exitCalled {
+					t.Error("Expected exit to be called but it wasn't")
+				}
+				if exitCode != 0 {
+					t.Errorf("Expected exit code 0, got %d", exitCode)
+				}
+			}
+		}()
+
+		// Parse with an unknown option to trigger an error
+		fs.Parse([]string{"--help"})
+
+		// Should not reach here due to panic
+		t.Error("Should not reach here - exit should have been called")
+	})
+
+	t.Run("ExitOnError calls exit with other errors", func(t *testing.T) {
 		var exitCalled bool
 		var exitCode int
 

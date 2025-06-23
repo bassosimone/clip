@@ -148,6 +148,14 @@ func (fx *FlagSet) parse(arguments []string) error {
 
 	// Parse the argv into items
 	items, err := fx.parser.Parse(argv)
+
+	// Handle the user requesting for help
+	if errors.Is(err, parser.ErrHelp) {
+		fmt.Fprintf(os.Stdout, "%s\n", fx.Usage())
+		// fallthrough
+	}
+
+	// Handle any other error
 	if err != nil {
 		return err
 	}
@@ -193,10 +201,14 @@ func (fx *FlagSet) maybeHandleError(err error) error {
 	case fx.handling == ContinueOnError:
 		return err
 
+	case fx.handling == ExitOnError && errors.Is(err, parser.ErrHelp):
+		exitfn(0)
+		panic(err) // just in case exitfn does not exit
+
 	case fx.handling == ExitOnError:
 		fmt.Fprintf(os.Stderr, "%s: %s\n", fx.progname, err.Error())
 		exitfn(2)
-		fallthrough // just in case exitfn does not exit
+		panic(err) // just in case exitfn does not exit
 
 	default:
 		panic(err) // catches also any unhandled fx.handling value
