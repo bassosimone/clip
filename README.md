@@ -47,13 +47,14 @@ command line tools behavior in their subcommands. For example, the
     +----------------+
 ```
 
-- [./pkg/flag](pkg/flag): flags compatible implementation (uses the parser)
+- [./pkg/flag](pkg/flag): [flag](https://pkg.go.dev/flag)
+inspired implementation (uses the parser).
 
-- [./pkg/getopt](pkg/getopt): getopt compatible implementation (uses the parser)
+- [./pkg/getopt](pkg/getopt): getopt compatible implementation (uses the parser).
 
-- [./pkg/scanner](pkg/scanner): scanner for CLI options
+- [./pkg/parser](pkg/parser): parser for CLI options (uses the scanner).
 
-- [./pkg/parser](pkg/parser): parser for CLI options (uses the scanner)
+- [./pkg/scanner](pkg/scanner): scanner for CLI options.
 
 ## Examples
 
