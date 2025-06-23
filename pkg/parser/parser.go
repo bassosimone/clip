@@ -292,7 +292,7 @@ func (a ArgumentItem) Strings() []string {
 //  1. [scanner.ErrMissingProgramName]
 //  2. [ErrInvalidOptionValue]
 //  3. [ErrOptionRequiresValue]
-//  4. [ErrUnknownOption]
+//  4. [ErrUnknownOptionContext]
 func (px *Parser) Parse(argv []string) ([]CommandLineItem, error) {
 	// Create the initial empty list of items
 	rv := []CommandLineItem{}
@@ -394,6 +394,33 @@ func (px *Parser) parse(tokens []scanner.Token, rv []CommandLineItem) ([]Command
 // ErrUnknownOption is returned when an option is not found in the [*Parser] config.
 var ErrUnknownOption = errors.New("unknown option")
 
+// ErrUknownOptionContext is a wrapper for [ErrUnknownOption] that contains
+// the context related to the unknown option. By using [errors.As], the caller
+// is thus able to inspect which specific option that caused the error.
+type ErrUnknownOptionContext struct {
+	// OptionName is the name of the unknown option.
+	OptionName string
+
+	// IsShort returns true if the unknown option was a short option.
+	IsShort bool
+
+	// Token is the unknown option token.
+	Token scanner.Token
+}
+
+// Unwrap returns [ErrUnknownOption] as the underlying error.
+//
+// This means that callers using [errors.Is] with [ErrUnknownOption] do
+// not need to change their code and everything continues to work.
+func (e ErrUnknownOptionContext) Unwrap() error {
+	return ErrUnknownOption
+}
+
+// Error returns an error message describing the unknown option.
+func (e ErrUnknownOptionContext) Error() string {
+	return fmt.Sprintf("%s: %s", ErrUnknownOption, e.OptionName)
+}
+
 // ErrOptionRequiresValue is returned when an option requires a value but none is provided.
 var ErrOptionRequiresValue = errors.New("option requires a value")
 
@@ -454,7 +481,7 @@ func (px *Parser) parseLong(tokens []scanner.Token, rv []CommandLineItem,
 
 	// Otherwise, the option does not exist
 	default:
-		return nil, nil, fmt.Errorf("%w: %s", ErrUnknownOption, optname)
+		return nil, nil, ErrUnknownOptionContext{OptionName: optname, IsShort: false, Token: cur}
 	}
 }
 
@@ -503,7 +530,7 @@ func (px *Parser) parseShort(tokens []scanner.Token, rv []CommandLineItem,
 
 		// Otherwise, it does not exist
 		default:
-			return nil, nil, fmt.Errorf("%w: %s", ErrUnknownOption, optname)
+			return nil, nil, ErrUnknownOptionContext{OptionName: optname, IsShort: true, Token: cur}
 		}
 	}
 

@@ -527,3 +527,33 @@ func TestParserParse(t *testing.T) {
 		})
 	}
 }
+
+func TestErrUnknownOptionContext(t *testing.T) {
+	// create an error that is actually an [ErrUnknownOptionContext] instance
+	var err error = ErrUnknownOptionContext{
+		OptionName: "help",
+		IsShort:    true,
+		Token:      scanner.OptionToken{Index: 1, Name: "help", Prefix: "-"},
+	}
+
+	// Ensure that [errors.Is] continues to see this as [ErrUnknownOption]
+	if !errors.Is(err, ErrUnknownOption) {
+		t.Fatalf("expected error %v, got %v", ErrUnknownOption, err)
+	}
+
+	// Ensure that we can unwrap with [errors.As]
+	var unknownOptionContext ErrUnknownOptionContext
+	if !errors.As(err, &unknownOptionContext) {
+		t.Fatalf("expected error %T, got %v", unknownOptionContext, err)
+	}
+	if diff := cmp.Diff(err, unknownOptionContext); diff != "" {
+		t.Fatalf("ErrUnknownOptionContext mismatch (-want +got):\n%s", diff)
+	}
+
+	// Ensure that the error message is like before
+	got := err.Error()
+	expect := "unknown option: help"
+	if diff := cmp.Diff(got, expect); diff != "" {
+		t.Fatalf("ErrUnknownOptionContext mismatch (-want +got):\n%s", diff)
+	}
+}
