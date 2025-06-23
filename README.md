@@ -56,7 +56,7 @@ https://github.com/bassosimone/pkg/flag)
 
 [Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
 
-### ./pkg/getopt
+### pkg/getopt
 
 [![pkg/getopt docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt) [![pkg/getopt code](
@@ -65,7 +65,7 @@ https://github.com/bassosimone/pkg/getopt)
 
 [GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
 
-### ./pkg/parser
+### pkg/parser
 
 [![pkg/parser docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
 https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser) [![pkg/parser code](
