@@ -150,8 +150,11 @@ var errUnexpectedItemType = errors.New("unexpected item type")
 //
 //  2. nil on success.
 //
-// With [ExitOnError] or [PanicOnError] this function does
-// not ever return a non-nil error.
+// With [ExitOnError] this function prints an error message
+// on the standard error and then invokes exit passing it as
+// status code the value 2, indicating an usage error.
+//
+// With [PanicOnError] function panics on error.
 //
 // This function may panic on internal errors.
 func (fx *FlagSet) Parse(arguments []string) error {
@@ -164,14 +167,6 @@ func (fx *FlagSet) parse(arguments []string) error {
 
 	// Parse the argv into items
 	items, err := fx.parser.Parse(argv)
-
-	// Handle the user requesting for help
-	if errors.Is(err, parser.ErrHelp) {
-		fmt.Fprintf(fx.stdout, "%s\n", fx.Usage())
-		// fallthrough
-	}
-
-	// Handle any other error
 	if err != nil {
 		return err
 	}
@@ -217,7 +212,10 @@ func (fx *FlagSet) maybeHandleError(err error) error {
 	case fx.handling == ContinueOnError:
 		return err
 
+	// Note: with ExitOnError, we're forced to print to the standard error
+	// because we're exiting so no-one else can do this.
 	case fx.handling == ExitOnError && errors.Is(err, parser.ErrHelp):
+		fmt.Fprintf(fx.stdout, "%s\n", fx.Usage())
 		exitfn(0)
 		panic(err) // just in case exitfn does not exit
 

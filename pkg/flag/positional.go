@@ -32,7 +32,7 @@ var ErrUnexpectedNumberOfPositionalArgs = errors.New("unexpected number of posit
 //
 //  1. Returns the error with [ContinueOnError].
 //
-//  2. Invokes exit with [ExitOnError].
+//  2. Print a message on the standard error and exits with code 2 with [ExitOnError].
 //
 //  3. And calls panic with [PanicOnError].
 func (fx *FlagSet) PositionalArgsRangeCheck(minargs, maxargs int) error {

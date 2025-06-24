@@ -6,6 +6,7 @@ package clip
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -235,5 +236,150 @@ func TestDispatch(t *testing.T) {
 				}
 			})
 		}
+	})
+
+	t.Run("ExitOnError policy", func(t *testing.T) {
+		// Create a command dispatcher with a command that fails.
+		errCommandFailed := errors.New("command failed")
+		dx := &DispatcherCommand[*StdlibExecEnv]{
+			Commands: map[string]Command[*StdlibExecEnv]{
+				"dig": &LeafCommand[*StdlibExecEnv]{
+					RunFunc: func(ctx context.Context, args *CommandArgs[*StdlibExecEnv]) error {
+						return errCommandFailed
+					},
+				},
+				"grep": &LeafCommand[*StdlibExecEnv]{},
+			},
+			ErrorHandling: 0, // we will modify this field in various test cases
+		}
+
+		// Customize a stdlib env to panic on Exit
+		errExit := errors.New("exit")
+		env := NewStdlibExecEnv()
+		env.OSExit = func(exitcode int) {
+			panic(fmt.Errorf("%w: %d", errExit, exitcode))
+		}
+
+		// Create a background context
+		ctx := context.Background()
+
+		t.Run("ContinueOnError", func(t *testing.T) {
+			// Set the proper error handling strategy
+			dx.ErrorHandling = ContinueOnError
+
+			// Run the command
+			err := dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
+				Args:        []string{"dig"},
+				Command:     dx,
+				CommandName: "main",
+				Env:         env,
+			})
+
+			// Verify the status
+			if !errors.Is(err, errCommandFailed) {
+				t.Fatalf("expected errCommandFailed, got %T", err)
+			}
+		})
+
+		t.Run("PanicOnError", func(t *testing.T) {
+			// Verify the status after the panic has occurred
+			defer func() {
+				err := recover().(error)
+				if !errors.Is(err, errCommandFailed) {
+					t.Fatalf("expected errCommandFailed, got %T", err)
+				}
+			}()
+
+			// Set the proper error handling strategy
+			dx.ErrorHandling = PanicOnError
+
+			// Run the command
+			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
+				Args:        []string{"dig"},
+				Command:     dx,
+				CommandName: "main",
+				Env:         env,
+			})
+
+			panic("unreachable")
+		})
+
+		t.Run("ExitOnError with exit code 1", func(t *testing.T) {
+			// Verify the status after the panic has occurred
+			defer func() {
+				err := recover().(error)
+				if !errors.Is(err, errExit) {
+					t.Fatalf("expected errCommandFailed, got %T", err)
+				}
+				if reason := err.Error(); reason != "exit: 1" {
+					t.Fatalf("expected 'exit: 1', got %s", reason)
+				}
+			}()
+
+			// Set the proper error handling strategy
+			dx.ErrorHandling = ExitOnError
+
+			// Run the command
+			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
+				Args:        []string{"dig"},
+				Command:     dx,
+				CommandName: "main",
+				Env:         env,
+			})
+
+			panic("unreachable")
+		})
+
+		t.Run("ExitOnError with exit code 2 for usage error", func(t *testing.T) {
+			// Verify the status after the panic has occurred
+			defer func() {
+				err := recover().(error)
+				if !errors.Is(err, errExit) {
+					t.Fatalf("expected errCommandFailed, got %T", err)
+				}
+				if reason := err.Error(); reason != "exit: 2" {
+					t.Fatalf("expected 'exit: 2', got %s", reason)
+				}
+			}()
+
+			// Set the proper error handling strategy
+			dx.ErrorHandling = ExitOnError
+
+			// Run the command
+			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
+				Args:        []string{"__antani__"},
+				Command:     dx,
+				CommandName: "main",
+				Env:         env,
+			})
+
+			panic("unreachable")
+		})
+
+		t.Run("ExitOnError with exit code 2 for ambiguous command line", func(t *testing.T) {
+			// Verify the status after the panic has occurred
+			defer func() {
+				err := recover().(error)
+				if !errors.Is(err, errExit) {
+					t.Fatalf("expected errCommandFailed, got %T", err)
+				}
+				if reason := err.Error(); reason != "exit: 2" {
+					t.Fatalf("expected 'exit: 2', got %s", reason)
+				}
+			}()
+
+			// Set the proper error handling strategy
+			dx.ErrorHandling = ExitOnError
+
+			// Run the command
+			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
+				Args:        []string{"-vkr", "--verbose", "dig", "-j4", "grep"},
+				Command:     dx,
+				CommandName: "main",
+				Env:         env,
+			})
+
+			panic("unreachable")
+		})
 	})
 }

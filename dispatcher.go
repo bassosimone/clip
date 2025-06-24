@@ -31,6 +31,12 @@ type DispatcherCommand[T ExecEnv] struct {
 	// Usage is the optional usage string for this dispatcher. If empty, we
 	// automatically generate a usage string when needed.
 	Usage string
+
+	// ErrorHandling indicates how the dispatcher should handle errors.
+	//
+	// Added in v0.3.0. When empty the behavior is [ContinueOnError], which
+	// is exactly cosistent with the v0.2.0 behavior.
+	ErrorHandling ErrorHandling
 }
 
 var _ Command[*StdlibExecEnv] = (*DispatcherCommand[*StdlibExecEnv])(nil)
@@ -54,7 +60,31 @@ func (dx *DispatcherCommand[T]) SupportsSubcommands() bool {
 
 // Run implements [Command].
 func (dx *DispatcherCommand[T]) Run(ctx context.Context, args *CommandArgs[T]) error {
-	return dx.dispatch(ctx, args)
+	return dx.maybeHandleError(args.Env, dx.dispatch(ctx, args))
+}
+
+// --- error filtering code ---
+
+func (dx *DispatcherCommand[T]) maybeHandleError(env T, err error) error {
+	// Determine what to do based on the policy
+	switch dx.ErrorHandling {
+	case ContinueOnError:
+		return err
+
+	case ExitOnError:
+		switch {
+		case errors.Is(err, ErrNoSuchCommand):
+			env.Exit(2)
+		case errors.Is(err, ErrAmbiguousCommandLine):
+			env.Exit(2)
+		default:
+			env.Exit(1)
+		}
+	}
+
+	// We end up here for [PanicOnError] or whenever env.Exit is so
+	// broken that it doesn't actually exit.
+	panic(err)
 }
 
 // --- dispatching code ---
@@ -184,7 +214,10 @@ func (dx *DispatcherCommand[T]) run(
 var ErrNoSuchCommand = errors.New("no such command")
 
 func (dx *DispatcherCommand[T]) errorNoSuchCommand(env T, commandName, subcommandName string) error {
-	fmt.Fprintln(env.Stderr(), dx.formatNoSuchCommand(commandName, subcommandName))
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "%s: no such command: %s\n", commandName, subcommandName)
+	fmt.Fprintf(&sb, "Try '%s --help' for more information.\n", commandName)
+	fmt.Fprintln(env.Stderr(), sb.String())
 	return ErrNoSuchCommand
 }
 
@@ -245,11 +278,4 @@ func (dx *DispatcherCommand[T]) sortedSubcommandNames() []string {
 	}
 	sort.Strings(names)
 	return names
-}
-
-func (dx *DispatcherCommand[T]) formatNoSuchCommand(commandName, subcommandName string) string {
-	var sb strings.Builder
-	fmt.Fprintf(&sb, "%s: no such command: %s\n", commandName, subcommandName)
-	fmt.Fprintf(&sb, "Try '%s --help' for more information.\n", commandName)
-	return strings.TrimSpace(sb.String())
 }
