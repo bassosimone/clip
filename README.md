@@ -40,10 +40,6 @@ network measurement tool.
 
 ## Examples
 
-This section shows how to use the packages in this repository.
-
-### clip
-
 The following example shows how to use the toplevel [clip](.) package:
 
 ```Go
@@ -115,23 +111,13 @@ func main() {
 }
 ```
 
-See also the testable examples at [example_test.go](example_test.go).
-
-### pkg/flag
-
-See the testable examples at [./pkg/flag/example_test.go](pkg/flag/example_test.go).
-
-### pkg/getopt
-
-See the testable examples at [./pkg/getopt/example_test.go](pkg/getopt/example_test.go).
-
-### pkg/parser
-
-See the testable examples at [./pkg/parser/example_test.go](pkg/parser/example_test.go).
-
-### pkg/scanner
-
-See the testable examples at [./pkg/scanner/example_test.go](pkg/scanner/example_test.go).
+| Package      | Example(s)                                                                                  |
+|--------------|--------------------------------------------------------------------------------------------|
+| clip         | [example_test.go](example_test.go)                                                         |
+| pkg/flag     | [pkg/flag/example_test.go](pkg/flag/example_test.go)                                       |
+| pkg/getopt   | [pkg/getopt/example_test.go](pkg/getopt/example_test.go)                                   |
+| pkg/parser   | [pkg/parser/example_test.go](pkg/parser/example_test.go)                                   |
+| pkg/scanner  | [pkg/scanner/example_test.go](pkg/scanner/example_test.go)                                 |
 
 ## Architecture
 
