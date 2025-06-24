@@ -97,6 +97,7 @@ var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 		"gzip": gzipSubcommand,
 		"tar":  tarSubcommand,
 	},
+	ErrorHandling: clip.ExitOnError,
 }
 
 // Create a root command to wrap it all

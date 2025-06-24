@@ -97,6 +97,7 @@ var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 		"gzip": gzipSubcommand,
 		"tar":  tarSubcommand,
 	},
+	ErrorHandling: clip.ExitOnError,
 }
 
 var toplevelDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
@@ -105,6 +106,7 @@ var toplevelDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 		"tools":   toolsDispatcher,
 		"version": versionSubcommand,
 	},
+	ErrorHandling: clip.ExitOnError,
 }
 
 // rootCommand is the root command of the application.
