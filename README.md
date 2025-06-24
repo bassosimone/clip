@@ -111,13 +111,15 @@ func main() {
 }
 ```
 
+The following table lists all the available, testable examples:
+
 | Package      | Example(s)                                                                                  |
 |--------------|--------------------------------------------------------------------------------------------|
-| clip         | [example_test.go](example_test.go)                                                         |
-| pkg/flag     | [pkg/flag/example_test.go](pkg/flag/example_test.go)                                       |
-| pkg/getopt   | [pkg/getopt/example_test.go](pkg/getopt/example_test.go)                                   |
-| pkg/parser   | [pkg/parser/example_test.go](pkg/parser/example_test.go)                                   |
-| pkg/scanner  | [pkg/scanner/example_test.go](pkg/scanner/example_test.go)                                 |
+| [clip](.)         | [example_test.go](example_test.go)                                                         |
+| [pkg/flag](./pkg/flag)     | [pkg/flag/example_test.go](pkg/flag/example_test.go)                                       |
+| [pkg/getopt](./pkg/getopt)   | [pkg/getopt/example_test.go](pkg/getopt/example_test.go)                                   |
+| [pkg/parser](./pkg/parser)   | [pkg/parser/example_test.go](pkg/parser/example_test.go)                                   |
+| [pkg/scanner](./pkg/scanner)  | [pkg/scanner/example_test.go](pkg/scanner/example_test.go)                                 |
 
 ## Architecture
 
@@ -145,15 +147,15 @@ flowchart TD
     flag --> textwrap
 ```
 
-| Package      | Docs                                                                 | Code                                                                 | Description                                                      |
-|--------------|----------------------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------|
-| clip         | [Docs](https://pkg.go.dev/github.com/bassosimone/clip)              | [GitHub](https://github.com/bassosimone/clip)                        | Top-level API integrating [./pkg/flag](./pkg/flag) with subcommands. |
-| pkg/flag     | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag)     | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/flag)     | Flag-inspired implementation (uses the parser).                  |
-| pkg/getopt   | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)   | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/getopt)   | GNU getopt compatible implementation (uses the parser).           |
-| pkg/parser   | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser)   | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/parser)   | Parser for CLI options (uses the scanner).                       |
-| pkg/scanner  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)  | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/scanner)  | Scanner for CLI options.                                         |
-| pkg/textwrap | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/textwrap) | Utility code to wrap and indent text.                            |
-| pkg/assert   | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/assert)   | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/assert)   | Code to write runtime assertions that panic in case of failure.   |
+| Package                                                                 | Docs                                                                 | Description                                                      |
+|-------------------------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------|
+| [clip](https://github.com/bassosimone/clip)                             | [Docs](https://pkg.go.dev/github.com/bassosimone/clip)              | Top-level API integrating [./pkg/flag](./pkg/flag) with subcommands. |
+| [pkg/flag](https://github.com/bassosimone/clip/tree/main/pkg/flag)      | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag)     | Stdlib-inspired flag implementation (uses the parser).                  |
+| [pkg/getopt](https://github.com/bassosimone/clip/tree/main/pkg/getopt)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)   | GNU getopt compatible implementation (uses the parser).           |
+| [pkg/parser](https://github.com/bassosimone/clip/tree/main/pkg/parser)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser)   | Parser for CLI options (uses the scanner).                       |
+| [pkg/scanner](https://github.com/bassosimone/clip/tree/main/pkg/scanner)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)  | Scanner for CLI options.                                         |
+| [pkg/textwrap](https://github.com/bassosimone/clip/tree/main/pkg/textwrap)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) | Utility code to wrap and indent text.                            |
+| [pkg/assert](https://github.com/bassosimone/clip/tree/main/pkg/assert)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/assert)   | Code to write runtime assertions that panic in case of failure.   |
 
 ## Documentation
 
