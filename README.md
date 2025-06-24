@@ -84,7 +84,8 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "Compress or expand files.",
 	HelpFlagValue:        "--help",
-	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
+	RunFunc: func(
+		ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 		// ... same as above ...
 	},
 }
