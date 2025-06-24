@@ -57,7 +57,8 @@ import (
 var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "Archiving utility.",
 	HelpFlagValue:        "--help",
-	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
+	RunFunc: func(
+		ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 		// Create command line parser
 		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
 		fset.SetDescription(args.Command.BriefDescription())
