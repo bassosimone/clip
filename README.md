@@ -3,8 +3,9 @@
 [![Package-level Go docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
 
 This repository implements a very flexible command line parser
-written in Go. It provides an intuitive API modeled after the
-standard library's [flag](https://pkg.go.dev/flag) package.
+written in Go. It provides an intuitive flag parsing API modeled
+after the standard library's [flag](https://pkg.go.dev/flag)
+package. It also provides means to create subcommands.
 
 By default, [clip](https://github.com/bassosimone/clip) implements
 [GNU getopt](https://linux.die.net/man/3/getopt) compatible
@@ -32,8 +33,9 @@ Go [flag](https://pkg.go.dev/flag) package.
 
 Therefore, [clip](https://github.com/bassosimone/clip) is suitable
 for writing complex command line tools that require to emulate other
-command line tools behavior in their subcommands. For example, the
-[rbmk](https://github.com/rbmk-project/rbmk) network measurement tool.
+command line tools behavior in their subcommands, such as, for
+example, the [rbmk](https://github.com/rbmk-project/rbmk)
+network measurement tool.
 
 ## Examples
 
@@ -41,43 +43,96 @@ This section shows how to use the packages in this repository.
 
 ### pkg/flag
 
-The following example shows how to use the [./pkg/flag](pkg/flag) package:
+The following example shows how to use the [clip](.) package:
 
 ```Go
 package main
 
 import (
+	"context"
 	"fmt"
+	"math"
 
-	"github.com/bassosimone/clip/pkg/flag"
+	"github.com/bassosimone/clip"
 )
 
+// Create a subcommand working a bit like gzip
+var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
+	BriefDescriptionText: "Compress or expand files.",
+	HelpFlagValue:        "--help",
+	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
+		// Create command line parser
+		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
+		fset.SetDescription(args.Command.BriefDescription())
+		fset.SetArgsDocs("file ...")
+
+		// Add the options
+		vflag := fset.Bool("verbose", 'v', false, "verbose mode")
+
+		// Parse command line arguments
+		clip.Must(args.Env, fset.Parse(args.Args))
+
+		// Validate number of positional arguments
+		clip.Must(args.Env, fset.PositionalArgsRangeCheck(1, math.MaxInt))
+
+		// ...
+	},
+}
+
+// Create a subcommand working a bit like tar
+var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
+	BriefDescriptionText: "Archiving utility.",
+	HelpFlagValue:        "--help",
+	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
+		// Create command line parser
+		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
+		fset.SetDescription(args.Command.BriefDescription())
+		fset.SetArgsDocs("file ...")
+
+		// Add the options
+		cflag := fset.Bool("create", 'c', false, "create a new archive")
+		fflag := fset.String("file", 'f', "", "archive file name")
+		vflag := fset.Bool("verbose", 'v', false, "verbose mode")
+		zflag := fset.Bool("gzip", 'z', false, "gzip compression")
+
+		// Parse command line arguments
+		clip.Must(args.Env, fset.Parse(args.Args))
+
+		// Validate number of positional arguments
+		clip.Must(args.Env, fset.PositionalArgsRangeCheck(1, math.MaxInt))
+
+		// ...
+	},
+}
+
+// Create a dispatcher handling control over either tar or gzip
+var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
+	BriefDescriptionText: "UNIX command-line tools.",
+	Commands: map[string]clip.Command[*clip.StdlibExecEnv]{
+		"gzip": gzipSubcommand,
+		"tar":  tarSubcommand,
+	},
+}
+
+// Create a root command to wrap it all
+var rootCommand = &clip.RootCommand[*clip.StdlibExecEnv]{
+	Command: toplevelDispatcher,
+}
+
 func main() {
-	// Create FlagSet
-	fset := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	// Create environment using the standard library I/O
+	env := clip.NewStdlibExecEnv()
 
-	// Define flags with both short and long options
-	help := fset.Bool("help", 'h', false, "display help information")
-	verbose := fset.Bool("verbose", 'v', false, "enable verbose output")
-	output := fset.String("output", 'o', "output.txt", "output file path")
-	format := fset.String("format", 'f', "text", "output format")
-
-	// Parse command line arguments (simulated here)
-	if err := fset.Parse(os.Args[1:]); err != nil {
-		fmt.Printf("Error parsing flags: %v\n", err)
-		return
-	}
-
-	// Print the values of the flags and arguments
-	fmt.Printf("help = %v\n", *help)
-	fmt.Printf("verbose = %v\n", *verbose)
-	fmt.Printf("output = %v\n", *output)
-	fmt.Printf("format = %v\n", *format)
-	fmt.Printf("args = %v\n", fset.Args())
+	// execute the root command
+	rootCommand.Main(env)
 }
 ```
 
-See also the testable examples at [./pkg/flag/example_test.go](pkg/flag/example_test.go).
+See also the testable examples at [example_test.go](example_test.go).
+
+### pkg/flag
+
+See the testable examples at [./pkg/flag/example_test.go](pkg/flag/example_test.go).
 
 ### pkg/getopt
 
@@ -98,12 +153,16 @@ The following diagram illustrates the package architecture:
 ```mermaid
 flowchart TD
     assert[pkg/assert]
+    clip
     getopt[pkg/getopt]
     flag[pkg/flag]
     parser[pkg/parser]
     scanner[pkg/scanner]
     textwrap[pkg/textwrap]
 
+    clip --> flag
+    clip --> assert
+    clip --> textwrap
     getopt --> parser
     flag --> parser
     parser --> scanner
@@ -114,6 +173,15 @@ flowchart TD
 ```
 
 The following subsections illustrate each package.
+
+### clip
+
+[![clip docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](
+https://pkg.go.dev/github.com/bassosimone/clip) [![clip code](
+https://img.shields.io/badge/GitHub-pkg/clip-blue?logo=github)](
+https://github.com/bassosimone/clip)
+
+Top-level API integrating [flag](./pkg/flag) with subcommands.
 
 ### pkg/flag
 

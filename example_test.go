@@ -9,7 +9,6 @@ import (
 	"math"
 
 	"github.com/bassosimone/clip"
-	"github.com/bassosimone/clip/pkg/flag"
 )
 
 var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
@@ -42,7 +41,7 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	HelpFlagValue:        "--help",
 	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 		// Create command line parser
-		fset := clip.NewFlagSet(args.CommandName, flag.ExitOnError)
+		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
 		fset.SetDescription(args.Command.BriefDescription())
 		fset.SetArgsDocs("file ...")
 
