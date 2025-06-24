@@ -97,14 +97,20 @@ The following diagram illustrates the package architecture:
 
 ```mermaid
 flowchart TD
+    assert[pkg/assert]
     getopt[pkg/getopt]
     flag[pkg/flag]
     parser[pkg/parser]
     scanner[pkg/scanner]
+    textwrap[pkg/textwrap]
 
     getopt --> parser
     flag --> parser
     parser --> scanner
+    flag --> assert
+    getopt --> assert
+    parser --> assert
+    flag --> textwrap
 ```
 
 The following subsections illustrate each package.
@@ -144,6 +150,24 @@ https://img.shields.io/badge/GitHub-pkg/scanner-blue?logo=github)](
 https://github.com/bassosimone/clip/tree/main/pkg/scanner)
 
 Scanner for CLI options.
+
+### pkg/textwrap
+
+[![pkg/textwrap docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/textwrap)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) [![pkg/textwrap code](
+https://img.shields.io/badge/GitHub-pkg/textwrap-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/textwrap)
+
+Utility code to wrap and indent text.
+
+### pkg/assert
+
+[![pkg/assert docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/assert)](
+https://pkg.go.dev/github.com/bassosimone/clip/pkg/assert) [![pkg/assert code](
+https://img.shields.io/badge/GitHub-pkg/assert-blue?logo=github)](
+https://github.com/bassosimone/clip/tree/main/pkg/assert)
+
+Code to write runtime assertions that panic in case of failure.
 
 ## Documentation
 
