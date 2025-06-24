@@ -217,7 +217,7 @@ func (dx *DispatcherCommand[T]) errorNoSuchCommand(env T, commandName, subcomman
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "%s: no such command: %s\n", commandName, subcommandName)
 	fmt.Fprintf(&sb, "Try '%s --help' for more information.\n", commandName)
-	fmt.Fprintln(env.Stderr(), sb.String())
+	fmt.Fprintln(env.Stderr(), strings.TrimSpace(sb.String()))
 	return ErrNoSuchCommand
 }
 
