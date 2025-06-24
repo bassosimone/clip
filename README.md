@@ -5,7 +5,8 @@
 This repository implements a very flexible command line parser
 written in Go. It provides an intuitive flag parsing API modeled
 after the standard library's [flag](https://pkg.go.dev/flag)
-package. It also provides means to create subcommands.
+package. It also provides means to create commands containing
+subcommands. It also automatically handles help generation.
 
 By default, [clip](https://github.com/bassosimone/clip) implements
 [GNU getopt](https://linux.die.net/man/3/getopt) compatible
@@ -41,9 +42,9 @@ network measurement tool.
 
 This section shows how to use the packages in this repository.
 
-### pkg/flag
+### clip
 
-The following example shows how to use the [clip](.) package:
+The following example shows how to use the toplevel [clip](.) package:
 
 ```Go
 package main
@@ -55,29 +56,6 @@ import (
 
 	"github.com/bassosimone/clip"
 )
-
-// Create a subcommand working a bit like gzip
-var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
-	BriefDescriptionText: "Compress or expand files.",
-	HelpFlagValue:        "--help",
-	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
-		// Create command line parser
-		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-		fset.SetDescription(args.Command.BriefDescription())
-		fset.SetArgsDocs("file ...")
-
-		// Add the options
-		vflag := fset.Bool("verbose", 'v', false, "verbose mode")
-
-		// Parse command line arguments
-		clip.Must(args.Env, fset.Parse(args.Args))
-
-		// Validate number of positional arguments
-		clip.Must(args.Env, fset.PositionalArgsRangeCheck(1, math.MaxInt))
-
-		// ...
-	},
-}
 
 // Create a subcommand working a bit like tar
 var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
@@ -102,6 +80,15 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 		clip.Must(args.Env, fset.PositionalArgsRangeCheck(1, math.MaxInt))
 
 		// ...
+	},
+}
+
+// Create a subcommand working a bit like gzip
+var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
+	BriefDescriptionText: "Compress or expand files.",
+	HelpFlagValue:        "--help",
+	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
+		// ... same as above ...
 	},
 }
 
@@ -172,70 +159,15 @@ flowchart TD
     flag --> textwrap
 ```
 
-The following subsections illustrate each package.
-
-### clip
-
-[![clip docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](
-https://pkg.go.dev/github.com/bassosimone/clip) [![clip code](
-https://img.shields.io/badge/GitHub-pkg/clip-blue?logo=github)](
-https://github.com/bassosimone/clip)
-
-Top-level API integrating [flag](./pkg/flag) with subcommands.
-
-### pkg/flag
-
-[![pkg/flag docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/flag)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag) [![pkg/flag code](
-https://img.shields.io/badge/GitHub-pkg/flag-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/flag)
-
-[Flag](https://pkg.go.dev/flag) inspired implementation (uses the parser).
-
-### pkg/getopt
-
-[![pkg/getopt docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/getopt)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt) [![pkg/getopt code](
-https://img.shields.io/badge/GitHub-pkg/getopt-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/getopt)
-
-[GNU getopt](https://linux.die.net/man/3/getopt) compatible implementation (uses the parser).
-
-### pkg/parser
-
-[![pkg/parser docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/parser)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser) [![pkg/parser code](
-https://img.shields.io/badge/GitHub-pkg/parser-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/parser)
-
-Parser for CLI options (uses the scanner).
-
-### pkg/scanner
-
-[![pkg/scanner docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/scanner)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner) [![pkg/scanner code](
-https://img.shields.io/badge/GitHub-pkg/scanner-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/scanner)
-
-Scanner for CLI options.
-
-### pkg/textwrap
-
-[![pkg/textwrap docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/textwrap)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) [![pkg/textwrap code](
-https://img.shields.io/badge/GitHub-pkg/textwrap-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/textwrap)
-
-Utility code to wrap and indent text.
-
-### pkg/assert
-
-[![pkg/assert docs](https://pkg.go.dev/badge/github.com/bassosimone/clip/pkg/assert)](
-https://pkg.go.dev/github.com/bassosimone/clip/pkg/assert) [![pkg/assert code](
-https://img.shields.io/badge/GitHub-pkg/assert-blue?logo=github)](
-https://github.com/bassosimone/clip/tree/main/pkg/assert)
-
-Code to write runtime assertions that panic in case of failure.
+| Package      | Docs                                                                 | Code                                                                 | Description                                                      |
+|--------------|----------------------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------|
+| clip         | [Docs](https://pkg.go.dev/github.com/bassosimone/clip)              | [GitHub](https://github.com/bassosimone/clip)                        | Top-level API integrating [./pkg/flag](./pkg/flag) with subcommands. |
+| pkg/flag     | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag)     | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/flag)     | Flag-inspired implementation (uses the parser).                  |
+| pkg/getopt   | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)   | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/getopt)   | GNU getopt compatible implementation (uses the parser).           |
+| pkg/parser   | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser)   | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/parser)   | Parser for CLI options (uses the scanner).                       |
+| pkg/scanner  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)  | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/scanner)  | Scanner for CLI options.                                         |
+| pkg/textwrap | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/textwrap) | Utility code to wrap and indent text.                            |
+| pkg/assert   | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/assert)   | [GitHub](https://github.com/bassosimone/clip/tree/main/pkg/assert)   | Code to write runtime assertions that panic in case of failure.   |
 
 ## Documentation
 
