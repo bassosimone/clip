@@ -146,6 +146,9 @@ func (fx *FlagSet) UsageSynopsis() string {
 
 	// Gather the separator to use (pick the first one for simplicity)
 	sep := fx.formatFirstSeparator()
+	if len(fx.Options()) <= 0 {
+		sep = ""
+	}
 
 	// Gather the arguments documentation
 	argsdoc := fx.ArgsDocs()
