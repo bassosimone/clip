@@ -5,6 +5,7 @@ package flag
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 
@@ -102,9 +103,20 @@ func (fx *FlagSet) Usage() string {
 
 	// Remind the user how to get help
 	if lpref := fx.firstLongOptionsPrefix(); lpref != "" {
-		fmt.Fprintf(&sb, "Use '%s %shelp' to show this help screen.", fx.ProgramName(), lpref)
+		fx.formatHowToGetHelpMessage(&sb)
 	}
 	return strings.TrimSpace(sb.String())
+}
+
+func (fx *FlagSet) formatHowToGetHelpMessage(sb *strings.Builder) {
+	// The general idea here is that `--help` is so ubiquitous in command
+	// lines that, even if `--` is not the preferred prefix, it still
+	// makes sense to allow using it inside the help message.
+	lpref := fx.firstLongOptionsPrefix()
+	if slices.Contains(fx.parser.LongOptionPrefixes, "--") {
+		lpref = "--"
+	}
+	fmt.Fprintf(sb, "Use '%s %shelp' to show this help screen.", fx.ProgramName(), lpref)
 }
 
 func (fx *FlagSet) firstShortOptionsPrefix() string {
