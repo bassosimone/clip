@@ -47,6 +47,9 @@ type FlagSet struct {
 	// description contains the optional description.
 	description string
 
+	// exitfn is the os.Exit function
+	exitfn func(code int)
+
 	// handling controls how we handle flag parsing errors.
 	handling ErrorHandling
 
@@ -85,6 +88,9 @@ func NewFlagSet(progname string, handling ErrorHandling) *FlagSet {
 	return &FlagSet{
 		args:         []string{},
 		argsdocs:     "[arguments]",
+		customusage:  nil,
+		description:  "",
+		exitfn:       os.Exit,
 		handling:     handling,
 		optionsShort: make(map[string]*Option),
 		optionsLong:  make(map[string]*Option),
@@ -93,6 +99,13 @@ func NewFlagSet(progname string, handling ErrorHandling) *FlagSet {
 		stderr:       os.Stderr,
 		stdout:       os.Stdout,
 	}
+}
+
+// SetExitFunc allows to override [os.Exit] when using [ExitOnError].
+//
+// This method MUST be invoked before [*FlagSet.Parse].
+func (fx *FlagSet) SetExitFunc(fn func(code int)) {
+	fx.exitfn = fn
 }
 
 // Args returns the parsed positional arguments.
@@ -202,8 +215,6 @@ func (fx *FlagSet) parse(arguments []string) error {
 	return nil
 }
 
-var exitfn = os.Exit // for testing
-
 func (fx *FlagSet) maybeHandleError(err error) error {
 	switch {
 	case err == nil:
@@ -216,7 +227,7 @@ func (fx *FlagSet) maybeHandleError(err error) error {
 	// because we're exiting so no-one else can do this.
 	case fx.handling == ExitOnError && errors.Is(err, parser.ErrHelp):
 		fmt.Fprintf(fx.stdout, "%s\n", fx.Usage())
-		exitfn(0)
+		fx.exitfn(0)
 		panic(err) // just in case exitfn does not exit
 
 	case fx.handling == ExitOnError:
@@ -224,7 +235,7 @@ func (fx *FlagSet) maybeHandleError(err error) error {
 		if lpref := fx.firstLongOptionsPrefix(); lpref != "" {
 			fmt.Fprintf(fx.stderr, "Try '%s %shelp' for more help.\n", fx.progname, lpref)
 		}
-		exitfn(2)
+		fx.exitfn(2)
 		panic(err) // just in case exitfn does not exit
 
 	default:

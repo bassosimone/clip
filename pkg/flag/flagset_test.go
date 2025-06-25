@@ -129,12 +129,6 @@ func TestFlagSet_Parse_Errors(t *testing.T) {
 }
 
 func TestFlagSet_ErrorHandling(t *testing.T) {
-	// Save the original exitfn and restore it after the test
-	originalExitFn := exitfn
-	defer func() {
-		exitfn = originalExitFn
-	}()
-
 	t.Run("ContinueOnError returns error", func(t *testing.T) {
 		fs := NewFlagSet("test", ContinueOnError)
 		err := fs.Parse([]string{"--unknown"})
@@ -150,16 +144,16 @@ func TestFlagSet_ErrorHandling(t *testing.T) {
 		var exitCalled bool
 		var exitCode int
 
+		fs := NewFlagSet("test", ExitOnError)
+
 		// Mock the exit function to simulate os.Exit behavior
-		exitfn = func(code int) {
+		fs.SetExitFunc(func(code int) {
 			exitCalled = true
 			exitCode = code
 			// Use panic to simulate exit stopping execution
 			// In real usage, `os.Exit` would stop the program
 			panic("simulated exit")
-		}
-
-		fs := NewFlagSet("test", ExitOnError)
+		})
 
 		// Expect the simulated exit panic
 		defer func() {
@@ -189,16 +183,16 @@ func TestFlagSet_ErrorHandling(t *testing.T) {
 		var exitCalled bool
 		var exitCode int
 
+		fs := NewFlagSet("test", ExitOnError)
+
 		// Mock the exit function to simulate os.Exit behavior
-		exitfn = func(code int) {
+		fs.SetExitFunc(func(code int) {
 			exitCalled = true
 			exitCode = code
 			// Use panic to simulate exit stopping execution
 			// In real usage, `os.Exit` would stop the program
 			panic("simulated exit")
-		}
-
-		fs := NewFlagSet("test", ExitOnError)
+		})
 
 		// Expect the simulated exit panic
 		defer func() {
