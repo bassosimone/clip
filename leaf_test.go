@@ -15,7 +15,7 @@ func TestLeafCommand(t *testing.T) {
 		lc := &LeafCommand[*StdlibExecEnv]{BriefDescriptionText: expect}
 		got := lc.BriefDescription()
 		if got != expect {
-			t.Errorf("BriefDescription() = %q, want %q", got, expect)
+			t.Fatalf("BriefDescription() = %q, want %q", got, expect)
 		}
 	})
 
@@ -24,7 +24,7 @@ func TestLeafCommand(t *testing.T) {
 		lc := &LeafCommand[*StdlibExecEnv]{HelpFlagValue: expect}
 		got := lc.HelpFlag()
 		if got != expect {
-			t.Errorf("HelpFlag() = %q, want %q", got, expect)
+			t.Fatalf("HelpFlag() = %q, want %q", got, expect)
 		}
 	})
 
@@ -33,7 +33,7 @@ func TestLeafCommand(t *testing.T) {
 		lc := &LeafCommand[*StdlibExecEnv]{}
 		got := lc.HelpFlag()
 		if got != expect {
-			t.Errorf("HelpFlag() = %q, want %q", got, expect)
+			t.Fatalf("HelpFlag() = %q, want %q", got, expect)
 		}
 	})
 
@@ -42,7 +42,7 @@ func TestLeafCommand(t *testing.T) {
 		lc := &LeafCommand[*StdlibExecEnv]{LongDescriptionText: expect}
 		got := lc.LongDescription()
 		if got != expect {
-			t.Errorf("LongDescription() = %q, want %q", got, expect)
+			t.Fatalf("LongDescription() = %q, want %q", got, expect)
 		}
 	})
 
@@ -51,7 +51,7 @@ func TestLeafCommand(t *testing.T) {
 		lc := &LeafCommand[*StdlibExecEnv]{BriefDescriptionText: expect}
 		got := lc.LongDescription()
 		if got != expect {
-			t.Errorf("LongDescription() = %q, want %q", got, expect)
+			t.Fatalf("LongDescription() = %q, want %q", got, expect)
 		}
 	})
 
@@ -60,7 +60,7 @@ func TestLeafCommand(t *testing.T) {
 		lc := &LeafCommand[*StdlibExecEnv]{}
 		got := lc.SupportsSubcommands()
 		if got != expect {
-			t.Errorf("SupportsSudo() = %v, want %v", got, expect)
+			t.Fatalf("SupportsSubcommands() = %v, want %v", got, expect)
 		}
 	})
 
@@ -73,7 +73,7 @@ func TestLeafCommand(t *testing.T) {
 		}
 		err := lc.Run(context.Background(), &CommandArgs[*StdlibExecEnv]{})
 		if !errors.Is(err, expect) {
-			t.Errorf("Run() = %v, want %v", err, expect)
+			t.Fatalf("Run() = %v, want %v", err, expect)
 		}
 	})
 }

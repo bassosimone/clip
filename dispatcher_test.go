@@ -102,6 +102,24 @@ func TestDispatch(t *testing.T) {
 			},
 
 			{
+				name:           "We invoke with --version",
+				skipTest:       false,
+				args:           []string{"--version"},
+				cmdReturnError: nil,
+				expectRunCmd:   false,
+				expectError:    nil,
+			},
+
+			{
+				name:           "We invoke with version",
+				skipTest:       false,
+				args:           []string{"version"},
+				cmdReturnError: nil,
+				expectRunCmd:   false,
+				expectError:    nil,
+			},
+
+			{
 				name:           "We invoke with help without arguments",
 				skipTest:       false,
 				args:           []string{"help"},
@@ -204,6 +222,7 @@ func TestDispatch(t *testing.T) {
 						},
 						"pipelines": &DispatcherCommand[*StdlibExecEnv]{},
 					},
+					Version: "0.1.0",
 				}
 
 				// Run the command

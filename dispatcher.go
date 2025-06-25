@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"sort"
 	"strings"
 
@@ -37,6 +38,20 @@ type DispatcherCommand[T ExecEnv] struct {
 	// Added in v0.3.0. When empty the behavior is [ContinueOnError], which
 	// is exactly cosistent with the v0.2.0 behavior.
 	ErrorHandling ErrorHandling
+
+	// Version is the program version string. If this field is set, the
+	// dispatcher will implement the following algorithm:
+	//
+	// If `--version` is the first argument, it will behave like the
+	// `version` command had been specified instead.
+	//
+	// If the `version` command exists, the dispatcher will invoke it.
+	//
+	// Otherwise, the dispatcher will create a [*VersionCommand] on
+	// the fly, configured with the version, and invoke it.
+	//
+	// Added in v0.4.0. When empty, we don't handle `--version` or `version.
+	Version string
 }
 
 var _ Command[*StdlibExecEnv] = (*DispatcherCommand[*StdlibExecEnv])(nil)
@@ -106,13 +121,19 @@ func (dx *DispatcherCommand[T]) dispatch(ctx context.Context, args *CommandArgs[
 		return dx.run(ctx, cmd, args, subName, subArgs)
 	}
 
-	// Handle special cases pertaining to obtain --help, -h, and help
-	switch subName {
-	case "--help", "-h":
+	// Handle special cases: --help, -h, help, --version, and version
+	switch {
+	case subName == "--help" || subName == "-h":
 		return dx.printUsage(args.Env, args.CommandName)
 
-	case "help":
+	case subName == "help":
 		return dx.maybeForwardHelp(ctx, args, subArgs)
+
+	case dx.Version != "" && subName == "--version":
+		return dx.handleVersionFlag(args.Env)
+
+	case dx.Version != "" && subName == "version":
+		return dx.handleVersionCommand(ctx, args, subArgs)
 	}
 
 	// Find all matching subcommands inside the subArgs
@@ -162,6 +183,17 @@ func (dx *DispatcherCommand[T]) dispatch(ctx context.Context, args *CommandArgs[
 func (dx *DispatcherCommand[T]) printUsage(env T, commandName string) error {
 	_, err := fmt.Fprintln(env.Stdout(), dx.formatUsage(commandName))
 	return err
+}
+
+func (dx *DispatcherCommand[T]) handleVersionFlag(env T) error {
+	command := &VersionCommand[T]{Version: dx.Version}
+	return command.PrintVersion(env)
+}
+
+func (dx *DispatcherCommand[T]) handleVersionCommand(
+	ctx context.Context, args *CommandArgs[T], subArgs []string) error {
+	command := &VersionCommand[T]{ErrorHandling: dx.ErrorHandling, Version: dx.Version}
+	return dx.run(ctx, command, args, "version", subArgs)
 }
 
 func (dx *DispatcherCommand[T]) maybeForwardHelp(
@@ -254,26 +286,48 @@ func (dx *DispatcherCommand[T]) formatUsage(commandName string) string {
 
 	// Otherwise, create a simple usage string message
 	var sb strings.Builder
+
+	// Synopsis
 	fmt.Fprintf(&sb, "\n")
 	fmt.Fprintf(&sb, "Usage: %s [command] [args]\n", commandName)
+
+	// Description
 	fmt.Fprintf(&sb, "\n")
 	fmt.Fprintf(&sb, "%s\n", textwrap.Do(dx.BriefDescriptionText, 72, ""))
+
+	// Commands
 	fmt.Fprintf(&sb, "\n")
 	fmt.Fprintf(&sb, "Commands:\n")
-	for _, name := range dx.sortedSubcommandNames() {
+	commands := dx.cloneSubcommandsForUsage()
+	for _, name := range sortedSubcommandNames(commands) {
 		fmt.Fprintf(&sb, "  %s\n", name)
-		cmd := dx.Commands[name]
+		cmd := commands[name]
 		fmt.Fprintf(&sb, "%s\n\n", textwrap.Do(cmd.BriefDescription(), 72, "    "))
 	}
+
+	// Conclusion
 	fmt.Fprintf(&sb, "Try '%s help COMMAND' for more information on COMMAND.\n", commandName)
 	fmt.Fprintf(&sb, "\n")
 	fmt.Fprintf(&sb, "Use '%s help' to show this help screen.\n", commandName)
+	if dx.Version != "" {
+		fmt.Fprintf(&sb, "\n")
+		fmt.Fprintf(&sb, "Use '%s --version` to show the command version.\n", commandName)
+	}
+
 	return strings.TrimSpace(sb.String())
 }
 
-func (dx *DispatcherCommand[T]) sortedSubcommandNames() []string {
-	names := make([]string, 0, len(dx.Commands))
-	for name := range dx.Commands {
+func (dx *DispatcherCommand[T]) cloneSubcommandsForUsage() map[string]Command[T] {
+	output := maps.Clone(dx.Commands)
+	if dx.Version != "" && output["version"] == nil {
+		output["version"] = &VersionCommand[T]{Version: dx.Version}
+	}
+	return output
+}
+
+func sortedSubcommandNames[T ExecEnv](commands map[string]Command[T]) []string {
+	names := make([]string, 0, len(commands))
+	for name := range commands {
 		names = append(names, name)
 	}
 	sort.Strings(names)
