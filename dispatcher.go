@@ -82,11 +82,14 @@ func (dx *DispatcherCommand[T]) Run(ctx context.Context, args *CommandArgs[T]) e
 
 func (dx *DispatcherCommand[T]) maybeHandleError(env T, err error) error {
 	// Determine what to do based on the policy
-	switch dx.ErrorHandling {
-	case ContinueOnError:
+	switch {
+	case err == nil:
+		return nil
+
+	case dx.ErrorHandling == ContinueOnError:
 		return err
 
-	case ExitOnError:
+	case dx.ErrorHandling == ExitOnError:
 		switch {
 		case errors.Is(err, ErrNoSuchCommand):
 			env.Exit(2)

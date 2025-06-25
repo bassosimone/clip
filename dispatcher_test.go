@@ -282,6 +282,28 @@ func TestDispatch(t *testing.T) {
 		// Create a background context
 		ctx := context.Background()
 
+		t.Run("without error", func(t *testing.T) {
+			for _, policy := range []ErrorHandling{ContinueOnError, ExitOnError, PanicOnError} {
+				t.Run(fmt.Sprintf("with policy %d", policy), func(t *testing.T) {
+					// Set the proper error handling strategy
+					dx.ErrorHandling = policy
+
+					// Run the command
+					err := dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
+						Args:        []string{},
+						Command:     dx,
+						CommandName: "main",
+						Env:         env,
+					})
+
+					// Verify the status
+					if err != nil {
+						t.Fatal(err)
+					}
+				})
+			}
+		})
+
 		t.Run("ContinueOnError", func(t *testing.T) {
 			// Set the proper error handling strategy
 			dx.ErrorHandling = ContinueOnError
