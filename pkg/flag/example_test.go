@@ -17,8 +17,8 @@ func ExampleFlagSet() {
 	fset := flag.NewFlagSet("program", flag.ContinueOnError)
 
 	// Define flags with both short and long options
-	help := fset.Bool("help", 'h', false, "display help information")
-	verbose := fset.Bool("verbose", 'v', false, "enable verbose output")
+	help := fset.Bool("help", 'h', "display help information")
+	verbose := fset.Bool("verbose", 'v', "enable verbose output")
 	output := fset.String("output", 'o', "output.txt", "output file path")
 	format := fset.String("format", 'f', "text", "output format")
 
@@ -53,11 +53,11 @@ func ExampleFlagSet_usage() {
 	fset.SetArgsDocs("[args...]")
 
 	// Define various flags to demonstrate usage formatting
-	fset.Bool("help", 'h', false, "display this help message")
-	fset.Bool("verbose", 'v', false, "enable verbose output mode")
+	fset.Bool("help", 'h', "display this help message")
+	fset.Bool("verbose", 'v', "enable verbose output mode")
 	fset.String("output", 'o', "output.txt", "path to the output file")
 	fset.String("format", 'f', "text", "output format (text or json)")
-	fset.Bool("debug", 'd', false, "enable debug logging")
+	fset.Bool("debug", 'd', "enable debug logging")
 	fset.String("config", 'c', "", "path to configuration file")
 
 	// Get the usage string and print it
@@ -99,14 +99,14 @@ func ExampleFlagSet_allMethods() {
 
 	// 1. Regular methods (return pointer)
 	// Bool variations
-	debug := fset.Bool("debug", 'd', false, "enable debug mode") // both long and short
-	trace := fset.BoolLong("trace", false, "enable trace mode")  // long only
-	quiet := fset.BoolShort('q', "suppress output")              // short only
+	debug := fset.Bool("debug", 'd', "enable debug mode") // both long and short
+	trace := fset.BoolLong("trace", "enable trace mode")  // long only
+	quiet := fset.BoolShort('q', "suppress output")       // short only
 
 	// String variations
 	config := fset.String("config", 'c', "config.json", "config file path") // both long and short
 	logfile := fset.StringLong("logfile", "app.log", "log file path")       // long only
-	mode := fset.StringShort('m', "operation mode")                         // short only
+	mode := fset.StringShort('m', "", "operation mode")                     // short only
 
 	// 2. Var methods (use existing pointer)
 	var (
@@ -198,8 +198,8 @@ func ExampleFlagSet_customParser() {
 	parser.Separators = []string{"--", "++"}        // Allow both -- and ++ as separators
 
 	// Define some flags
-	verbose := fset.Bool("verbose", 'v', false, "enable verbose mode")
-	debug := fset.Bool("debug", 'd', false, "enable debug mode")
+	verbose := fset.Bool("verbose", 'v', "enable verbose mode")
+	debug := fset.Bool("debug", 'd', "enable debug mode")
 	output := fset.String("output", 'o', "out.txt", "output file")
 
 	// Parse with custom prefixes

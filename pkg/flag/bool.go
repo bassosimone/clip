@@ -10,12 +10,12 @@ import (
 )
 
 // BoolLong creates a new boolean flag available as --name with the
-// given usage string and default value. The actual flag prefixes may
-// vary if you modify the parser by using [*FlagSet.Parser].
+// given usage string and a false default value. The actual flag prefixes
+// may vary if you modify the parser by using [*FlagSet.Parser].
 //
 // This method MUST be invoked before calling [FlagSet.Parse].
-func (fx *FlagSet) BoolLong(name string, value bool, usage string) *bool {
-	return fx.Bool(name, 0, value, usage)
+func (fx *FlagSet) BoolLong(name string, usage string) *bool {
+	return fx.Bool(name, 0, usage)
 }
 
 // BoolLongVar is like [*FlagSet.BoolLong] but accepts a pointer to a bool
@@ -32,7 +32,7 @@ func (fx *FlagSet) BoolLongVar(p *bool, name string, usage string) {
 //
 // This method MUST be invoked before calling [FlagSet.Parse].
 func (fx *FlagSet) BoolShort(name byte, usage string) *bool {
-	return fx.Bool("", name, false, usage)
+	return fx.Bool("", name, usage)
 }
 
 // BoolShortVar is like [*FlagSet.BoolShort] but accepts a pointer to a bool
@@ -44,11 +44,12 @@ func (fx *FlagSet) BoolShortVar(p *bool, name byte, usage string) {
 }
 
 // Bool creates a new boolean flag available as --longName and -shortName
-// with the given usage string and default value. The actual flag prefixes
+// with the given usage string and false default value. The actual flag prefixes
 // may vary if you modify the parser by using [*FlagSet.Parser].
 //
 // This method MUST be invoked before calling [FlagSet.Parse].
-func (fx *FlagSet) Bool(longName string, shortName byte, value bool, usage string) *bool {
+func (fx *FlagSet) Bool(longName string, shortName byte, usage string) *bool {
+	var value bool
 	fx.BoolVar(&value, longName, shortName, usage)
 	return &value
 }

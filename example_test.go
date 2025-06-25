@@ -21,7 +21,7 @@ var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 		fset.SetArgsDocs("file ...")
 
 		// Add the `-v` option
-		vflag := fset.Bool("verbose", 'v', false, "verbose mode")
+		vflag := fset.Bool("verbose", 'v', "verbose mode")
 
 		// Parse command line arguments
 		clip.Must(args.Env, fset.Parse(args.Args))
@@ -46,16 +46,16 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 		fset.SetArgsDocs("file ...")
 
 		// Add the `-c` option
-		cflag := fset.Bool("create", 'c', false, "create a new archive")
+		cflag := fset.Bool("create", 'c', "create a new archive")
 
 		// Add the `-f` option
 		fflag := fset.String("file", 'f', "", "archive file name")
 
 		// Add the `-v` option
-		vflag := fset.Bool("verbose", 'v', false, "verbose mode")
+		vflag := fset.Bool("verbose", 'v', "verbose mode")
 
 		// Add the `-z` option
-		zflag := fset.Bool("gzip", 'z', false, "gzip compression")
+		zflag := fset.Bool("gzip", 'z', "gzip compression")
 
 		// Parse command line arguments
 		clip.Must(args.Env, fset.Parse(args.Args))

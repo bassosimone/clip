@@ -6,7 +6,7 @@ package flag
 import "github.com/bassosimone/clip/pkg/parser"
 
 // StringLong creates a new string flag available as --name with the
-// given usage string and default value. The actual flag prefixes may
+// given usage string and a default value. The actual flag prefixes may
 // vary if you modify the parser by using [*FlagSet.Parser].
 //
 // This method MUST be invoked before calling [FlagSet.Parse].
@@ -23,12 +23,12 @@ func (fx *FlagSet) StringLongVar(p *string, name string, usage string) {
 }
 
 // StringShort creates a new string flag available as -name with the
-// given usage string and an empty default value. The actual flag prefixes
+// given usage string and a default value. The actual flag prefixes
 // may vary if you modify the parser by using [*FlagSet.Parser].
 //
 // This method MUST be invoked before calling [FlagSet.Parse].
-func (fx *FlagSet) StringShort(name byte, usage string) *string {
-	return fx.String("", name, "", usage)
+func (fx *FlagSet) StringShort(name byte, value string, usage string) *string {
+	return fx.String("", name, value, usage)
 }
 
 // StringShortVar is like [*FlagSet.StringShort] but accepts a pointer to a string
@@ -40,7 +40,7 @@ func (fx *FlagSet) StringShortVar(p *string, name byte, usage string) {
 }
 
 // String creates a new string flag available as --longName and -shortName
-// with the given usage string and default value. The actual flag prefixes
+// with the given usage string and a default value. The actual flag prefixes
 // may vary if you modify the parser by using [*FlagSet.Parser].
 //
 // This method MUST be invoked before calling [FlagSet.Parse].
