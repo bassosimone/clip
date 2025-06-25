@@ -3,10 +3,16 @@
 [![Package-level Go docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
 
 This repository implements a very flexible command line parser
-written in Go. It provides an intuitive flag parsing API modeled
-after the standard library's [flag](https://pkg.go.dev/flag)
-package. It also provides means to create commands containing
-subcommands. It also automatically handles help generation.
+written in Go. These are the main features:
+
+1. Intuitive flag parsing API modeled after the standard
+library's [flag](https://pkg.go.dev/flag) package.
+
+2. Support for (possibly nested) subcommands.
+
+3. Automatic handling of help generation.
+
+4. Optional handling of printing version information.
 
 By default, [clip](https://github.com/bassosimone/clip) implements
 [GNU getopt](https://linux.die.net/man/3/getopt) compatible
@@ -34,9 +40,12 @@ Go [flag](https://pkg.go.dev/flag) package.
 
 Therefore, [clip](https://github.com/bassosimone/clip) is suitable
 for writing complex command line tools that require to emulate other
-command line tools behavior in their subcommands, such as, for
-example, the [rbmk](https://github.com/rbmk-project/rbmk)
-network measurement tool.
+command line tools behavior in their subcommands. A good use case
+for this functionality is the the [rbmk](https://github.com/rbmk-project/rbmk)
+network measurement tool, which has a `dig` subcommand using the
+[dig](https://linux.die.net/man/1/dig) flag parsing style, and
+a `curl` subcommand using the [curl](https://linux.die.net/man/1/curl)
+flag parsing style.
 
 ## Examples
 
@@ -123,6 +132,11 @@ The following table lists all the available, testable examples:
 | [pkg/getopt](./pkg/getopt)   | [pkg/getopt/example_test.go](pkg/getopt/example_test.go)                                   |
 | [pkg/parser](./pkg/parser)   | [pkg/parser/example_test.go](pkg/parser/example_test.go)                                   |
 | [pkg/scanner](./pkg/scanner)  | [pkg/scanner/example_test.go](pkg/scanner/example_test.go)                                 |
+
+The [cmd/minirbmk](./cmd/minirbmk) example shows how to integrate
+[clip](https://github.com/bassosimone/clip) into an Go CLI application
+using nested subcommands. In such example we also show customizing
+the flag parser to parse `+flag`-like flags.
 
 ## Architecture
 
