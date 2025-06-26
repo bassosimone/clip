@@ -227,9 +227,9 @@ Loop:
 			}
 		}
 
-		// Then, check for (sorted) prefixes
+		// Then, check for (sorted) prefixes with actual names
 		for _, prefix := range prefixes {
-			if strings.HasPrefix(arg, prefix) {
+			if strings.HasPrefix(arg, prefix) && len(arg) > len(prefix) {
 				tokens = append(tokens, OptionToken{Idx: actual, Prefix: prefix, Name: arg[len(prefix):]})
 				continue Loop
 			}

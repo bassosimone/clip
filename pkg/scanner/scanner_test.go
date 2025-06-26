@@ -115,3 +115,28 @@ func TestScannerMissingProgramName(t *testing.T) {
 		})
 	}
 }
+
+func TestScannerZeroLengthOption(t *testing.T) {
+	scanner := &Scanner{
+		Prefixes:   []string{"-"},
+		Separators: []string{},
+	}
+
+	args := []string{"prog", "-"}
+	tokens, err := scanner.Scan(args)
+	if err != nil {
+		t.Fatalf("Scanner.Scan() error = %v", err)
+	}
+
+	if len(tokens) != 2 {
+		t.Errorf("Expected 1 token, got %d", len(tokens))
+	}
+
+	if _, ok := tokens[0].(ProgramNameToken); !ok {
+		t.Errorf("Expected ProgramNameToken, got %T", tokens[0])
+	}
+
+	if _, ok := tokens[1].(PositionalArgumentToken); !ok {
+		t.Errorf("Expected PositionalArgumentToken, got %T", tokens[1])
+	}
+}
