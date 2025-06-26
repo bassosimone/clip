@@ -424,7 +424,7 @@ func (px *Parser) parse(tokens []scanner.Token, rv []CommandLineItem) ([]Command
 		tokens = tokens[1:]
 
 		// Add separator to items and stop parsing when we encounter a separator
-		if sep, ok := cur.(scanner.SeparatorToken); ok {
+		if sep, ok := cur.(scanner.OptionsArgumentsSeparatorToken); ok {
 			rv = append(rv, SeparatorItem{Token: cur, Separator: sep.Separator})
 			parse = false
 			continue

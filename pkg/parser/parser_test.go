@@ -163,7 +163,7 @@ func TestSeparatorItemStrings(t *testing.T) {
 			name: "double dash separator",
 			item: SeparatorItem{
 				Separator: "--",
-				Token:     scanner.SeparatorToken{Separator: "--"},
+				Token:     scanner.OptionsArgumentsSeparatorToken{Separator: "--"},
 			},
 			expected: []string{"--"},
 		},
@@ -291,7 +291,7 @@ func TestParserParse(t *testing.T) {
 				},
 				SeparatorItem{
 					Separator: "--",
-					Token:     scanner.SeparatorToken{Idx: 2, Separator: "--"},
+					Token:     scanner.OptionsArgumentsSeparatorToken{Idx: 2, Separator: "--"},
 				},
 				ArgumentItem{
 					Value: "-v",

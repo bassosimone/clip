@@ -69,7 +69,7 @@ func ExampleParser_dig() {
 	// parser.OptionItem{Name:"f", Token:scanner.OptionToken{Idx:7, Prefix:"-", Name:"f"}, Value:"config", IsShort:true, Type:1, Prefix:"-"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:2, Value:"IN"}, Value:"IN"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:3, Value:"A"}, Value:"A"}
-	// parser.SeparatorItem{Token:scanner.SeparatorToken{Idx:9, Separator:"--"}, Separator:"--"}
+	// parser.SeparatorItem{Token:scanner.OptionsArgumentsSeparatorToken{Idx:9, Separator:"--"}, Separator:"--"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:10, Value:"remaining"}, Value:"remaining"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:11, Value:"args"}, Value:"args"}
 }
@@ -128,7 +128,7 @@ func ExampleParser_gnu() {
 	// parser.OptionItem{Name:"verbose", Token:scanner.OptionToken{Idx:5, Prefix:"--", Name:"verbose"}, Value:"true", IsShort:false, Type:2, Prefix:"--"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:2, Value:"target"}, Value:"target"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:4, Value:"input.txt"}, Value:"input.txt"}
-	// parser.SeparatorItem{Token:scanner.SeparatorToken{Idx:6, Separator:"--"}, Separator:"--"}
+	// parser.SeparatorItem{Token:scanner.OptionsArgumentsSeparatorToken{Idx:6, Separator:"--"}, Separator:"--"}
 	// parser.ArgumentItem{Token:scanner.OptionToken{Idx:7, Prefix:"--", Name:"not-an-option"}, Value:"--not-an-option"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:8, Value:"output.txt"}, Value:"output.txt"}
 }
@@ -180,7 +180,7 @@ func ExampleParser_go() {
 	// parser.OptionItem{Name:"file", Token:scanner.OptionToken{Idx:2, Prefix:"-", Name:"file=config.txt"}, Value:"config.txt", IsShort:false, Type:1, Prefix:"-"}
 	// parser.OptionItem{Name:"verbose", Token:scanner.OptionToken{Idx:3, Prefix:"-", Name:"verbose"}, Value:"true", IsShort:false, Type:2, Prefix:"-"}
 	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:4, Value:"input.txt"}, Value:"input.txt"}
-	// parser.SeparatorItem{Token:scanner.SeparatorToken{Idx:5, Separator:"--"}, Separator:"--"}
+	// parser.SeparatorItem{Token:scanner.OptionsArgumentsSeparatorToken{Idx:5, Separator:"--"}, Separator:"--"}
 	// parser.ArgumentItem{Token:scanner.OptionToken{Idx:6, Prefix:"-", Name:"extra"}, Value:"-extra"}
 }
 

@@ -53,7 +53,7 @@ func ExampleScanner_dig() {
 	// scanner.OptionToken{Idx:4, Prefix:"+", Name:"short=yes"}
 	// scanner.OptionToken{Idx:5, Prefix:"-", Name:"f"}
 	// scanner.ArgumentToken{Idx:6, Value:"config"}
-	// scanner.SeparatorToken{Idx:7, Separator:"--"}
+	// scanner.OptionsArgumentsSeparatorToken{Idx:7, Separator:"--"}
 	// scanner.ArgumentToken{Idx:8, Value:"remaining"}
 	// scanner.OptionToken{Idx:9, Prefix:"-", Name:"args"}
 }
@@ -98,7 +98,7 @@ func ExampleScanner_gnu() {
 	// scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}
 	// scanner.OptionToken{Idx:2, Prefix:"--", Name:"file=config.txt"}
 	// scanner.OptionToken{Idx:3, Prefix:"-", Name:"abc"}
-	// scanner.SeparatorToken{Idx:4, Separator:"--"}
+	// scanner.OptionsArgumentsSeparatorToken{Idx:4, Separator:"--"}
 	// scanner.OptionToken{Idx:5, Prefix:"--", Name:"an-option"}
 	// scanner.ArgumentToken{Idx:6, Value:"input.txt"}
 }
@@ -143,7 +143,7 @@ func ExampleScanner_go() {
 	// scanner.OptionToken{Idx:3, Prefix:"-", Name:"verbose"}
 	// scanner.OptionToken{Idx:4, Prefix:"-", Name:"debug"}
 	// scanner.ArgumentToken{Idx:5, Value:"input.txt"}
-	// scanner.SeparatorToken{Idx:6, Separator:"--"}
+	// scanner.OptionsArgumentsSeparatorToken{Idx:6, Separator:"--"}
 	// scanner.ArgumentToken{Idx:7, Value:"extra"}
 }
 

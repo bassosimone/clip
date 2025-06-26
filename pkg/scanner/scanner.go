@@ -55,7 +55,7 @@ produces the following tokens:
 
  1. [ProgramNameToken] command
  2. [OptionToken] verbose
- 3. [SeparatorToken] --
+ 3. [OptionsArgumentsSeparatorToken] --
  4. [ArgumentToken] othercommand
  5. [OptionToken] v
  7. [OptionToken] trace
@@ -135,8 +135,8 @@ func (tk ArgumentToken) String() string {
 	return tk.Value
 }
 
-// SeparatorToken is a [Token] containing the separator between options and arguments.
-type SeparatorToken struct {
+// OptionsArgumentsSeparatorToken is a [Token] containing the separator between options and arguments.
+type OptionsArgumentsSeparatorToken struct {
 	// Idx is the position in the original command line arguments.
 	Idx int
 
@@ -144,15 +144,15 @@ type SeparatorToken struct {
 	Separator string
 }
 
-var _ Token = SeparatorToken{}
+var _ Token = OptionsArgumentsSeparatorToken{}
 
 // Index implements [Token].
-func (tk SeparatorToken) Index() int {
+func (tk OptionsArgumentsSeparatorToken) Index() int {
 	return tk.Idx
 }
 
 // String implements [Token].
-func (tk SeparatorToken) String() string {
+func (tk OptionsArgumentsSeparatorToken) String() string {
 	return tk.Separator
 }
 
@@ -222,7 +222,7 @@ Loop:
 		// Check for separators first
 		for _, sep := range sx.Separators {
 			if arg == sep {
-				tokens = append(tokens, SeparatorToken{Idx: actual, Separator: arg})
+				tokens = append(tokens, OptionsArgumentsSeparatorToken{Idx: actual, Separator: arg})
 				continue Loop
 			}
 		}

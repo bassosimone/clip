@@ -28,7 +28,7 @@ func TestTokenIndex(t *testing.T) {
 		},
 		{
 			name:     "SeparatorToken",
-			token:    SeparatorToken{Idx: 1},
+			token:    OptionsArgumentsSeparatorToken{Idx: 1},
 			expected: 1,
 		},
 	}
@@ -71,7 +71,7 @@ func TestTokenString(t *testing.T) {
 		},
 		{
 			name:     "SeparatorToken",
-			token:    SeparatorToken{Separator: "--"},
+			token:    OptionsArgumentsSeparatorToken{Separator: "--"},
 			expected: "--",
 		},
 	}
