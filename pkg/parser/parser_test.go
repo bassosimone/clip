@@ -121,7 +121,7 @@ func TestArgumentItemStrings(t *testing.T) {
 			name: "simple argument",
 			item: ArgumentItem{
 				Value: "file.txt",
-				Token: scanner.ArgumentToken{Value: "file.txt"},
+				Token: scanner.PositionalArgumentToken{Value: "file.txt"},
 			},
 			expected: []string{"file.txt"},
 		},
@@ -129,7 +129,7 @@ func TestArgumentItemStrings(t *testing.T) {
 			name: "argument with spaces",
 			item: ArgumentItem{
 				Value: "file with spaces.txt",
-				Token: scanner.ArgumentToken{Value: "file with spaces.txt"},
+				Token: scanner.PositionalArgumentToken{Value: "file with spaces.txt"},
 			},
 			expected: []string{"file with spaces.txt"},
 		},
@@ -137,7 +137,7 @@ func TestArgumentItemStrings(t *testing.T) {
 			name: "empty argument",
 			item: ArgumentItem{
 				Value: "",
-				Token: scanner.ArgumentToken{Value: ""},
+				Token: scanner.PositionalArgumentToken{Value: ""},
 			},
 			expected: []string{""},
 		},
@@ -264,7 +264,7 @@ func TestParserParse(t *testing.T) {
 				},
 				ArgumentItem{
 					Value: "target.txt",
-					Token: scanner.ArgumentToken{Idx: 1, Value: "target.txt"},
+					Token: scanner.PositionalArgumentToken{Idx: 1, Value: "target.txt"},
 				},
 			},
 		},
@@ -299,7 +299,7 @@ func TestParserParse(t *testing.T) {
 				},
 				ArgumentItem{
 					Value: "file.txt",
-					Token: scanner.ArgumentToken{Idx: 4, Value: "file.txt"},
+					Token: scanner.PositionalArgumentToken{Idx: 4, Value: "file.txt"},
 				},
 			},
 		},
@@ -326,7 +326,7 @@ func TestParserParse(t *testing.T) {
 				},
 				ArgumentItem{
 					Value: "file.txt",
-					Token: scanner.ArgumentToken{Idx: 2, Value: "file.txt"},
+					Token: scanner.PositionalArgumentToken{Idx: 2, Value: "file.txt"},
 				},
 				ArgumentItem{
 					Value: "-v",

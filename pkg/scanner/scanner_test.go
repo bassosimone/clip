@@ -23,7 +23,7 @@ func TestTokenIndex(t *testing.T) {
 		},
 		{
 			name:     "ArgumentToken",
-			token:    ArgumentToken{Idx: 1},
+			token:    PositionalArgumentToken{Idx: 1},
 			expected: 1,
 		},
 		{
@@ -66,7 +66,7 @@ func TestTokenString(t *testing.T) {
 		},
 		{
 			name:     "ArgumentToken",
-			token:    ArgumentToken{Value: "file.txt"},
+			token:    PositionalArgumentToken{Value: "file.txt"},
 			expected: "file.txt",
 		},
 		{

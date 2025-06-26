@@ -56,10 +56,10 @@ produces the following tokens:
  1. [ProgramNameToken] command
  2. [OptionToken] verbose
  3. [OptionsArgumentsSeparatorToken] --
- 4. [ArgumentToken] othercommand
+ 4. [PositionalArgumentToken] othercommand
  5. [OptionToken] v
  7. [OptionToken] trace
- 8. [ArgumentToken] file.txt
+ 8. [PositionalArgumentToken] file.txt
 */
 package scanner
 
@@ -114,8 +114,8 @@ func (tk OptionToken) String() string {
 	return tk.Prefix + tk.Name
 }
 
-// ArgumentToken is a [Token] containing a positional argument.
-type ArgumentToken struct {
+// PositionalArgumentToken is a [Token] containing a positional argument.
+type PositionalArgumentToken struct {
 	// Idx is the position in the original command line arguments.
 	Idx int
 
@@ -123,15 +123,15 @@ type ArgumentToken struct {
 	Value string
 }
 
-var _ Token = ArgumentToken{}
+var _ Token = PositionalArgumentToken{}
 
 // Index implements [Token].
-func (tk ArgumentToken) Index() int {
+func (tk PositionalArgumentToken) Index() int {
 	return tk.Idx
 }
 
 // String implements [Token].
-func (tk ArgumentToken) String() string {
+func (tk PositionalArgumentToken) String() string {
 	return tk.Value
 }
 
@@ -236,7 +236,7 @@ Loop:
 		}
 
 		// Everything else is an argument
-		tokens = append(tokens, ArgumentToken{Idx: actual, Value: arg})
+		tokens = append(tokens, PositionalArgumentToken{Idx: actual, Value: arg})
 	}
 
 	return tokens, nil

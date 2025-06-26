@@ -53,7 +53,7 @@ func TestLong(t *testing.T) {
 					Prefix:  "--",
 				},
 				parser.ArgumentItem{
-					Token: scanner.ArgumentToken{Idx: 2, Value: "subcommand"},
+					Token: scanner.PositionalArgumentToken{Idx: 2, Value: "subcommand"},
 					Value: "subcommand",
 				},
 				parser.ArgumentItem{
@@ -96,7 +96,7 @@ func TestLong(t *testing.T) {
 					Prefix:  "--",
 				},
 				parser.ArgumentItem{
-					Token: scanner.ArgumentToken{Idx: 2, Value: "subcommand"},
+					Token: scanner.PositionalArgumentToken{Idx: 2, Value: "subcommand"},
 					Value: "subcommand",
 				},
 				parser.ArgumentItem{
@@ -155,7 +155,7 @@ func TestLong(t *testing.T) {
 					Prefix:  "--",
 				},
 				parser.ArgumentItem{
-					Token: scanner.ArgumentToken{Idx: 1, Value: "subcommand"},
+					Token: scanner.PositionalArgumentToken{Idx: 1, Value: "subcommand"},
 					Value: "subcommand",
 				},
 			},

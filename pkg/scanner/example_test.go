@@ -52,9 +52,9 @@ func ExampleScanner_dig() {
 	// scanner.OptionToken{Idx:3, Prefix:"--", Name:"verbose"}
 	// scanner.OptionToken{Idx:4, Prefix:"+", Name:"short=yes"}
 	// scanner.OptionToken{Idx:5, Prefix:"-", Name:"f"}
-	// scanner.ArgumentToken{Idx:6, Value:"config"}
+	// scanner.PositionalArgumentToken{Idx:6, Value:"config"}
 	// scanner.OptionsArgumentsSeparatorToken{Idx:7, Separator:"--"}
-	// scanner.ArgumentToken{Idx:8, Value:"remaining"}
+	// scanner.PositionalArgumentToken{Idx:8, Value:"remaining"}
 	// scanner.OptionToken{Idx:9, Prefix:"-", Name:"args"}
 }
 
@@ -100,7 +100,7 @@ func ExampleScanner_gnu() {
 	// scanner.OptionToken{Idx:3, Prefix:"-", Name:"abc"}
 	// scanner.OptionsArgumentsSeparatorToken{Idx:4, Separator:"--"}
 	// scanner.OptionToken{Idx:5, Prefix:"--", Name:"an-option"}
-	// scanner.ArgumentToken{Idx:6, Value:"input.txt"}
+	// scanner.PositionalArgumentToken{Idx:6, Value:"input.txt"}
 }
 
 // ExampleScanner_go demonstrates Go command-line parsing style.
@@ -142,9 +142,9 @@ func ExampleScanner_go() {
 	// scanner.OptionToken{Idx:2, Prefix:"-", Name:"file=config.txt"}
 	// scanner.OptionToken{Idx:3, Prefix:"-", Name:"verbose"}
 	// scanner.OptionToken{Idx:4, Prefix:"-", Name:"debug"}
-	// scanner.ArgumentToken{Idx:5, Value:"input.txt"}
+	// scanner.PositionalArgumentToken{Idx:5, Value:"input.txt"}
 	// scanner.OptionsArgumentsSeparatorToken{Idx:6, Separator:"--"}
-	// scanner.ArgumentToken{Idx:7, Value:"extra"}
+	// scanner.PositionalArgumentToken{Idx:7, Value:"extra"}
 }
 
 // ExampleScanner_unix demonstrates traditional UNIX command-line parsing.
@@ -184,7 +184,7 @@ func ExampleScanner_unix() {
 	// scanner.ProgramNameToken{Idx:0, Name:"program"}
 	// scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}
 	// scanner.OptionToken{Idx:2, Prefix:"-", Name:"f"}
-	// scanner.ArgumentToken{Idx:3, Value:"file.txt"}
+	// scanner.PositionalArgumentToken{Idx:3, Value:"file.txt"}
 	// scanner.OptionToken{Idx:4, Prefix:"-", Name:"abc"}
-	// scanner.ArgumentToken{Idx:5, Value:"input.txt"}
+	// scanner.PositionalArgumentToken{Idx:5, Value:"input.txt"}
 }

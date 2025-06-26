@@ -629,7 +629,7 @@ func (px *Parser) getOptionValueFromNextToken(tokens []scanner.Token, rv []Comma
 	// Specifically, we don't want the program name or the separator
 	// or anything else to be a valid option value
 	switch tokens[0].(type) {
-	case scanner.ArgumentToken:
+	case scanner.PositionalArgumentToken:
 	case scanner.OptionToken:
 	default:
 		return nil, nil, fmt.Errorf("%w: %s", ErrInvalidOptionValue, optname)
