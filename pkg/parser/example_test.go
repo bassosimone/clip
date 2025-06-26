@@ -61,17 +61,17 @@ func ExampleParser_dig() {
 	}
 
 	// Output:
-	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Index:0, Name:"program"}}
-	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Index:1, Prefix:"-", Name:"v"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
-	// parser.OptionItem{Name:"trace", Token:scanner.OptionToken{Index:4, Prefix:"+", Name:"trace"}, Value:"true", IsShort:false, Type:2, Prefix:"+"}
-	// parser.OptionItem{Name:"port", Token:scanner.OptionToken{Index:5, Prefix:"--", Name:"port=53"}, Value:"53", IsShort:false, Type:1, Prefix:"--"}
-	// parser.OptionItem{Name:"timeout", Token:scanner.OptionToken{Index:6, Prefix:"+", Name:"timeout=5"}, Value:"5", IsShort:false, Type:1, Prefix:"+"}
-	// parser.OptionItem{Name:"f", Token:scanner.OptionToken{Index:7, Prefix:"-", Name:"f"}, Value:"config", IsShort:true, Type:1, Prefix:"-"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:2, Value:"IN"}, Value:"IN"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:3, Value:"A"}, Value:"A"}
-	// parser.SeparatorItem{Token:scanner.SeparatorToken{Index:9, Separator:"--"}, Separator:"--"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:10, Value:"remaining"}, Value:"remaining"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:11, Value:"args"}, Value:"args"}
+	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Idx:0, Name:"program"}}
+	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
+	// parser.OptionItem{Name:"trace", Token:scanner.OptionToken{Idx:4, Prefix:"+", Name:"trace"}, Value:"true", IsShort:false, Type:2, Prefix:"+"}
+	// parser.OptionItem{Name:"port", Token:scanner.OptionToken{Idx:5, Prefix:"--", Name:"port=53"}, Value:"53", IsShort:false, Type:1, Prefix:"--"}
+	// parser.OptionItem{Name:"timeout", Token:scanner.OptionToken{Idx:6, Prefix:"+", Name:"timeout=5"}, Value:"5", IsShort:false, Type:1, Prefix:"+"}
+	// parser.OptionItem{Name:"f", Token:scanner.OptionToken{Idx:7, Prefix:"-", Name:"f"}, Value:"config", IsShort:true, Type:1, Prefix:"-"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:2, Value:"IN"}, Value:"IN"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:3, Value:"A"}, Value:"A"}
+	// parser.SeparatorItem{Token:scanner.SeparatorToken{Idx:9, Separator:"--"}, Separator:"--"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:10, Value:"remaining"}, Value:"remaining"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:11, Value:"args"}, Value:"args"}
 }
 
 // ExampleParser_gnu demonstrates GNU command-line parsing.
@@ -121,16 +121,16 @@ func ExampleParser_gnu() {
 	}
 
 	// Output:
-	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Index:0, Name:"program"}}
-	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Index:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
-	// parser.OptionItem{Name:"h", Token:scanner.OptionToken{Index:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
-	// parser.OptionItem{Name:"file", Token:scanner.OptionToken{Index:3, Prefix:"--", Name:"file=config.txt"}, Value:"config.txt", IsShort:false, Type:1, Prefix:"--"}
-	// parser.OptionItem{Name:"verbose", Token:scanner.OptionToken{Index:5, Prefix:"--", Name:"verbose"}, Value:"true", IsShort:false, Type:2, Prefix:"--"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:2, Value:"target"}, Value:"target"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:4, Value:"input.txt"}, Value:"input.txt"}
-	// parser.SeparatorItem{Token:scanner.SeparatorToken{Index:6, Separator:"--"}, Separator:"--"}
-	// parser.ArgumentItem{Token:scanner.OptionToken{Index:7, Prefix:"--", Name:"not-an-option"}, Value:"--not-an-option"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:8, Value:"output.txt"}, Value:"output.txt"}
+	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Idx:0, Name:"program"}}
+	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Idx:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
+	// parser.OptionItem{Name:"h", Token:scanner.OptionToken{Idx:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
+	// parser.OptionItem{Name:"file", Token:scanner.OptionToken{Idx:3, Prefix:"--", Name:"file=config.txt"}, Value:"config.txt", IsShort:false, Type:1, Prefix:"--"}
+	// parser.OptionItem{Name:"verbose", Token:scanner.OptionToken{Idx:5, Prefix:"--", Name:"verbose"}, Value:"true", IsShort:false, Type:2, Prefix:"--"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:2, Value:"target"}, Value:"target"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:4, Value:"input.txt"}, Value:"input.txt"}
+	// parser.SeparatorItem{Token:scanner.SeparatorToken{Idx:6, Separator:"--"}, Separator:"--"}
+	// parser.ArgumentItem{Token:scanner.OptionToken{Idx:7, Prefix:"--", Name:"not-an-option"}, Value:"--not-an-option"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:8, Value:"output.txt"}, Value:"output.txt"}
 }
 
 // ExampleParser_go demonstrates Go command-line parsing style.
@@ -175,13 +175,13 @@ func ExampleParser_go() {
 	}
 
 	// Output:
-	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Index:0, Name:"program"}}
-	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Index:1, Prefix:"-", Name:"v"}, Value:"true", IsShort:false, Type:2, Prefix:"-"}
-	// parser.OptionItem{Name:"file", Token:scanner.OptionToken{Index:2, Prefix:"-", Name:"file=config.txt"}, Value:"config.txt", IsShort:false, Type:1, Prefix:"-"}
-	// parser.OptionItem{Name:"verbose", Token:scanner.OptionToken{Index:3, Prefix:"-", Name:"verbose"}, Value:"true", IsShort:false, Type:2, Prefix:"-"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:4, Value:"input.txt"}, Value:"input.txt"}
-	// parser.SeparatorItem{Token:scanner.SeparatorToken{Index:5, Separator:"--"}, Separator:"--"}
-	// parser.ArgumentItem{Token:scanner.OptionToken{Index:6, Prefix:"-", Name:"extra"}, Value:"-extra"}
+	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Idx:0, Name:"program"}}
+	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}, Value:"true", IsShort:false, Type:2, Prefix:"-"}
+	// parser.OptionItem{Name:"file", Token:scanner.OptionToken{Idx:2, Prefix:"-", Name:"file=config.txt"}, Value:"config.txt", IsShort:false, Type:1, Prefix:"-"}
+	// parser.OptionItem{Name:"verbose", Token:scanner.OptionToken{Idx:3, Prefix:"-", Name:"verbose"}, Value:"true", IsShort:false, Type:2, Prefix:"-"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:4, Value:"input.txt"}, Value:"input.txt"}
+	// parser.SeparatorItem{Token:scanner.SeparatorToken{Idx:5, Separator:"--"}, Separator:"--"}
+	// parser.ArgumentItem{Token:scanner.OptionToken{Idx:6, Prefix:"-", Name:"extra"}, Value:"-extra"}
 }
 
 // ExampleParser_noPermute demonstrates parsing with FlagNoPermute.
@@ -221,13 +221,13 @@ func ExampleParser_noPermute() {
 	}
 
 	// Output:
-	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Index:0, Name:"program"}}
-	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Index:1, Prefix:"-", Name:"v"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:2, Value:"input.txt"}, Value:"input.txt"}
-	// parser.ArgumentItem{Token:scanner.OptionToken{Index:3, Prefix:"--", Name:"verbose"}, Value:"--verbose"}
-	// parser.ArgumentItem{Token:scanner.OptionToken{Index:4, Prefix:"-", Name:"f"}, Value:"-f"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:5, Value:"config.txt"}, Value:"config.txt"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:6, Value:"output.txt"}, Value:"output.txt"}
+	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Idx:0, Name:"program"}}
+	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:2, Value:"input.txt"}, Value:"input.txt"}
+	// parser.ArgumentItem{Token:scanner.OptionToken{Idx:3, Prefix:"--", Name:"verbose"}, Value:"--verbose"}
+	// parser.ArgumentItem{Token:scanner.OptionToken{Idx:4, Prefix:"-", Name:"f"}, Value:"-f"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:5, Value:"config.txt"}, Value:"config.txt"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:6, Value:"output.txt"}, Value:"output.txt"}
 }
 
 // ExampleParser_unix demonstrates traditional UNIX command-line parsing.
@@ -272,10 +272,10 @@ func ExampleParser_unix() {
 	}
 
 	// Output:
-	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Index:0, Name:"program"}}
-	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Index:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
-	// parser.OptionItem{Name:"h", Token:scanner.OptionToken{Index:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
-	// parser.OptionItem{Name:"f", Token:scanner.OptionToken{Index:2, Prefix:"-", Name:"f"}, Value:"config.txt", IsShort:true, Type:1, Prefix:"-"}
-	// parser.OptionItem{Name:"d", Token:scanner.OptionToken{Index:4, Prefix:"-", Name:"d"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
-	// parser.ArgumentItem{Token:scanner.ArgumentToken{Index:5, Value:"input.txt"}, Value:"input.txt"}
+	// parser.ProgramNameItem{Name:"program", Token:scanner.ProgramNameToken{Idx:0, Name:"program"}}
+	// parser.OptionItem{Name:"v", Token:scanner.OptionToken{Idx:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
+	// parser.OptionItem{Name:"h", Token:scanner.OptionToken{Idx:1, Prefix:"-", Name:"vh"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
+	// parser.OptionItem{Name:"f", Token:scanner.OptionToken{Idx:2, Prefix:"-", Name:"f"}, Value:"config.txt", IsShort:true, Type:1, Prefix:"-"}
+	// parser.OptionItem{Name:"d", Token:scanner.OptionToken{Idx:4, Prefix:"-", Name:"d"}, Value:"true", IsShort:true, Type:2, Prefix:"-"}
+	// parser.ArgumentItem{Token:scanner.ArgumentToken{Idx:5, Value:"input.txt"}, Value:"input.txt"}
 }

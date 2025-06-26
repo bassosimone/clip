@@ -46,16 +46,16 @@ func ExampleScanner_dig() {
 	}
 
 	// Output:
-	// scanner.ProgramNameToken{Index:0, Name:"program"}
-	// scanner.OptionToken{Index:1, Prefix:"-", Name:"v"}
-	// scanner.OptionToken{Index:2, Prefix:"+", Name:"trace"}
-	// scanner.OptionToken{Index:3, Prefix:"--", Name:"verbose"}
-	// scanner.OptionToken{Index:4, Prefix:"+", Name:"short=yes"}
-	// scanner.OptionToken{Index:5, Prefix:"-", Name:"f"}
-	// scanner.ArgumentToken{Index:6, Value:"config"}
-	// scanner.SeparatorToken{Index:7, Separator:"--"}
-	// scanner.ArgumentToken{Index:8, Value:"remaining"}
-	// scanner.OptionToken{Index:9, Prefix:"-", Name:"args"}
+	// scanner.ProgramNameToken{Idx:0, Name:"program"}
+	// scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}
+	// scanner.OptionToken{Idx:2, Prefix:"+", Name:"trace"}
+	// scanner.OptionToken{Idx:3, Prefix:"--", Name:"verbose"}
+	// scanner.OptionToken{Idx:4, Prefix:"+", Name:"short=yes"}
+	// scanner.OptionToken{Idx:5, Prefix:"-", Name:"f"}
+	// scanner.ArgumentToken{Idx:6, Value:"config"}
+	// scanner.SeparatorToken{Idx:7, Separator:"--"}
+	// scanner.ArgumentToken{Idx:8, Value:"remaining"}
+	// scanner.OptionToken{Idx:9, Prefix:"-", Name:"args"}
 }
 
 // ExampleScanner_gnu demonstrates GNU command-line parsing.
@@ -94,13 +94,13 @@ func ExampleScanner_gnu() {
 	}
 
 	// Output:
-	// scanner.ProgramNameToken{Index:0, Name:"program"}
-	// scanner.OptionToken{Index:1, Prefix:"-", Name:"v"}
-	// scanner.OptionToken{Index:2, Prefix:"--", Name:"file=config.txt"}
-	// scanner.OptionToken{Index:3, Prefix:"-", Name:"abc"}
-	// scanner.SeparatorToken{Index:4, Separator:"--"}
-	// scanner.OptionToken{Index:5, Prefix:"--", Name:"an-option"}
-	// scanner.ArgumentToken{Index:6, Value:"input.txt"}
+	// scanner.ProgramNameToken{Idx:0, Name:"program"}
+	// scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}
+	// scanner.OptionToken{Idx:2, Prefix:"--", Name:"file=config.txt"}
+	// scanner.OptionToken{Idx:3, Prefix:"-", Name:"abc"}
+	// scanner.SeparatorToken{Idx:4, Separator:"--"}
+	// scanner.OptionToken{Idx:5, Prefix:"--", Name:"an-option"}
+	// scanner.ArgumentToken{Idx:6, Value:"input.txt"}
 }
 
 // ExampleScanner_go demonstrates Go command-line parsing style.
@@ -137,14 +137,14 @@ func ExampleScanner_go() {
 	}
 
 	// Output:
-	// scanner.ProgramNameToken{Index:0, Name:"program"}
-	// scanner.OptionToken{Index:1, Prefix:"-", Name:"v"}
-	// scanner.OptionToken{Index:2, Prefix:"-", Name:"file=config.txt"}
-	// scanner.OptionToken{Index:3, Prefix:"-", Name:"verbose"}
-	// scanner.OptionToken{Index:4, Prefix:"-", Name:"debug"}
-	// scanner.ArgumentToken{Index:5, Value:"input.txt"}
-	// scanner.SeparatorToken{Index:6, Separator:"--"}
-	// scanner.ArgumentToken{Index:7, Value:"extra"}
+	// scanner.ProgramNameToken{Idx:0, Name:"program"}
+	// scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}
+	// scanner.OptionToken{Idx:2, Prefix:"-", Name:"file=config.txt"}
+	// scanner.OptionToken{Idx:3, Prefix:"-", Name:"verbose"}
+	// scanner.OptionToken{Idx:4, Prefix:"-", Name:"debug"}
+	// scanner.ArgumentToken{Idx:5, Value:"input.txt"}
+	// scanner.SeparatorToken{Idx:6, Separator:"--"}
+	// scanner.ArgumentToken{Idx:7, Value:"extra"}
 }
 
 // ExampleScanner_unix demonstrates traditional UNIX command-line parsing.
@@ -181,10 +181,10 @@ func ExampleScanner_unix() {
 	}
 
 	// Output:
-	// scanner.ProgramNameToken{Index:0, Name:"program"}
-	// scanner.OptionToken{Index:1, Prefix:"-", Name:"v"}
-	// scanner.OptionToken{Index:2, Prefix:"-", Name:"f"}
-	// scanner.ArgumentToken{Index:3, Value:"file.txt"}
-	// scanner.OptionToken{Index:4, Prefix:"-", Name:"abc"}
-	// scanner.ArgumentToken{Index:5, Value:"input.txt"}
+	// scanner.ProgramNameToken{Idx:0, Name:"program"}
+	// scanner.OptionToken{Idx:1, Prefix:"-", Name:"v"}
+	// scanner.OptionToken{Idx:2, Prefix:"-", Name:"f"}
+	// scanner.ArgumentToken{Idx:3, Value:"file.txt"}
+	// scanner.OptionToken{Idx:4, Prefix:"-", Name:"abc"}
+	// scanner.ArgumentToken{Idx:5, Value:"input.txt"}
 }

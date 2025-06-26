@@ -83,14 +83,17 @@ type Scanner struct {
 
 // Token is a token lexed by [*Scanner.Scan].
 type Token interface {
+	// Index returns the token index.
+	Index() int
+
 	// String returns the string representation of the token.
 	String() string
 }
 
 // OptionToken is a [Token] containing an option.
 type OptionToken struct {
-	// Index is the position in the original command line arguments.
-	Index int
+	// Idx is the position in the original command line arguments.
+	Idx int
 
 	// Prefix is the scanned prefix.
 	Prefix string
@@ -101,6 +104,11 @@ type OptionToken struct {
 
 var _ Token = OptionToken{}
 
+// Index implements [Token].
+func (tk OptionToken) Index() int {
+	return tk.Idx
+}
+
 // String implements [Token].
 func (tk OptionToken) String() string {
 	return tk.Prefix + tk.Name
@@ -108,14 +116,19 @@ func (tk OptionToken) String() string {
 
 // ArgumentToken is a [Token] containing a positional argument.
 type ArgumentToken struct {
-	// Index is the position in the original command line arguments.
-	Index int
+	// Idx is the position in the original command line arguments.
+	Idx int
 
 	// Value is the parsed value.
 	Value string
 }
 
 var _ Token = ArgumentToken{}
+
+// Index implements [Token].
+func (tk ArgumentToken) Index() int {
+	return tk.Idx
+}
 
 // String implements [Token].
 func (tk ArgumentToken) String() string {
@@ -124,14 +137,19 @@ func (tk ArgumentToken) String() string {
 
 // SeparatorToken is a [Token] containing the separator between options and arguments.
 type SeparatorToken struct {
-	// Index is the position in the original command line arguments.
-	Index int
+	// Idx is the position in the original command line arguments.
+	Idx int
 
 	// Separator is the parsed separator.
 	Separator string
 }
 
 var _ Token = SeparatorToken{}
+
+// Index implements [Token].
+func (tk SeparatorToken) Index() int {
+	return tk.Idx
+}
 
 // String implements [Token].
 func (tk SeparatorToken) String() string {
@@ -140,14 +158,19 @@ func (tk SeparatorToken) String() string {
 
 // ProgramNameToken is the program name [Token].
 type ProgramNameToken struct {
-	// Index is the position in the original command line arguments.
-	Index int
+	// Idx is the position in the original command line arguments.
+	Idx int
 
 	// Name is the program name.
 	Name string
 }
 
 var _ Token = ProgramNameToken{}
+
+// Index implements [Token].
+func (tk ProgramNameToken) Index() int {
+	return tk.Idx
+}
 
 // String implements [Token].
 func (tk ProgramNameToken) String() string {
@@ -175,7 +198,7 @@ func (sx *Scanner) Scan(argv []string) ([]Token, error) {
 	}
 
 	// Save the program name
-	tokens = append(tokens, ProgramNameToken{Index: 0, Name: argv[0]})
+	tokens = append(tokens, ProgramNameToken{Idx: 0, Name: argv[0]})
 	argv = argv[1:]
 
 	// Create sorted copy of prefixes (longest first)
@@ -199,7 +222,7 @@ Loop:
 		// Check for separators first
 		for _, sep := range sx.Separators {
 			if arg == sep {
-				tokens = append(tokens, SeparatorToken{Index: actual, Separator: arg})
+				tokens = append(tokens, SeparatorToken{Idx: actual, Separator: arg})
 				continue Loop
 			}
 		}
@@ -207,13 +230,13 @@ Loop:
 		// Then, check for (sorted) prefixes
 		for _, prefix := range prefixes {
 			if strings.HasPrefix(arg, prefix) {
-				tokens = append(tokens, OptionToken{Index: actual, Prefix: prefix, Name: arg[len(prefix):]})
+				tokens = append(tokens, OptionToken{Idx: actual, Prefix: prefix, Name: arg[len(prefix):]})
 				continue Loop
 			}
 		}
 
 		// Everything else is an argument
-		tokens = append(tokens, ArgumentToken{Index: actual, Value: arg})
+		tokens = append(tokens, ArgumentToken{Idx: actual, Value: arg})
 	}
 
 	return tokens, nil

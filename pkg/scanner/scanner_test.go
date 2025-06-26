@@ -5,6 +5,44 @@ package scanner
 
 import "testing"
 
+func TestTokenIndex(t *testing.T) {
+	tests := []struct {
+		name     string
+		token    Token
+		expected int
+	}{
+		{
+			name:     "ProgramNameToken",
+			token:    ProgramNameToken{Idx: 1},
+			expected: 1,
+		},
+		{
+			name:     "OptionToken",
+			token:    OptionToken{Idx: 1},
+			expected: 1,
+		},
+		{
+			name:     "ArgumentToken",
+			token:    ArgumentToken{Idx: 1},
+			expected: 1,
+		},
+		{
+			name:     "SeparatorToken",
+			token:    SeparatorToken{Idx: 1},
+			expected: 1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.token.Index()
+			if got != tt.expected {
+				t.Errorf("Token.Index() = %q, want %q", got, tt.expected)
+			}
+		})
+	}
+}
+
 func TestTokenString(t *testing.T) {
 	tests := []struct {
 		name     string

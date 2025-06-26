@@ -218,7 +218,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "v",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "v", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "v", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
@@ -226,7 +226,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "f",
 					Value:   "file.txt",
-					Token:   scanner.OptionToken{Index: 2, Name: "f", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 2, Name: "f", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeString,
 					Prefix:  "-",
@@ -249,7 +249,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "verbose",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 2, Name: "verbose", Prefix: "--"},
+					Token:   scanner.OptionToken{Idx: 2, Name: "verbose", Prefix: "--"},
 					IsShort: false,
 					Type:    OptionTypeBool,
 					Prefix:  "--",
@@ -257,14 +257,14 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "file",
 					Value:   "test.txt",
-					Token:   scanner.OptionToken{Index: 3, Name: "file=test.txt", Prefix: "--"},
+					Token:   scanner.OptionToken{Idx: 3, Name: "file=test.txt", Prefix: "--"},
 					IsShort: false,
 					Type:    OptionTypeString,
 					Prefix:  "--",
 				},
 				ArgumentItem{
 					Value: "target.txt",
-					Token: scanner.ArgumentToken{Index: 1, Value: "target.txt"},
+					Token: scanner.ArgumentToken{Idx: 1, Value: "target.txt"},
 				},
 			},
 		},
@@ -284,22 +284,22 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "v",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "v", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "v", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
 				},
 				SeparatorItem{
 					Separator: "--",
-					Token:     scanner.SeparatorToken{Index: 2, Separator: "--"},
+					Token:     scanner.SeparatorToken{Idx: 2, Separator: "--"},
 				},
 				ArgumentItem{
 					Value: "-v",
-					Token: scanner.OptionToken{Index: 3, Name: "v", Prefix: "-"},
+					Token: scanner.OptionToken{Idx: 3, Name: "v", Prefix: "-"},
 				},
 				ArgumentItem{
 					Value: "file.txt",
-					Token: scanner.ArgumentToken{Index: 4, Value: "file.txt"},
+					Token: scanner.ArgumentToken{Idx: 4, Value: "file.txt"},
 				},
 			},
 		},
@@ -319,18 +319,18 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "v",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "v", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "v", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
 				},
 				ArgumentItem{
 					Value: "file.txt",
-					Token: scanner.ArgumentToken{Index: 2, Value: "file.txt"},
+					Token: scanner.ArgumentToken{Idx: 2, Value: "file.txt"},
 				},
 				ArgumentItem{
 					Value: "-v",
-					Token: scanner.OptionToken{Index: 3, Name: "v", Prefix: "-"},
+					Token: scanner.OptionToken{Idx: 3, Name: "v", Prefix: "-"},
 				},
 			},
 		},
@@ -449,7 +449,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "a",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "abc", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "abc", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
@@ -457,7 +457,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "b",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "abc", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "abc", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
@@ -465,7 +465,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "c",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "abc", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "abc", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
@@ -488,7 +488,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "v",
 					Value:   "true",
-					Token:   scanner.OptionToken{Index: 1, Name: "vffile.txt", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "vffile.txt", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeBool,
 					Prefix:  "-",
@@ -496,7 +496,7 @@ func TestParserParse(t *testing.T) {
 				OptionItem{
 					Name:    "f",
 					Value:   "file.txt",
-					Token:   scanner.OptionToken{Index: 1, Name: "vffile.txt", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "vffile.txt", Prefix: "-"},
 					IsShort: true,
 					Type:    OptionTypeString,
 					Prefix:  "-",
@@ -599,7 +599,7 @@ func TestErrUnknownOptionContext(t *testing.T) {
 	var err error = ErrUnknownOptionContext{
 		OptionName: "help",
 		IsShort:    true,
-		Token:      scanner.OptionToken{Index: 1, Name: "help", Prefix: "-"},
+		Token:      scanner.OptionToken{Idx: 1, Name: "help", Prefix: "-"},
 	}
 
 	// Ensure that [errors.Is] continues to see this as [ErrUnknownOption]

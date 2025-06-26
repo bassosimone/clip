@@ -42,26 +42,26 @@ func TestLong(t *testing.T) {
 			want: []parser.CommandLineItem{
 				parser.ProgramNameItem{
 					Name:  "program",
-					Token: scanner.ProgramNameToken{Index: 0, Name: "program"},
+					Token: scanner.ProgramNameToken{Idx: 0, Name: "program"},
 				},
 				parser.OptionItem{
 					Name:    "file",
-					Token:   scanner.OptionToken{Index: 1, Name: "file=input.txt", Prefix: "--"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "file=input.txt", Prefix: "--"},
 					Value:   "input.txt",
 					IsShort: false,
 					Type:    parser.OptionTypeString,
 					Prefix:  "--",
 				},
 				parser.ArgumentItem{
-					Token: scanner.ArgumentToken{Index: 2, Value: "subcommand"},
+					Token: scanner.ArgumentToken{Idx: 2, Value: "subcommand"},
 					Value: "subcommand",
 				},
 				parser.ArgumentItem{
-					Token: scanner.OptionToken{Index: 3, Prefix: "-", Name: "v"},
+					Token: scanner.OptionToken{Idx: 3, Prefix: "-", Name: "v"},
 					Value: "-v",
 				},
 				parser.ArgumentItem{
-					Token: scanner.OptionToken{Index: 4, Prefix: "--", Name: "verbose"},
+					Token: scanner.OptionToken{Idx: 4, Prefix: "--", Name: "verbose"},
 					Value: "--verbose",
 				},
 			},
@@ -85,26 +85,26 @@ func TestLong(t *testing.T) {
 			want: []parser.CommandLineItem{
 				parser.ProgramNameItem{
 					Name:  "program",
-					Token: scanner.ProgramNameToken{Index: 0, Name: "program"},
+					Token: scanner.ProgramNameToken{Idx: 0, Name: "program"},
 				},
 				parser.OptionItem{
 					Name:    "file",
-					Token:   scanner.OptionToken{Index: 1, Name: "file=input.txt", Prefix: "--"},
+					Token:   scanner.OptionToken{Idx: 1, Name: "file=input.txt", Prefix: "--"},
 					Value:   "input.txt",
 					IsShort: false,
 					Type:    parser.OptionTypeString,
 					Prefix:  "--",
 				},
 				parser.ArgumentItem{
-					Token: scanner.ArgumentToken{Index: 2, Value: "subcommand"},
+					Token: scanner.ArgumentToken{Idx: 2, Value: "subcommand"},
 					Value: "subcommand",
 				},
 				parser.ArgumentItem{
-					Token: scanner.OptionToken{Index: 3, Prefix: "-", Name: "v"},
+					Token: scanner.OptionToken{Idx: 3, Prefix: "-", Name: "v"},
 					Value: "-v",
 				},
 				parser.ArgumentItem{
-					Token: scanner.OptionToken{Index: 4, Prefix: "--", Name: "verbose"},
+					Token: scanner.OptionToken{Idx: 4, Prefix: "--", Name: "verbose"},
 					Value: "--verbose",
 				},
 			},
@@ -128,11 +128,11 @@ func TestLong(t *testing.T) {
 			want: []parser.CommandLineItem{
 				parser.ProgramNameItem{
 					Name:  "program",
-					Token: scanner.ProgramNameToken{Index: 0, Name: "program"},
+					Token: scanner.ProgramNameToken{Idx: 0, Name: "program"},
 				},
 				parser.OptionItem{
 					Name:    "v",
-					Token:   scanner.OptionToken{Index: 2, Name: "v", Prefix: "-"},
+					Token:   scanner.OptionToken{Idx: 2, Name: "v", Prefix: "-"},
 					Value:   "true",
 					IsShort: true,
 					Type:    parser.OptionTypeBool,
@@ -140,7 +140,7 @@ func TestLong(t *testing.T) {
 				},
 				parser.OptionItem{
 					Name:    "file",
-					Token:   scanner.OptionToken{Index: 3, Name: "file=input.txt", Prefix: "--"},
+					Token:   scanner.OptionToken{Idx: 3, Name: "file=input.txt", Prefix: "--"},
 					Value:   "input.txt",
 					IsShort: false,
 					Type:    parser.OptionTypeString,
@@ -148,14 +148,14 @@ func TestLong(t *testing.T) {
 				},
 				parser.OptionItem{
 					Name:    "verbose",
-					Token:   scanner.OptionToken{Index: 4, Name: "verbose", Prefix: "--"},
+					Token:   scanner.OptionToken{Idx: 4, Name: "verbose", Prefix: "--"},
 					Value:   "true",
 					IsShort: false,
 					Type:    parser.OptionTypeBool,
 					Prefix:  "--",
 				},
 				parser.ArgumentItem{
-					Token: scanner.ArgumentToken{Index: 1, Value: "subcommand"},
+					Token: scanner.ArgumentToken{Idx: 1, Value: "subcommand"},
 					Value: "subcommand",
 				},
 			},
