@@ -628,6 +628,10 @@ func (px *Parser) getOptionValueFromNextToken(tokens []scanner.Token, rv []Comma
 	//
 	// Specifically, we don't want the program name or the separator
 	// or anything else to be a valid option value
+	//
+	// TODO(bassosimone): actually, this prevents `--output --` which
+	// is a valid invocation. By performing this check here, we basically
+	// prevent creating a file named `--`. Niche, but still...
 	switch tokens[0].(type) {
 	case scanner.PositionalArgumentToken:
 	case scanner.OptionToken:
