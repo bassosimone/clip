@@ -12,3 +12,22 @@ func True(condition bool, message string) {
 		panic(errors.New(message))
 	}
 }
+
+// True1 is like [True] but returns the given [T] on success.
+func True1[T any](value T, condition bool) T {
+	True(condition, "assertion failed")
+	return value
+}
+
+// NotError panics if the given error is not nil.
+func NotError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+// NotError1 is like [NotError] but returns the given [T] on success.
+func NotError1[T any](value T, err error) T {
+	NotError(err)
+	return value
+}
