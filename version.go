@@ -73,6 +73,9 @@ func (c *VersionCommand[T]) Run(ctx context.Context, args *CommandArgs[T]) error
 	clp.MinPositionalArgs = 0
 	clp.MaxPositionalArgs = 0
 
+	// Add the `-h, --help` flag.
+	clp.AutoHelp("help", 'h', "Show this help message and exit.")
+
 	// Parse the command line arguments.
 	if err := clp.Parse(args.Args); err != nil {
 		return err

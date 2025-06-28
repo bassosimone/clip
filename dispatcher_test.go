@@ -121,6 +121,24 @@ func TestDispatch(t *testing.T) {
 			},
 
 			{
+				name:           "We obtain the help of the version subcommand using --help",
+				skipTest:       false,
+				args:           []string{"version", "--help"},
+				cmdReturnError: nil,
+				expectRunCmd:   false,
+				expectError:    nflag.ErrHelp,
+			},
+
+			{
+				name:           "We obtain the help of the version subcommand using help",
+				skipTest:       false,
+				args:           []string{"help", "version"},
+				cmdReturnError: nil,
+				expectRunCmd:   false,
+				expectError:    nflag.ErrHelp,
+			},
+
+			{
 				name:           "We invoke with help without arguments",
 				skipTest:       false,
 				args:           []string{"help"},
