@@ -69,9 +69,14 @@ import (
 // Create a subcommand working a bit like tar
 var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "Archiving utility.",
-	HelpFlagValue:        "--help",
+
+	// The parent needs to know how to get the help for this leaf command
+	// so that `tool help tar` internally becomes `tool tar --help`.
+	HelpFlagValue: "--help",
+
 	RunFunc: func(
 		ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
+
 		// Create command line parser
 		fset := nflag.NewFlagSet(args.CommandName, nflag.ExitOnError)
 		fset.Description = args.Command.BriefDescription()
@@ -79,14 +84,23 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 		fset.MinPositionalArgs = 1
 		fset.MaxPositionalArgs = math.MaxInt
 
-		// Add the options
+		// Add -c, --create flag
 		cflag := fset.Bool("create", 'c', false, "create a new archive")
+
+		// Add the -f, --file <argument> flag
 		fflag := fset.String("file", 'f', "", "archive file name")
-		fset.AutoHelp("help", 'h', "Print this help message and exit.") // automatic -h, --help
+
+		// Add -h, --help flag, which the FlagSet will handle automatically
+		fset.AutoHelp("help", 'h', "Print this help message and exit.")
+
+		// Add -v, --verbose flag
 		vflag := fset.Bool("verbose", 'v', false, "verbose mode")
+
+		// Add -z, --gzip flag
 		zflag := fset.Bool("gzip", 'z', false, "gzip compression")
 
-		// Parse command line arguments
+		// Parse command line arguments and assert on error, which should
+		// not happen since we're using nflag.ExitOnError
 		assert.NotError(fset.Parse(args.Args))
 
 		// ...
@@ -106,12 +120,36 @@ var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 // Create a dispatcher handling control over either tar or gzip
 var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "UNIX command-line tools.",
+
+	// These are to subcommands to dispatch to, indexed by name
 	Commands: map[string]clip.Command[*clip.StdlibExecEnv]{
 		"gzip": gzipSubcommand,
 		"tar":  tarSubcommand,
 	},
-	ErrorHandling:             nflag.ExitOnError,
-	Version:                   toolVersion,
+
+	// This flag means that the dispatcher calls Exit on error
+	ErrorHandling: nflag.ExitOnError,
+
+	// Setting this field enables the `--version` flag.
+	Version: toolVersion,
+
+	// Tell the dispatcher about the option prefixes we're using in the
+	// whole application (we're using GNU conventions). This allows it to
+	// reorder command line arguments and options in a way that this:
+	//
+	//	tool -czf archive.tar.gz tar file1.txt file2.txt
+	//
+	// is parsed and interpreted as:
+	//
+	//	tool tar -czf archive.tar.gz file1.txt file2.txt
+	//
+	// We need to know the option prefixes to know which tokens are
+	// options and which, instead, are positional arguments.
+	//
+	// The separator between options and positional arguments is
+	// `--`, which is the value used by GNU getopt. When we encounter
+	// this separator, we stop processing options and treat all
+	// subsequent tokens as positional arguments.
 	OptionPrefixes:            []string{"-", "--"},
 	OptionsArgumentsSeparator: "--",
 }
