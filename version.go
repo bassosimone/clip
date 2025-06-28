@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bassosimone/clip/pkg/flag"
+	"github.com/bassosimone/clip/pkg/nflag"
 )
 
 // VersionCommand implements the version command.
@@ -22,7 +22,7 @@ type VersionCommand[T ExecEnv] struct {
 	// ErrorHandling is the optional error handling strategy.
 	//
 	// When unset, we use [ContinueOnError].
-	ErrorHandling ErrorHandling
+	ErrorHandling nflag.ErrorHandling
 
 	// HelpFlagValue is the optional help flag. When unset, we use "--help".
 	HelpFlagValue string
@@ -64,15 +64,17 @@ func (c *VersionCommand[T]) PrintVersion(env T) error {
 // Run implements [Command].
 func (c *VersionCommand[T]) Run(ctx context.Context, args *CommandArgs[T]) error {
 	// Create empty command line parser.
-	clp := flag.NewFlagSet(args.CommandName, c.ErrorHandling)
-	clp.SetDescription(args.Command.BriefDescription())
-	clp.SetArgsDocs("")
+	clp := nflag.NewFlagSet(args.CommandName, c.ErrorHandling)
+	clp.Description = args.Command.BriefDescription()
+	clp.PositionalArgumentsUsage = "" // do not print a name for positional arguments
+
+	// Explicitly set positional arguments to 0 for clarity
+	// even though this is already the default.
+	clp.MinPositionalArgs = 0
+	clp.MaxPositionalArgs = 0
 
 	// Parse the command line arguments.
 	if err := clp.Parse(args.Args); err != nil {
-		return err
-	}
-	if err := clp.PositionalArgsEqualCheck(0); err != nil {
 		return err
 	}
 

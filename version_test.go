@@ -8,8 +8,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/bassosimone/clip/pkg/flag"
-	"github.com/bassosimone/clip/pkg/parser"
+	"github.com/bassosimone/clip/pkg/nparser"
 )
 
 func TestVersionCommand(t *testing.T) {
@@ -52,35 +51,42 @@ func TestVersionCommand(t *testing.T) {
 	t.Run("Run with unexpected flags", func(t *testing.T) {
 		vc := &VersionCommand[*StdlibExecEnv]{}
 		args := &CommandArgs[*StdlibExecEnv]{
-			Args:    []string{"--unexpected"},
-			Command: vc,
-			Env:     NewStdlibExecEnv(),
+			Args:        []string{"--unexpected"},
+			Command:     vc,
+			CommandName: "version",
+			Env:         NewStdlibExecEnv(),
 		}
 		err := vc.Run(context.Background(), args)
-		if !errors.Is(err, parser.ErrUnknownOption) {
-			t.Fatalf("Run() = %v, want %v", err, parser.ErrUnknownOption)
+		var unknownOption nparser.ErrUnknownOption
+		if !errors.As(err, &unknownOption) {
+			t.Fatalf("Run() = %v, want %v", err, unknownOption)
 		}
 	})
 
 	t.Run("Run with unexpected positional arguments", func(t *testing.T) {
 		vc := &VersionCommand[*StdlibExecEnv]{}
 		args := &CommandArgs[*StdlibExecEnv]{
-			Args:    []string{"unexpected"},
-			Command: vc,
-			Env:     NewStdlibExecEnv(),
+			Args:        []string{"unexpected"},
+			Command:     vc,
+			CommandName: "version",
+			Env:         NewStdlibExecEnv(),
 		}
 		err := vc.Run(context.Background(), args)
-		if !errors.Is(err, flag.ErrUnexpectedNumberOfPositionalArgs) {
-			t.Fatalf("Run() = %v, want %v", err, parser.ErrUnknownOption)
+		var unknownPositional nparser.ErrTooManyPositionalArguments
+		if !errors.As(err, &unknownPositional) {
+			t.Fatalf("Run() = %v, want %v", err, unknownPositional)
 		}
 	})
 
 	t.Run("Run with no arguments and no flags", func(t *testing.T) {
-		vc := &VersionCommand[*StdlibExecEnv]{}
+		vc := &VersionCommand[*StdlibExecEnv]{
+			Version: "0.1.0",
+		}
 		args := &CommandArgs[*StdlibExecEnv]{
-			Args:    []string{},
-			Command: vc,
-			Env:     NewStdlibExecEnv(),
+			Args:        []string{},
+			Command:     vc,
+			CommandName: "version",
+			Env:         NewStdlibExecEnv(),
 		}
 		err := vc.Run(context.Background(), args)
 		if err != nil {

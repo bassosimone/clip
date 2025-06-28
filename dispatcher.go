@@ -12,7 +12,10 @@ import (
 	"strings"
 
 	"github.com/bassosimone/clip/pkg/assert"
+	"github.com/bassosimone/clip/pkg/nflag"
+	"github.com/bassosimone/clip/pkg/scanner"
 	"github.com/bassosimone/clip/pkg/textwrap"
+	"github.com/kballard/go-shellquote"
 )
 
 // DispatcherCommand is a [Command] dispatching to subcommands.
@@ -37,7 +40,7 @@ type DispatcherCommand[T ExecEnv] struct {
 	//
 	// Added in v0.3.0. When empty the behavior is [ContinueOnError], which
 	// is exactly cosistent with the v0.2.0 behavior.
-	ErrorHandling ErrorHandling
+	ErrorHandling nflag.ErrorHandling
 
 	// Version is the program version string. If this field is set, the
 	// dispatcher will implement the following algorithm:
@@ -52,6 +55,24 @@ type DispatcherCommand[T ExecEnv] struct {
 	//
 	// Added in v0.4.0. When empty, we don't handle `--version` or `version.
 	Version string
+
+	// OptionPrefixes contains the option prefixes used when trying
+	// to find a matching subcommand when the command line is not
+	// correctly ordered with the subcommand being the first entry.
+	//
+	// If empty, we do not attempt to reorder the command line.
+	//
+	// New in v0.6.0. Before, we always tried to reorder, but that
+	// was flawed since we did not know the prefixes.
+	OptionPrefixes []string
+
+	// OptionsArgumentsSeparator optionally specifies the separator
+	// used to separate options from positional arguments.
+	//
+	// When empty, there is no separator.
+	//
+	// New in v0.6.0 and tied to OptionPrefixes.
+	OptionsArgumentsSeparator string
 }
 
 var _ Command[*StdlibExecEnv] = (*DispatcherCommand[*StdlibExecEnv])(nil)
@@ -86,14 +107,12 @@ func (dx *DispatcherCommand[T]) maybeHandleError(env T, err error) error {
 	case err == nil:
 		return nil
 
-	case dx.ErrorHandling == ContinueOnError:
+	case dx.ErrorHandling == nflag.ContinueOnError:
 		return err
 
-	case dx.ErrorHandling == ExitOnError:
+	case dx.ErrorHandling == nflag.ExitOnError:
 		switch {
 		case errors.Is(err, ErrNoSuchCommand):
-			env.Exit(2)
-		case errors.Is(err, ErrAmbiguousCommandLine):
 			env.Exit(2)
 		default:
 			env.Exit(1)
@@ -107,80 +126,100 @@ func (dx *DispatcherCommand[T]) maybeHandleError(env T, err error) error {
 
 // --- dispatching code ---
 
-// ErrAmbiguousCommandLine is returned when the dispatcher encounters an ambiguous command line.
-var ErrAmbiguousCommandLine = errors.New("ambiguous command line")
-
 func (dx *DispatcherCommand[T]) dispatch(ctx context.Context, args *CommandArgs[T]) error {
 	// Handle the case where there are no arguments
 	if len(args.Args) <= 0 {
 		return dx.printUsage(args.Env, args.CommandName)
 	}
 
-	// Obtain subcommand name and arguments
-	subName, subArgs := args.Args[0], args.Args[1:]
-
-	// Attempt an exact match with subName
-	if cmd := dx.Commands[subName]; cmd != nil {
-		return dx.run(ctx, cmd, args, subName, subArgs)
+	// Unconditionally scan the command line. Note that, with empty separators
+	// and prefixes, the scanner will return all positional arguments.
+	//
+	// Also, the scanner only fails if the program name is missing, which is
+	// something we already checked for above, hence the assert.
+	//
+	// Also, the scanner returns the program name as the first token, we
+	// know that, so we can assert again for the type and then skip it.
+	sx := &scanner.Scanner{Prefixes: dx.OptionPrefixes, Separators: []string{}}
+	if dx.OptionsArgumentsSeparator != "" {
+		sx.Separators = append(sx.Separators, dx.OptionsArgumentsSeparator)
 	}
+	argv := append([]string{args.CommandName}, args.Args...)
+	tokens := assert.NotError1(sx.Scan(argv))
+	_, ok := tokens[0].(scanner.ProgramNameToken)
+	assert.True(ok, "the first token must be a ProgramNameToken")
+	tokens = tokens[1:]
 
-	// Handle special cases: --help, -h, help, --version, and version
-	switch {
-	case subName == "--help" || subName == "-h":
-		return dx.printUsage(args.Env, args.CommandName)
-
-	case subName == "help":
-		return dx.maybeForwardHelp(ctx, args, subArgs)
-
-	case dx.Version != "" && subName == "--version":
-		return dx.handleVersionFlag(args.Env)
-
-	case dx.Version != "" && subName == "version":
-		return dx.handleVersionCommand(ctx, args, subArgs)
-	}
-
-	// Find all matching subcommands inside the subArgs
-	var indexes []int
-	for idx, arg := range subArgs {
-		if _, found := dx.Commands[arg]; found {
-			indexes = append(indexes, idx)
+	// Now, scan the tokens to find the subcommand name.
+	commandIdx := -1
+scannerLoop:
+	for idx := 0; idx < len(tokens); idx++ {
+		switch tokens[idx].(type) {
+		case scanner.PositionalArgumentToken:
+			commandIdx = idx // first positional argument stops the search
+			break scannerLoop
+		case scanner.OptionsArgumentsSeparatorToken:
+			break scannerLoop
 		}
 	}
 
-	// If there is a single match, follow the rule of repair and
-	// silently reorder the command line to execute it.
-	//
-	// Here's an example to fully understand what is going on:
-	//
-	// 	subName = "IN"
-	// 	subArgs = ["A", "+short", "dig", "example.com"]
-	//
-	// In such a case we want to modify the overall state to:
-	//
-	// 	subName = "dig"
-	// 	subArgs = ["IN", "A", "+short", "example.com"]
-	if len(indexes) == 1 {
-		rewritten := []string{subName}
-		subName = subArgs[indexes[0]]
-		for idx := 0; idx < len(subArgs); idx++ {
-			if idx != indexes[0] {
-				rewritten = append(rewritten, subArgs[idx])
+	// With a subcommand name, we're in business.
+	if commandIdx >= 0 {
+		// Reorder the command line arguments to move the subcommand at the beginning
+		var subArgs []string
+		subName := tokens[commandIdx].String()
+		for idx := 0; idx < len(tokens); idx++ {
+			if idx != commandIdx {
+				subArgs = append(subArgs, tokens[idx].String())
 			}
 		}
-		cmd := dx.Commands[subName]
-		assert.True(cmd != nil, "expected command to be not nil here")
-		subArgs = rewritten
-		return dx.run(ctx, cmd, args, subName, subArgs)
+
+		// Attempt an exact match with subName
+		if cmd := dx.Commands[subName]; cmd != nil {
+			return dx.run(ctx, cmd, args, subName, subArgs)
+		}
+
+		// Special case: synthesize `help` and `version` commands
+		// when they have not been explicitly defined
+		switch {
+		case subName == "help":
+			return dx.maybeForwardHelp(ctx, args, subArgs)
+
+		case dx.Version != "" && subName == "version":
+			return dx.handleVersionCommand(ctx, args, subArgs)
+		}
+
+		// Otherwise mention that the given command was not found
+		return dx.errorNoSuchCommand(args.Env, args.CommandName, subName)
 	}
 
-	// Let the user know that the command line is ambiguous
-	if len(indexes) > 1 {
-		fmt.Fprintln(args.Env.Stderr(), dx.formatAmbiguousCommandLine(args.CommandName, subArgs, indexes))
-		return ErrAmbiguousCommandLine
+	// If we have tokens, attempt to find a `--help` or `--version` or `-h`
+	// flag (or equivalents considering the configured prefixes).
+	for idx := 0; idx < len(tokens); idx++ {
+		switch tok := tokens[idx].(type) {
+		case scanner.OptionToken:
+			switch {
+			case tok.Name == "help" || tok.Name == "h":
+				return dx.printUsage(args.Env, args.CommandName)
+			case dx.Version != "" && tok.Name == "version":
+				return dx.handleVersionFlag(args.Env)
+			}
+		}
 	}
 
-	// Otherwise mention that the given command was not found
-	return dx.errorNoSuchCommand(args.Env, args.CommandName, subName)
+	return dx.errorInvalidFlags(args.Env, args.CommandName, args.Args)
+}
+
+// ErrInvalidFlags is returned when the command line contains invalid
+// flags and no subcommand is specified.
+var ErrInvalidFlags = errors.New("invalid flags")
+
+func (dx *DispatcherCommand[T]) errorInvalidFlags(env T, commandName string, args []string) error {
+	var sb strings.Builder
+	fmt.Fprintf(&sb, "%s: invalid flags: %s\n", commandName, shellquote.Join(args...))
+	fmt.Fprintf(&sb, "Try '%s --help' for more information.\n", commandName)
+	fmt.Fprintln(env.Stderr(), strings.TrimSpace(sb.String()))
+	return ErrInvalidFlags
 }
 
 func (dx *DispatcherCommand[T]) printUsage(env T, commandName string) error {
@@ -257,29 +296,6 @@ func (dx *DispatcherCommand[T]) errorNoSuchCommand(env T, commandName, subcomman
 }
 
 // --- formatting code ---
-
-func (dx *DispatcherCommand[T]) formatAmbiguousCommandLine(commandName string, subArgs []string, indexes []int) string {
-	// List the ambiguous subcommands
-	var sb strings.Builder
-	fmt.Fprintf(
-		&sb,
-		"%s: fatal: ambiguous command line: found multiple subcommands (%s)",
-		commandName,
-		strings.Join(func() []string {
-			out := make([]string, len(indexes))
-			for i, idx := range indexes {
-				out[i] = subArgs[idx]
-			}
-			return out
-		}(), ", "))
-
-	// Mention how to obtain further help
-	fmt.Fprintf(&sb, "\n")
-	fmt.Fprintf(&sb, "Try '%s help' for more information on '%s'.\n", commandName, commandName)
-
-	// Return a trimmed string to avoid messing up with newlines
-	return strings.TrimSpace(sb.String())
-}
 
 func (dx *DispatcherCommand[T]) formatUsage(commandName string) string {
 	// If the user configured the usage string, use it

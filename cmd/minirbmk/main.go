@@ -5,13 +5,13 @@
 // command line tool using nested subcommands.
 package main
 
-import "github.com/bassosimone/clip"
+import (
+	"github.com/bassosimone/clip"
+	"github.com/bassosimone/clip/pkg/nflag"
+)
 
 // configurable for testing
-var (
-	// env is the execution environment to use
-	env = clip.NewStdlibExecEnv()
-)
+var env = clip.NewStdlibExecEnv()
 
 func main() {
 	// Define the overall suite version
@@ -27,6 +27,7 @@ func main() {
 	digCmd := &clip.LeafCommand[*clip.StdlibExecEnv]{
 		BriefDescriptionText: "Utility to query the DNS.",
 		RunFunc:              digMain,
+		HelpFlagValue:        "-h", // custom and dig specific
 	}
 
 	// Create the 'git clone' leaf command
@@ -48,8 +49,10 @@ func main() {
 			"clone": gitCloneCmd,
 			"init":  gitInitCmd,
 		},
-		ErrorHandling: clip.ExitOnError,
-		Version:       version,
+		ErrorHandling:             nflag.ExitOnError,
+		Version:                   version,
+		OptionPrefixes:            []string{"-", "--"},
+		OptionsArgumentsSeparator: "--",
 	}
 
 	// Create the root command
@@ -68,10 +71,18 @@ func main() {
 			},
 
 			// Cause the dispatcher to call [os.Exit] on error
-			ErrorHandling: clip.ExitOnError,
+			ErrorHandling: nflag.ExitOnError,
 
 			// Automatically define --version and the version subcommand
 			Version: version,
+
+			// Set the prefixes used for options throughout the command line interface.
+			//
+			// We also need to add `+` because the `dig` command uses it.
+			OptionPrefixes: []string{"-", "--", "+"},
+
+			// Set the separator used between options and arguments
+			OptionsArgumentsSeparator: "--",
 		},
 
 		// Automatic signals handling: SIGINT and SIGTERM will

@@ -46,7 +46,7 @@ func Test_main(t *testing.T) {
 		},
 
 		{
-			argv:   []string{"minirbmk", "dig", "--help"},
+			argv:   []string{"minirbmk", "dig", "-h"},
 			expect: 0,
 		},
 

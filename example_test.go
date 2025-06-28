@@ -9,6 +9,8 @@ import (
 	"math"
 
 	"github.com/bassosimone/clip"
+	"github.com/bassosimone/clip/pkg/assert"
+	"github.com/bassosimone/clip/pkg/nflag"
 )
 
 var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
@@ -16,18 +18,20 @@ var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	HelpFlagValue:        "--help",
 	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 		// Create command line parser
-		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-		fset.SetDescription(args.Command.BriefDescription())
-		fset.SetArgsDocs("file ...")
+		fset := nflag.NewFlagSet(args.CommandName, nflag.ExitOnError)
+		fset.Description = args.Command.BriefDescription()
+		fset.PositionalArgumentsUsage = "file ..."
+		fset.MinPositionalArgs = 1
+		fset.MaxPositionalArgs = math.MaxInt
+
+		// Add the --help flag
+		fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 		// Add the `-v` option
 		vflag := fset.Bool("verbose", 'v', "verbose mode")
 
 		// Parse command line arguments
-		clip.Must(args.Env, fset.Parse(args.Args))
-
-		// Validate number of positional arguments
-		clip.Must(args.Env, fset.PositionalArgsRangeCheck(1, math.MaxInt))
+		assert.NotError(fset.Parse(args.Args))
 
 		// Print the received flags and arguments
 		fmt.Fprintf(args.Env.Stdout(), "Flags: -v=%v\n", *vflag)
@@ -41,15 +45,20 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	HelpFlagValue:        "--help",
 	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 		// Create command line parser
-		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-		fset.SetDescription(args.Command.BriefDescription())
-		fset.SetArgsDocs("file ...")
+		fset := nflag.NewFlagSet(args.CommandName, nflag.ExitOnError)
+		fset.Description = args.Command.BriefDescription()
+		fset.PositionalArgumentsUsage = "file ..."
+		fset.MinPositionalArgs = 1
+		fset.MaxPositionalArgs = math.MaxInt
 
 		// Add the `-c` option
 		cflag := fset.Bool("create", 'c', "create a new archive")
 
 		// Add the `-f` option
-		fflag := fset.String("file", 'f', "", "archive file name")
+		fflag := fset.String("file", 'f', "archive file name")
+
+		// Add the --help flag
+		fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 		// Add the `-v` option
 		vflag := fset.Bool("verbose", 'v', "verbose mode")
@@ -58,10 +67,7 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 		zflag := fset.Bool("gzip", 'z', "gzip compression")
 
 		// Parse command line arguments
-		clip.Must(args.Env, fset.Parse(args.Args))
-
-		// Validate number of positional arguments
-		clip.Must(args.Env, fset.PositionalArgsRangeCheck(1, math.MaxInt))
+		assert.NotError(fset.Parse(args.Args))
 
 		// Print the received flags and arguments
 		fmt.Fprintf(args.Env.Stdout(), "Flags: -c=%v, -f=%v, -v=%v, -z=%v\n", *cflag, *fflag, *vflag, *zflag)
@@ -70,26 +76,7 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	},
 }
 
-var versionSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
-	BriefDescriptionText: "Print the version of the program.",
-	HelpFlagValue:        "--help",
-	RunFunc: func(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
-		// Create command line parser
-		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-		fset.SetDescription("Print the version of the program.")
-		fset.SetArgsDocs("")
-
-		// Parse command line arguments
-		clip.Must(args.Env, fset.Parse(args.Args))
-
-		// Validate number of positional arguments
-		clip.Must(args.Env, fset.PositionalArgsEqualCheck(0))
-
-		// Print the received flags and arguments
-		fmt.Fprintf(args.Env.Stdout(), "0.1.0\n")
-		return nil
-	},
-}
+const toolVersion = "0.1.0"
 
 var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "UNIX command-line tools.",
@@ -97,16 +84,21 @@ var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 		"gzip": gzipSubcommand,
 		"tar":  tarSubcommand,
 	},
-	ErrorHandling: clip.ExitOnError,
+	ErrorHandling:             nflag.ExitOnError,
+	Version:                   toolVersion,
+	OptionPrefixes:            []string{"-", "--"},
+	OptionsArgumentsSeparator: "--",
 }
 
 var toplevelDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "Swiss Army Knife command-line tools.",
 	Commands: map[string]clip.Command[*clip.StdlibExecEnv]{
-		"tools":   toolsDispatcher,
-		"version": versionSubcommand,
+		"tools": toolsDispatcher,
 	},
-	ErrorHandling: clip.ExitOnError,
+	ErrorHandling:             nflag.ExitOnError,
+	Version:                   toolVersion,
+	OptionPrefixes:            []string{"-", "--"},
+	OptionsArgumentsSeparator: "--",
 }
 
 // rootCommand is the root command of the application.

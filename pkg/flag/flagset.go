@@ -10,22 +10,23 @@ import (
 	"os"
 
 	"github.com/bassosimone/clip/pkg/assert"
+	"github.com/bassosimone/clip/pkg/nflag"
 	"github.com/bassosimone/clip/pkg/parser"
 )
 
 // ErrorHandling defines the behavior of the flag set when an error occurs.
-type ErrorHandling int
+type ErrorHandling = nflag.ErrorHandling
 
 // These flags control how we handle flag parsing errors.
 const (
 	// ContinueOnError causes the flag set to continue parsing after an error occurs.
-	ContinueOnError = ErrorHandling(iota)
+	ContinueOnError = nflag.ContinueOnError
 
 	// ExitOnError causes the flag set to call Exit(2) after an error occurs.
-	ExitOnError
+	ExitOnError = nflag.ExitOnError
 
 	// PanicOnError causes the flag set to panic after an error occurs.
-	PanicOnError
+	PanicOnError = nflag.PanicOnError
 )
 
 // FlagSet represents a set of command-line flags.

@@ -8,31 +8,35 @@ import (
 	"fmt"
 
 	"github.com/bassosimone/clip"
+	"github.com/bassosimone/clip/pkg/assert"
+	"github.com/bassosimone/clip/pkg/nflag"
 )
 
 // gitInitMain is the main entry point for the 'git init' leaf command.
 func gitInitMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 	// Create flag set
-	fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-	fset.SetDescription(args.Command.BriefDescription())
-	fset.SetArgsDocs("[directory]")
+	fset := nflag.NewFlagSet(args.CommandName, nflag.ExitOnError)
+	fset.Description = args.Command.BriefDescription()
+	fset.PositionalArgumentsUsage = "[directory]"
+	fset.MinPositionalArgs = 0
+	fset.MaxPositionalArgs = 1
 
 	// Not strictly needed in production but necessary for testing
-	fset.SetExitFunc(args.Env.Exit)
-	fset.SetStderr(args.Env.Stderr())
-	fset.SetStdout(args.Env.Stdout())
+	fset.Exit = args.Env.Exit
+	fset.Stderr = args.Env.Stderr()
+	fset.Stdout = args.Env.Stdout()
 
 	// Add the --branch, -b flag
-	branchFlag := fset.String("branch", 'b', "", "Branch name")
+	branchFlag := fset.String("branch", 'b', "Branch name")
+
+	// Add the --help flag
+	fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 	// Add the -q, --quiet flag
 	quietFlag := fset.Bool("quiet", 'q', "Run in quiet mode.")
 
-	// Parse the flags; note that ExitOnError is set, so it will exit on error
-	_ = fset.Parse(args.Args)
-
-	// Parse the positional arguments; note that ExitOnError is set, so it will exit on error
-	_ = fset.PositionalArgsRangeCheck(0, 1)
+	// Parse the flags
+	assert.NotError(fset.Parse(args.Args))
 
 	// Print the parsed flags
 	fmt.Fprintf(args.Env.Stdout(), "branch: %s\n", *branchFlag)
@@ -46,26 +50,28 @@ func gitInitMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv
 // gitCloneMain is the main entry point for the 'git clone' leaf command.
 func gitCloneMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 	// Create flag set
-	fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-	fset.SetDescription(args.Command.BriefDescription())
-	fset.SetArgsDocs("<repository> [directory]")
+	fset := nflag.NewFlagSet(args.CommandName, nflag.ExitOnError)
+	fset.Description = args.Command.BriefDescription()
+	fset.PositionalArgumentsUsage = "<repository> [directory]"
+	fset.MinPositionalArgs = 1
+	fset.MaxPositionalArgs = 2
 
 	// Not strictly needed in production but necessary for testing
-	fset.SetExitFunc(args.Env.Exit)
-	fset.SetStderr(args.Env.Stderr())
-	fset.SetStdout(args.Env.Stdout())
+	fset.Exit = args.Env.Exit
+	fset.Stderr = args.Env.Stderr()
+	fset.Stdout = args.Env.Stdout()
 
 	// Add the -b flag
-	branchFlag := fset.String("branch", 'b', "", "Branch name")
+	branchFlag := fset.String("branch", 'b', "Branch name")
+
+	// Add the --help flag
+	fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 	// Add the -q, --quiet flag
 	quietFlag := fset.Bool("quiet", 'q', "Run in quiet mode.")
 
-	// Parse the flags; note that ExitOnError is set, so it will exit on error
-	_ = fset.Parse(args.Args)
-
-	// Parse the positional arguments; note that ExitOnError is set, so it will exit on error
-	_ = fset.PositionalArgsRangeCheck(1, 2)
+	// Parse the flags
+	assert.NotError(fset.Parse(args.Args))
 
 	// Print the parsed flags
 	fmt.Fprintf(args.Env.Stdout(), "branch: %s\n", *branchFlag)

@@ -49,7 +49,9 @@ flag parsing style.
 
 ## Examples
 
-The following example shows how to use the toplevel [clip](.) package:
+The following example shows how to use the toplevel [clip](.) package to
+create subcommands along with [pkg/nflag](./pkg/nflag) to parse flags and
+[pkg/assert](./pkg/assert) to write runtime assertions:
 
 ```Go
 package main
@@ -60,6 +62,8 @@ import (
 	"math"
 
 	"github.com/bassosimone/clip"
+	"github.com/bassosimone/pkg/assert"
+	"github.com/bassosimone/pkg/nflag"
 )
 
 // Create a subcommand working a bit like tar
@@ -69,21 +73,21 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	RunFunc: func(
 		ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 		// Create command line parser
-		fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-		fset.SetDescription(args.Command.BriefDescription())
-		fset.SetArgsDocs("file ...")
+		fset := nflag.NewFlagSet(args.CommandName, nflag.ExitOnError)
+		fset.Description = args.Command.BriefDescription()
+		fset.PositionalArgumentsUsage = "file ..."
+		fset.MinPositionalArgs = 1
+		fset.MaxPositionalArgs = math.MaxInt
 
 		// Add the options
 		cflag := fset.Bool("create", 'c', false, "create a new archive")
 		fflag := fset.String("file", 'f', "", "archive file name")
+		fset.AutoHelp("help", 'h', "Print this help message and exit.") // automatic -h, --help
 		vflag := fset.Bool("verbose", 'v', false, "verbose mode")
 		zflag := fset.Bool("gzip", 'z', false, "gzip compression")
 
 		// Parse command line arguments
-		clip.Must(args.Env, fset.Parse(args.Args))
-
-		// Validate number of positional arguments
-		clip.Must(args.Env, fset.PositionalArgsRangeCheck(1, math.MaxInt))
+		assert.NotError(fset.Parse(args.Args))
 
 		// ...
 	},
@@ -106,7 +110,10 @@ var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 		"gzip": gzipSubcommand,
 		"tar":  tarSubcommand,
 	},
-	ErrorHandling: clip.ExitOnError,
+	ErrorHandling:             nflag.ExitOnError,
+	Version:                   toolVersion,
+	OptionPrefixes:            []string{"-", "--"},
+	OptionsArgumentsSeparator: "--",
 }
 
 // Create a root command to wrap it all
@@ -128,9 +135,9 @@ The following table lists all the available, testable examples:
 | Package      | Example(s)                                                                                  |
 |--------------|--------------------------------------------------------------------------------------------|
 | [clip](.)         | [example_test.go](example_test.go)                                                         |
-| [pkg/flag](./pkg/flag)     | [pkg/flag/example_test.go](pkg/flag/example_test.go)                                       |
+| [pkg/nflag](./pkg/nflag)     | [pkg/nflag/example_test.go](pkg/nflag/example_test.go)                                       |
 | [pkg/getopt](./pkg/getopt)   | [pkg/getopt/example_test.go](pkg/getopt/example_test.go)                                   |
-| [pkg/parser](./pkg/parser)   | [pkg/parser/example_test.go](pkg/parser/example_test.go)                                   |
+| [pkg/nparser](./pkg/nparser)   | [pkg/nparser/example_test.go](pkg/nparser/example_test.go)                                   |
 | [pkg/scanner](./pkg/scanner)  | [pkg/scanner/example_test.go](pkg/scanner/example_test.go)                                 |
 
 The [cmd/minirbmk](./cmd/minirbmk) example shows how to integrate
@@ -147,36 +154,36 @@ flowchart TD
     assert[pkg/assert]
     clip
     getopt[pkg/getopt]
-    flag[pkg/flag]
-    parser[pkg/parser]
+    nflag[pkg/nflag]
+    nparser[pkg/nparser]
     scanner[pkg/scanner]
     textwrap[pkg/textwrap]
 
-    clip --> flag
+    clip --> nflag
     clip --> assert
     clip --> textwrap
-    getopt --> parser
-    flag --> parser
-    parser --> scanner
-    flag --> assert
+    getopt --> nparser
+    nflag --> nparser
+    nparser --> scanner
+    nflag --> assert
     getopt --> assert
-    parser --> assert
-    flag --> textwrap
+    nparser --> assert
+    nflag --> textwrap
 ```
 
 | Package                                                                 | Docs                                                                 | Description                                                      |
 |-------------------------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------|
 | [clip](https://github.com/bassosimone/clip)                             | [Docs](https://pkg.go.dev/github.com/bassosimone/clip)              | Top-level API integrating [./pkg/flag](./pkg/flag) with subcommands. |
-| [pkg/flag](https://github.com/bassosimone/clip/tree/main/pkg/flag)      | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/flag)     | Stdlib-inspired flag implementation (uses the parser).                  |
+| [pkg/nflag](https://github.com/bassosimone/clip/tree/main/pkg/nflag)      | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/nflag)     | Stdlib-inspired flag implementation (uses the parser).                  |
 | [pkg/getopt](https://github.com/bassosimone/clip/tree/main/pkg/getopt)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)   | GNU getopt compatible implementation (uses the parser).           |
-| [pkg/parser](https://github.com/bassosimone/clip/tree/main/pkg/parser)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/parser)   | Parser for CLI options (uses the scanner).                       |
+| [pkg/nparser](https://github.com/bassosimone/clip/tree/main/pkg/nparser)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/nparser)   | Parser for CLI options (uses the scanner).                       |
 | [pkg/scanner](https://github.com/bassosimone/clip/tree/main/pkg/scanner)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)  | Scanner for CLI options.                                         |
 | [pkg/textwrap](https://github.com/bassosimone/clip/tree/main/pkg/textwrap)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) | Utility code to wrap and indent text.                            |
 | [pkg/assert](https://github.com/bassosimone/clip/tree/main/pkg/assert)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/assert)   | Code to write runtime assertions that panic in case of failure.   |
 
 ## Documentation
 
-Read the package documentation at [pkg.go.dev/github.com/bassosimone/clip](https://pkg.go.dev/github.com/bassosimone/clip)
+Read the package documentation at [pkg.go.dev/github.com/bassosimone/clip](https://pkg.go.dev/github.com/bassosimone/clip).
 
 ## Minimum Supported Go Version
 
@@ -204,6 +211,9 @@ go test -race -count 1 -cover ./...
 
 - [github.com/google/go-cmp](https://pkg.go.dev/github.com/google/go-cmp)
 for improving the comparison of structs in unit tests.
+
+- [github.com/kballard/go-shellquote](https://pkg.go.dev/github.com/kballard/go-shellquote)
+for quoting command line arguments in error messages.
 
 ## License
 

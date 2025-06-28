@@ -20,74 +20,48 @@ See the package examples for more information.
 
 # RootCommand
 
-The [RootCommand] optionally allows to react to signals and otherwise
-dispatches the work to the [DispatcherCommand] or [LeafCommand]
+The [*RootCommand] optionally allows to react to signals and otherwise
+dispatches the work to the [*DispatcherCommand] or [*LeafCommand]
 contained within.
 
 # DispatcherCommand
 
-A [DispatcherCommand] dispatches the execution to subcommands by
+A [*DispatcherCommand] dispatches the execution to subcommands by
 inspecting the command-line arguments and finding a match to a known
-subcommand. Typically, the next command to execute is the first
-entry of the arguments slice. However, [DispatcherCommand] can also
-transparently handle the case where the command appears later on
-in the slice. This works as long as there is a single
-token in the arguments slice mapping to known subcommands. With more
-than one match we return [ErrAmbiguousCommandLine]. With no match,
-we return [ErrNoSuchCommand]. The [DispatcherCommand] automatically
-handles `--help`, `-h`, `help` and `help COMMAND` requests by
-printing its own help or dispatching to subcommands:
+subcommand. By default, [*DispatcherCommand] assumes that the
+command to execute is the first arguments slice entry.
 
- 1. `foo --help` and `foo -h` print the help message for `foo`.
+However, the [*DispatcherCommand] can also handle cases in which
+options and subcommands are interleaved, if you configure the
+prefixes used to recognize options. For example, if following the
+GNU conventions, those prefixes are `-` and `--`.
 
- 2. `foo help` also prints the help message for `foo`.
+Specifically, if we know the prefixes, we scan for the first
+non-option token and use it as the command to execute. If the
+there is no such command, but the token is "help" we automatically
+print the help message for the [*DispatcherCommand]. If the token
+is "version and you configured the version string, we print the
+version string. Otherwise, we return [ErrNoSuchCommand].
 
- 3. `foo help bar` prints the help message for the `bar` subcommand.
+When no command is specified and you configured the options
+prefixes, we also scan the command-line for a flag named `help`
+or `h` and print help in such a case. If you configured the
+version string, and we see a flag named `version`, we print it.
 
-There is no flag associated with the [DispatcherCommand]. All the
-flags are only associated with the subcommands. However, given that
-the command-line can be out of order, as mentioned above, the
-overall usage experience is smooth and forgiving. Yet, you need
-by convention to ensure command line consistency among tools. But, on
-the flip side, the resulting code is straightforward.
+Otherwise, we return [ErrInvalidFlags]. Apart from these
+special cases, there is no flag associated with a
+[*DispatcherCommand]. This is by design: we keep the [*DispatcherCommand]
+very cleanly separated from [*LeafCommand]. You will need to
+manually enforce a reasonably consistent convention for
+the command-line interface of your subcommands. But, on the
+flip side, the resulting code is straightforward and readable.
 
 # LeafCommand and FlagSet
 
-To parse command line flags in a [LeafCommand], you create a
-[*FlagSet] using [clip.NewFlagSet]. The [*FlagSet] uses an API
-very similar to the Go standard library `flag` package. However,
-by default, [*FlagSet] uses the GNU command line conventions:
-
- 1. Short options start with `-` (e.g., `-v`).
-
- 2. Long options start with `--` (e.g., `--verbose`).
-
- 3. Short options may be combined (e.g., `-vf`).
-
- 4. Short options arguments can be specified in separate arguments
-    (e.g., `-vf FILE`) or inline (e.g., `-vfFILE`).
-
- 5. Long options arguments can be specified in separate arguments
-    (e.g., `--file FILE`) or inline (e.g., `--file=FILE`).
-
- 6. The `--` separator terminates option processing and all
-    subsequent arguments are treated as positional.
-
-Yet, as documented in [pkg/flags] and [pkg/parser], it is possible to
-configure an individual [*FlagSet] differently (e.g., to behave
-like the Go [flag] package or like `dig`). This functionality is
-actually one of the strongest selling point of this package. It
-allows one to write tools combining different command-line interfaces
-styles. While in principle this is not desirable for a new tool, it
-simplifies the job of providing a consistent command-line interface
-across different emulated tools. The poster child for this functionality
-is a tool named `rbmk` where `rbmk dig` works like `dig` and
-`rbmk curl` works like `curl`.
-
-A [*FlagSet] automatically discovers the usage of help flags (by
-default `-h` and `--help`) and, overall, this package ensures that
-appending `--help` to an otherwise completely broken command line
-always displays the help message.
+To parse command line flags in a [LeafCommand], you should
+use the [pkg/nflag] package, which provides a functionality
+similar to the standard library `flag` package, but with
+the possibility of customizing the options prefixes.
 
 # Testability
 

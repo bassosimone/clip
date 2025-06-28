@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/bassosimone/clip/pkg/nflag"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -185,19 +186,19 @@ func TestDispatch(t *testing.T) {
 			{
 				name:           "Repair with ambiguous command line",
 				skipTest:       false,
-				args:           []string{"IN", "A", "+short", "tools", "dig", "example.com"},
+				args:           []string{"+short", "tools", "dig", "IN", "A", "example.com"},
 				cmdReturnError: errMocked,
 				expectRunCmd:   true,
 				expectError:    errMocked,
 			},
 
 			{
-				name:           "Impossible to repair ambiguity",
+				name:           "No command name just flags before the separator",
 				skipTest:       false,
-				args:           []string{"IN", "A", "+short", "tools", "dig", "example.com", "pipelines"},
-				cmdReturnError: nil,
+				args:           []string{"+short", "--", "tools", "dig"},
+				cmdReturnError: errMocked,
 				expectRunCmd:   false,
-				expectError:    ErrAmbiguousCommandLine,
+				expectError:    ErrInvalidFlags,
 			},
 		}
 
@@ -219,10 +220,15 @@ func TestDispatch(t *testing.T) {
 									},
 								},
 							},
+							Version:                   "0.1.0",
+							OptionPrefixes:            []string{"--", "-", "+"},
+							OptionsArgumentsSeparator: "--",
 						},
 						"pipelines": &DispatcherCommand[*StdlibExecEnv]{},
 					},
-					Version: "0.1.0",
+					Version:                   "0.1.0",
+					OptionPrefixes:            []string{"--", "-", "+"},
+					OptionsArgumentsSeparator: "--",
 				}
 
 				// Run the command
@@ -245,7 +251,7 @@ func TestDispatch(t *testing.T) {
 					t.Fatal("expected", tc.expectError, "got", err)
 				default:
 					if !errors.Is(err, tc.expectError) {
-						t.Fatalf("unexpected error: want=%T, got=%T\n", tc.expectError, err)
+						t.Fatalf("unexpected error: want=%v, got=%v\n", tc.expectError, err)
 					}
 				}
 
@@ -283,7 +289,7 @@ func TestDispatch(t *testing.T) {
 		ctx := context.Background()
 
 		t.Run("without error", func(t *testing.T) {
-			for _, policy := range []ErrorHandling{ContinueOnError, ExitOnError, PanicOnError} {
+			for _, policy := range []nflag.ErrorHandling{nflag.ContinueOnError, nflag.ExitOnError, nflag.PanicOnError} {
 				t.Run(fmt.Sprintf("with policy %d", policy), func(t *testing.T) {
 					// Set the proper error handling strategy
 					dx.ErrorHandling = policy
@@ -306,7 +312,7 @@ func TestDispatch(t *testing.T) {
 
 		t.Run("ContinueOnError", func(t *testing.T) {
 			// Set the proper error handling strategy
-			dx.ErrorHandling = ContinueOnError
+			dx.ErrorHandling = nflag.ContinueOnError
 
 			// Run the command
 			err := dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
@@ -332,7 +338,7 @@ func TestDispatch(t *testing.T) {
 			}()
 
 			// Set the proper error handling strategy
-			dx.ErrorHandling = PanicOnError
+			dx.ErrorHandling = nflag.PanicOnError
 
 			// Run the command
 			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
@@ -342,7 +348,7 @@ func TestDispatch(t *testing.T) {
 				Env:         env,
 			})
 
-			panic("unreachable")
+			t.Fatal("expected panic, but did not occur")
 		})
 
 		t.Run("ExitOnError with exit code 1", func(t *testing.T) {
@@ -358,7 +364,7 @@ func TestDispatch(t *testing.T) {
 			}()
 
 			// Set the proper error handling strategy
-			dx.ErrorHandling = ExitOnError
+			dx.ErrorHandling = nflag.ExitOnError
 
 			// Run the command
 			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
@@ -368,7 +374,7 @@ func TestDispatch(t *testing.T) {
 				Env:         env,
 			})
 
-			panic("unreachable")
+			t.Fatal("expected panic, but did not occur")
 		})
 
 		t.Run("ExitOnError with exit code 2 for usage error", func(t *testing.T) {
@@ -384,7 +390,7 @@ func TestDispatch(t *testing.T) {
 			}()
 
 			// Set the proper error handling strategy
-			dx.ErrorHandling = ExitOnError
+			dx.ErrorHandling = nflag.ExitOnError
 
 			// Run the command
 			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
@@ -394,33 +400,7 @@ func TestDispatch(t *testing.T) {
 				Env:         env,
 			})
 
-			panic("unreachable")
-		})
-
-		t.Run("ExitOnError with exit code 2 for ambiguous command line", func(t *testing.T) {
-			// Verify the status after the panic has occurred
-			defer func() {
-				err := recover().(error)
-				if !errors.Is(err, errExit) {
-					t.Fatalf("expected errCommandFailed, got %T", err)
-				}
-				if reason := err.Error(); reason != "exit: 2" {
-					t.Fatalf("expected 'exit: 2', got %s", reason)
-				}
-			}()
-
-			// Set the proper error handling strategy
-			dx.ErrorHandling = ExitOnError
-
-			// Run the command
-			_ = dx.Run(ctx, &CommandArgs[*StdlibExecEnv]{
-				Args:        []string{"-vkr", "--verbose", "dig", "-j4", "grep"},
-				Command:     dx,
-				CommandName: "main",
-				Env:         env,
-			})
-
-			panic("unreachable")
+			t.Fatal("expected panic, but did not occur")
 		})
 	})
 }

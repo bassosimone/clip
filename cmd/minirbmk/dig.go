@@ -8,35 +8,37 @@ import (
 	"fmt"
 
 	"github.com/bassosimone/clip"
+	"github.com/bassosimone/clip/pkg/assert"
+	"github.com/bassosimone/clip/pkg/nflag"
 )
 
 // digMain is the main entry point for the dig leaf command.
 func digMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) error {
 	// Create flag set
-	fset := clip.NewFlagSet(args.CommandName, clip.ExitOnError)
-	fset.SetDescription(args.Command.BriefDescription())
-	fset.SetArgsDocs("[@server] name [type] [class]")
+	fset := nflag.NewFlagSet(args.CommandName, nflag.ExitOnError)
+	fset.Description = args.Command.BriefDescription()
+	fset.PositionalArgumentsUsage = "[@server] name [type] [class]"
+	fset.MinPositionalArgs = 1
+	fset.MaxPositionalArgs = 4
+	fset.LongFlagPrefix = "+"
+	fset.ShortFlagPrefix = "-" // already the default, but set explicitly for clarity
 
 	// Not strictly needed in production but necessary for testing
-	fset.SetExitFunc(args.Env.Exit)
-	fset.SetStderr(args.Env.Stderr())
-	fset.SetStdout(args.Env.Stdout())
-
-	// Customize the parser
-	px := fset.Parser()
-	px.LongOptionPrefixes = []string{"+", "--"}
+	fset.Exit = args.Env.Exit
+	fset.Stderr = args.Env.Stderr()
+	fset.Stdout = args.Env.Stdout()
 
 	// Add the -4 flag
-	fourFlag := fset.BoolShort('4', "Only use IPv4")
+	fourFlag := fset.Bool("", '4', "Only use IPv4")
+
+	// Add the -h flag
+	fset.AutoHelp("", 'h', "Print this help message and exit.")
 
 	// Add the +short flag
-	shortFlag := fset.BoolLong("short", "Print a terse query representation.")
+	shortFlag := fset.Bool("short", 0, "Print a terse query representation.")
 
-	// Parse the flags; note that ExitOnError is set, so it will exit on error
-	_ = fset.Parse(args.Args)
-
-	// Parse the positional arguments; note that ExitOnError is set, so it will exit on error
-	_ = fset.PositionalArgsRangeCheck(1, 4)
+	// Parse the flags
+	assert.NotError(fset.Parse(args.Args))
 
 	// Print the parsed flags
 	fmt.Fprintf(args.Env.Stdout(), "-4: %v\n", *fourFlag)
