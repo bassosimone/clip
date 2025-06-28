@@ -53,7 +53,7 @@ rbmk dig +short example.com @8.8.4.4 IN A
 ```
 
 And [clip](.) provides the necessary functionality to implement that. In fact,
-[clip] is derived from code originally written for `rbmk`.
+[clip](.) is derived from code originally written for `rbmk`.
 
 ## Main Concepts
 
