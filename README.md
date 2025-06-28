@@ -2,8 +2,9 @@
 
 [![Package-level Go docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
 
-This repository implements a very flexible command line parser
-written in Go. These are the main features:
+Clip is a flexible command line parser written in Go.
+
+## Features
 
 1. Intuitive flag parsing API modeled after the standard
 library's [flag](https://pkg.go.dev/flag) package.
@@ -14,44 +15,72 @@ library's [flag](https://pkg.go.dev/flag) package.
 
 4. Optional handling of printing version information.
 
-By default, [clip](https://github.com/bassosimone/clip) implements
-[GNU getopt](https://linux.die.net/man/3/getopt) compatible
-command line parsing:
+5. [GNU getopt](https://linux.die.net/man/3/getopt) compatible defaults:
 
-1. Short options introduced by `-`, long options introduced by `--`.
+    - Short options introduced by `-`, long options introduced by `--`.
 
-2. The ability to mix short and long options.
+    - The ability to mix short and long options.
 
-3. Automatic (but configurable) options and arguments permutation.
+    - Automatic (but configurable) options and arguments permutation.
 
-4. The `--` separator to terminate options processing.
+    - The `--` separator to terminate options processing.
 
-However, what sets [clip](https://github.com/bassosimone/clip) apart is
-the possibility of customizing the prefixes used for short and long
-options. For example, it is possible to customize it to:
+6. Customizable option prefixes for short and long flags,
+allowing to implement subcommands that emulate different command
+line tools' flag parsing styles (e.g., using `+` to introduce
+long options, like in the [dig](https://linux.die.net/man/1/dig)).
 
-1. Only use long options introduced by `-` and `--`, like in the
-Go [flag](https://pkg.go.dev/flag) package.
+## Use Cases
 
-2. Allow long options to also be introduced by `+` like in the
-[dig](https://linux.die.net/man/1/dig) command line tool.
+The main use case for this package is to implement command line
+tools that require a flexible command line parser designed to
+handle subcommands with distinct parsing styles.
 
-3. Have options be introduced by `/`, like Windows tools do.
+For example, the [rbmk](https://github.com/rbmk-project/rbmk) network
+measurement tool includes, among other subcommands, a `curl` subcommand
+emulating [curl](https://linux.die.net/man/1/curl) and using the GNU
+parsing style and a `dig` subcommand emulating [dig](https://linux.die.net/man/1/dig),
+which uses `dig`-style flag parsing.
 
-Therefore, [clip](https://github.com/bassosimone/clip) is suitable
-for writing complex command line tools that require to emulate other
-command line tools behavior in their subcommands. A good use case
-for this functionality is the the [rbmk](https://github.com/rbmk-project/rbmk)
-network measurement tool, which has a `dig` subcommand using the
-[dig](https://linux.die.net/man/1/dig) flag parsing style, and
-a `curl` subcommand using the [curl](https://linux.die.net/man/1/curl)
-flag parsing style.
+Therefore, `rbmk` needs to parse the following command lines:
+
+```bash
+# Using curl-like parsing style
+rbmk curl -X GET --header "Accept: application/json" https://api.example.com/resource
+
+# Using dig-like parsing style
+rbmk dig +short example.com @8.8.4.4 IN A
+```
+
+And [clip](.) provides the necessary functionality to implement that. In fact,
+[clip] is derived from code originally written for `rbmk`.
+
+## Main Concepts
+
+1. **clip/pkg/nflag.FlagSet**: parses command-line arguments
+using an API similar to the standard library’s [flag](https://pkg.go.dev/flag)
+package. It supports both short and long options, positional arguments,
+and automatic help generation. You can configure option
+prefixes (e.g., `-`, `--`, `+`, `/`) per flag.
+
+2. **clip.RootCommand**: the root command of your CLI application.
+
+3. **clip.DispatcherCommand**: a command that dispatches to
+subcommands. It can be used to implement a top-level command
+that handles subcommands, like `git`, or `docker`.
+
+4. **clip.LeafCommand**: a command that does not have subcommands
+and should parse flags using a **FlagSet**.
+
+The **RootCommand**, **DispatcherCommand**, and **LeafCommand** are
+generic over an **ExecEnv** type, which is an environment mocking
+selected standard library I/O functions, such as `os.Stdout`, `os.Stderr`,
+thus facilitating writing unit tests for your commands.
 
 ## Examples
 
-The following example shows how to use the toplevel [clip](.) package to
-create subcommands along with [pkg/nflag](./pkg/nflag) to parse flags and
-[pkg/assert](./pkg/assert) to write runtime assertions:
+The following example shows how to create subcommands and parse flags using
+[clip](.) and [pkg/nflag](./pkg/nflag):
 
 ```Go
 package main
@@ -66,7 +95,10 @@ import (
 	"github.com/bassosimone/pkg/nflag"
 )
 
-// Create a subcommand working a bit like tar
+// toolVersion is the version of the tool we're implementing.
+const toolVersion = "0.1.0"
+
+// Define a tar-like subcommand for archiving files.
 var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "Archiving utility.",
 
@@ -107,7 +139,7 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	},
 }
 
-// Create a subcommand working a bit like gzip
+// Define a gzip-like subcommand for compressing files.
 var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "Compress or expand files.",
 	HelpFlagValue:        "--help",
@@ -117,11 +149,11 @@ var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 	},
 }
 
-// Create a dispatcher handling control over either tar or gzip
+// Define a dispatcher dispatching to either the tar or gzip subcommands.
 var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 	BriefDescriptionText: "UNIX command-line tools.",
 
-	// These are to subcommands to dispatch to, indexed by name
+	// These are the subcommands to dispatch to, indexed by name
 	Commands: map[string]clip.Command[*clip.StdlibExecEnv]{
 		"gzip": gzipSubcommand,
 		"tar":  tarSubcommand,
@@ -150,20 +182,23 @@ var toolsDispatcher = &clip.DispatcherCommand[*clip.StdlibExecEnv]{
 	// `--`, which is the value used by GNU getopt. When we encounter
 	// this separator, we stop processing options and treat all
 	// subsequent tokens as positional arguments.
+	//
+	// If you do not set at least the `OptionPrefixes` field, then the
+	// dispatcher will not attempt to reorder the command line.
 	OptionPrefixes:            []string{"-", "--"},
 	OptionsArgumentsSeparator: "--",
 }
 
-// Create a root command to wrap it all
+// Define a root command to wrap it all
 var rootCommand = &clip.RootCommand[*clip.StdlibExecEnv]{
-	Command: toplevelDispatcher,
+	Command: toolsDispatcher,
 }
 
 func main() {
 	// Create environment using the standard library I/O
 	env := clip.NewStdlibExecEnv()
 
-	// execute the root command
+	// Execute the root command
 	rootCommand.Main(env)
 }
 ```
@@ -179,13 +214,13 @@ The following table lists all the available, testable examples:
 | [pkg/scanner](./pkg/scanner)  | [pkg/scanner/example_test.go](pkg/scanner/example_test.go)                                 |
 
 The [cmd/minirbmk](./cmd/minirbmk) example shows how to integrate
-[clip](https://github.com/bassosimone/clip) into an Go CLI application
+[clip](https://github.com/bassosimone/clip) into a Go CLI application
 using nested subcommands. In such example we also show customizing
 the flag parser to parse `+flag`-like flags.
 
 ## Architecture
 
-The following diagram illustrates the package architecture:
+The following diagram illustrates the main [clip](.) packages and their dependencies:
 
 ```mermaid
 flowchart TD
@@ -236,7 +271,7 @@ go get -u -v github.com/bassosimone/clip
 ## API Stability Guarantees
 
 This package is experimental and the API may change in the future. Yet,
-we will not anticiapte break the existing API without a compelling reason
+we will not anticipate breaking the existing API without a compelling reason
 to do so (e.g., bugs or significant design flaws).
 
 ## Running Tests
