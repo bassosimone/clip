@@ -5,10 +5,11 @@ package getopt
 
 import (
 	"errors"
+	"math"
 	"strings"
 
 	"github.com/bassosimone/clip/pkg/assert"
-	"github.com/bassosimone/clip/pkg/parser"
+	"github.com/bassosimone/clip/pkg/nparser"
 )
 
 // ErrExpectedSeparator is returned when the separator is not found.
@@ -27,81 +28,100 @@ var ErrExpectedSeparator = errors.New("expected separator")
 // The provided params must not contain the program name, like in getopt(1).
 func Main(argv []string) ([]string, error) {
 	// Instantiate the parser
-	px := &parser.Parser{
-		Flags: parser.FlagNoPermute,
-		LongOptions: map[string]parser.OptionType{
-			"longoptions": parser.OptionTypeString,
-			"options":     parser.OptionTypeString,
+	px := &nparser.Parser{
+		DisablePermute:            true,
+		MaxPositionalArguments:    math.MaxInt,
+		MinPositionalArguments:    0,
+		OptionsArgumentsSeparator: "--",
+		Options: []*nparser.Option{
+			{
+				Name:   "longoptions",
+				Prefix: "--",
+				Type:   nparser.OptionTypeStandaloneArgumentRequired,
+			},
+			{
+				Name:   "options",
+				Prefix: "--",
+				Type:   nparser.OptionTypeStandaloneArgumentRequired,
+			},
+			{
+				Name:   "l",
+				Prefix: "-",
+				Type:   nparser.OptionTypeGroupableArgumentRequired,
+			},
+			{
+				Name:   "o",
+				Prefix: "-",
+				Type:   nparser.OptionTypeGroupableArgumentRequired,
+			},
 		},
-		LongOptionPrefixes: []string{"--"},
-		Separators:         []string{"--"},
-		ShortOptions: map[string]parser.OptionType{
-			"l": parser.OptionTypeString,
-			"o": parser.OptionTypeString,
-		},
-		ShortOptionPrefixes: []string{"-"},
 	}
 
 	// Parse the command line arguments
-	items, err := px.Parse(argv)
+	values, err := px.Parse(argv)
 	if err != nil {
 		return nil, err
 	}
 
-	// Initalize the options, longoptions, and parameters
+	// Initialize the options, longoptions, and parameters
 	var (
 		optstring  string
 		options    []Option
 		parameters []string
 	)
 
-	// Skip over the program name
-	assert.True(len(items) >= 1, "program name not found")
-	_, ok := items[0].(parser.ProgramNameItem)
+	// Skip over the program name.
+	//
+	// Note: using assert here because the parser guarantees that
+	// the first value is always the program name.
+	assert.True(len(values) >= 1, "program name not found")
+	_, ok := values[0].(nparser.ValueProgramName)
 	assert.True(ok, "program name not found")
-	items = items[1:]
+	values = values[1:]
 
-	// Process the option items
-	for len(items) > 0 {
-		opt, ok := items[0].(parser.OptionItem)
+	// Process the option values
+	for len(values) > 0 {
+		opt, ok := values[0].(nparser.ValueOption)
 		if !ok {
 			break
 		}
-		items = items[1:]
-		switch opt.Name {
+		values = values[1:]
+		switch opt.Option.Name {
 		case "o", "options":
 			optstring = opt.Value
 		case "l", "longoptions":
-			options = append(options, parseLongOptions(opt)...)
+			options = append(options, parseLongOptions(opt.Value)...)
 		}
 	}
 
-	// Handle the case where we are out of items
-	if len(items) <= 0 {
+	// Handle the case where we are out of values
+	if len(values) <= 0 {
 		return []string{}, nil
 	}
 
 	// Expect to see the separator
-	if _, ok := items[0].(parser.SeparatorItem); !ok {
+	if _, ok := values[0].(nparser.ValueOptionsArgumentsSeparator); !ok {
 		return nil, ErrExpectedSeparator
 	}
-	items = items[1:]
+	values = values[1:]
 
-	// Process the command line items
-	for len(items) > 0 {
-		item, ok := items[0].(parser.ArgumentItem)
-		assert.True(ok, "expected argument item") // parser should guarantee this
-		items = items[1:]
-		parameters = append(parameters, item.Value)
+	// Process the command line values
+	for len(values) > 0 {
+		value, ok := values[0].(nparser.ValuePositionalArgument)
+		assert.True(ok, "expected ValuePositionalArgument") // parser should guarantee this
+		values = values[1:]
+		parameters = append(parameters, value.Value)
 	}
 
 	// Reorder the arguments
 	return reorder(parameters, optstring, options)
 }
 
-func parseLongOptions(opt parser.OptionItem) []Option {
+func parseLongOptions(optValue string) []Option {
 	options := []Option{}
-	values := strings.SplitSeq(opt.Value, ",")
+	// strings.Split and strings.SplitSet return a single
+	// value when there are no commas
+	values := strings.SplitSeq(optValue, ",")
 	for value := range values {
 		hasArg := false
 		if strings.HasSuffix(value, ":") {
@@ -121,7 +141,7 @@ func reorder(parameters []string, optstring string, options []Option) ([]string,
 	argv := append([]string{"dummy"}, parameters...)
 
 	// parse using the [Long] function
-	items, err := Long(argv, optstring, options)
+	values, err := Long(argv, optstring, options)
 
 	// handle any parsing errors
 	if err != nil {
@@ -129,11 +149,16 @@ func reorder(parameters []string, optstring string, options []Option) ([]string,
 	}
 
 	// remove the dummy program name
-	assert.True(len(items) >= 1, "no items found after parsing")
-	_, ok := items[0].(parser.ProgramNameItem)
+	//
+	// Note: using assert here because the parser guarantees that
+	// the first value is always the program name.
+	//
+	// Also the parser should return at least one value
+	assert.True(len(values) >= 1, "no values found after parsing")
+	_, ok := values[0].(nparser.ValueProgramName)
 	assert.True(ok, "program name not found after parsing")
-	items = items[1:]
+	values = values[1:]
 
-	// serialize the command line items w/o the dummy program name
-	return Serialize(items), nil
+	// serialize the command line values w/o the dummy program name
+	return Serialize(values), nil
 }

@@ -35,14 +35,14 @@ func ExampleShort() {
 	}
 
 	// Parse using traditional getopt style with options that take arguments
-	items, err := getopt.Short(argv, "vf:C:z")
+	values, err := getopt.Short(argv, "vf:C:z")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
 	// Convert back to argv format for easy comparison
-	result := getopt.Serialize(items)
+	result := getopt.Serialize(values)
 	for _, arg := range result {
 		fmt.Printf("%s\n", arg)
 	}
@@ -95,14 +95,14 @@ func ExampleLong() {
 	}
 
 	// Parse using GNU getopt_long style
-	items, err := getopt.Long(argv, "p:r:", options)
+	values, err := getopt.Long(argv, "p:r:", options)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
 	// Convert back to argv format for easy comparison
-	result := getopt.Serialize(items)
+	result := getopt.Serialize(values)
 	for _, arg := range result {
 		fmt.Printf("%s\n", arg)
 	}

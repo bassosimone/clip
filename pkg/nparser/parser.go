@@ -46,12 +46,12 @@ type Parser struct {
 
 	// MaxPositionalArguments is the maximum number of positional
 	// arguments allowed by the parser. The default is zero, meaning
-	// that the parson won't accept more than zero positionals.
+	// that the parser won't accept more than zero positionals.
 	MaxPositionalArguments int
 
 	// MinPositionalArguments is the minimum number of positional
 	// arguments allowed by the parser. The default is zero, meaning
-	// that the parson won't accept less than zero positionals.
+	// that the parser won't accept less than zero positionals.
 	MinPositionalArguments int
 
 	// OptionsArgumentsSeparator is the optional separator that terminates

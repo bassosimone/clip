@@ -4,10 +4,11 @@
 package getopt
 
 import (
+	"math"
 	"os"
 	"strings"
 
-	"github.com/bassosimone/clip/pkg/parser"
+	"github.com/bassosimone/clip/pkg/nparser"
 )
 
 // Option describes a long option.
@@ -17,11 +18,19 @@ type Option struct {
 
 	// HasArg indicates whether the option takes an argument.
 	HasArg bool
-}
 
-var boolToOptionType = map[bool]parser.OptionType{
-	true:  parser.OptionTypeString,
-	false: parser.OptionTypeBool,
+	// IsArgOptional flags optional arguments.
+	//
+	// Added in v0.6.0 - before that, option arguments
+	// were always required.
+	IsArgOptional bool
+
+	// DefaultValue is the default value used
+	// when the argument is optional.
+	//
+	// Added in v0.6.0 - before that, option arguments
+	// were always required.
+	DefaultValue string
 }
 
 var lookupEnv = os.LookupEnv // for testing
@@ -34,32 +43,45 @@ var lookupEnv = os.LookupEnv // for testing
 // set, we disable permutation of the command line arguments.
 //
 // If the optstring starts with `-`, we also disable permutation.
-func Long(argv []string, optstring string, options []Option) ([]parser.CommandLineItem, error) {
+func Long(argv []string, optstring string, options []Option) ([]nparser.Value, error) {
 	// Honour the POSIXLY_CORRECT environment variable.
-	var flags parser.Flags
+	var disablePermute bool
 	if _, found := lookupEnv("POSIXLY_CORRECT"); found {
-		flags |= parser.FlagNoPermute
+		disablePermute = true
 	}
 
 	// Check whether to disable permutation by checking the optstring
 	if strings.HasPrefix(optstring, "-") {
-		flags |= parser.FlagNoPermute
+		disablePermute = true
 		optstring = optstring[1:]
 	}
 
 	// Instantiate the parser
-	px := &parser.Parser{
-		Flags:               flags,
-		LongOptions:         map[string]parser.OptionType{},
-		LongOptionPrefixes:  []string{"--"},
-		Separators:          []string{"--"},
-		ShortOptions:        map[string]parser.OptionType{},
-		ShortOptionPrefixes: []string{"-"},
+	px := &nparser.Parser{
+		DisablePermute:            disablePermute,
+		MaxPositionalArguments:    math.MaxInt,
+		MinPositionalArguments:    0,
+		OptionsArgumentsSeparator: "--",
+		Options:                   []*nparser.Option{},
 	}
 
 	// Register the long options
 	for _, option := range options {
-		px.LongOptions[option.Name] = boolToOptionType[option.HasArg]
+		px.Options = append(px.Options, &nparser.Option{
+			DefaultValue: option.DefaultValue,
+			Name:         option.Name,
+			Prefix:       "--",
+			Type: (func(o Option) nparser.OptionType {
+				switch {
+				case o.HasArg && o.IsArgOptional:
+					return nparser.OptionTypeStandaloneArgumentOptional
+				case o.HasArg:
+					return nparser.OptionTypeStandaloneArgumentRequired
+				default:
+					return nparser.OptionTypeStandaloneArgumentNone
+				}
+			}(option)),
+		})
 	}
 
 	// Register the short options
@@ -71,7 +93,18 @@ func Long(argv []string, optstring string, options []Option) ([]parser.CommandLi
 			optstring = optstring[1:]
 			hasArg = true
 		}
-		px.ShortOptions[optname] = boolToOptionType[hasArg]
+		px.Options = append(px.Options, &nparser.Option{
+			Name:   optname,
+			Prefix: "-",
+			Type: (func(hasArg bool) nparser.OptionType {
+				switch hasArg {
+				case true:
+					return nparser.OptionTypeGroupableArgumentRequired
+				default:
+					return nparser.OptionTypeGroupableArgumentNone
+				}
+			}(hasArg)),
+		})
 	}
 
 	// Parse the arguments vector

@@ -58,7 +58,7 @@ func TestMain(t *testing.T) {
 				"-a", "-b", "-c",
 			},
 			want:    nil,
-			wantErr: errors.New("unknown option: x"),
+			wantErr: errors.New("unknown option: -x"),
 		},
 
 		{
@@ -89,7 +89,7 @@ func TestMain(t *testing.T) {
 				"-a", "value", "log.txt", "--foo", "-bc",
 			},
 			want:    nil,
-			wantErr: errors.New("unknown option: foo"),
+			wantErr: errors.New("unknown option: --foo"),
 		},
 	}
 

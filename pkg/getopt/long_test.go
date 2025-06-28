@@ -6,7 +6,7 @@ package getopt
 import (
 	"testing"
 
-	"github.com/bassosimone/clip/pkg/parser"
+	"github.com/bassosimone/clip/pkg/nparser"
 	"github.com/bassosimone/clip/pkg/scanner"
 	"github.com/google/go-cmp/cmp"
 )
@@ -18,7 +18,7 @@ func TestLong(t *testing.T) {
 		optstring string
 		options   []Option
 		env       map[string]string // environment variables to set
-		want      []parser.CommandLineItem
+		want      []nparser.Value
 	}
 
 	tests := []config{
@@ -39,29 +39,30 @@ func TestLong(t *testing.T) {
 			env: map[string]string{
 				"POSIXLY_CORRECT": "1",
 			},
-			want: []parser.CommandLineItem{
-				parser.ProgramNameItem{
-					Name:  "program",
-					Token: scanner.ProgramNameToken{Idx: 0, Name: "program"},
+			want: []nparser.Value{
+				nparser.ValueProgramName{
+					Name: "program",
+					Tok:  scanner.ProgramNameToken{Idx: 0, Name: "program"},
 				},
-				parser.OptionItem{
-					Name:    "file",
-					Token:   scanner.OptionToken{Idx: 1, Name: "file=input.txt", Prefix: "--"},
-					Value:   "input.txt",
-					IsShort: false,
-					Type:    parser.OptionTypeString,
-					Prefix:  "--",
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						Name:   "file",
+						Prefix: "--",
+						Type:   nparser.OptionTypeStandaloneArgumentRequired,
+					},
+					Tok:   scanner.OptionToken{Idx: 1, Name: "file=input.txt", Prefix: "--"},
+					Value: "input.txt",
 				},
-				parser.ArgumentItem{
-					Token: scanner.PositionalArgumentToken{Idx: 2, Value: "subcommand"},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.PositionalArgumentToken{Idx: 2, Value: "subcommand"},
 					Value: "subcommand",
 				},
-				parser.ArgumentItem{
-					Token: scanner.OptionToken{Idx: 3, Prefix: "-", Name: "v"},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.OptionToken{Idx: 3, Prefix: "-", Name: "v"},
 					Value: "-v",
 				},
-				parser.ArgumentItem{
-					Token: scanner.OptionToken{Idx: 4, Prefix: "--", Name: "verbose"},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.OptionToken{Idx: 4, Prefix: "--", Name: "verbose"},
 					Value: "--verbose",
 				},
 			},
@@ -82,29 +83,30 @@ func TestLong(t *testing.T) {
 				{Name: "verbose", HasArg: false},
 			},
 			env: map[string]string{}, // no environment variables
-			want: []parser.CommandLineItem{
-				parser.ProgramNameItem{
-					Name:  "program",
-					Token: scanner.ProgramNameToken{Idx: 0, Name: "program"},
+			want: []nparser.Value{
+				nparser.ValueProgramName{
+					Name: "program",
+					Tok:  scanner.ProgramNameToken{Idx: 0, Name: "program"},
 				},
-				parser.OptionItem{
-					Name:    "file",
-					Token:   scanner.OptionToken{Idx: 1, Name: "file=input.txt", Prefix: "--"},
-					Value:   "input.txt",
-					IsShort: false,
-					Type:    parser.OptionTypeString,
-					Prefix:  "--",
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						Name:   "file",
+						Prefix: "--",
+						Type:   nparser.OptionTypeStandaloneArgumentRequired,
+					},
+					Tok:   scanner.OptionToken{Idx: 1, Name: "file=input.txt", Prefix: "--"},
+					Value: "input.txt",
 				},
-				parser.ArgumentItem{
-					Token: scanner.PositionalArgumentToken{Idx: 2, Value: "subcommand"},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.PositionalArgumentToken{Idx: 2, Value: "subcommand"},
 					Value: "subcommand",
 				},
-				parser.ArgumentItem{
-					Token: scanner.OptionToken{Idx: 3, Prefix: "-", Name: "v"},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.OptionToken{Idx: 3, Prefix: "-", Name: "v"},
 					Value: "-v",
 				},
-				parser.ArgumentItem{
-					Token: scanner.OptionToken{Idx: 4, Prefix: "--", Name: "verbose"},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.OptionToken{Idx: 4, Prefix: "--", Name: "verbose"},
 					Value: "--verbose",
 				},
 			},
@@ -125,37 +127,95 @@ func TestLong(t *testing.T) {
 				{Name: "verbose", HasArg: false},
 			},
 			env: map[string]string{}, // no environment variables
-			want: []parser.CommandLineItem{
-				parser.ProgramNameItem{
-					Name:  "program",
-					Token: scanner.ProgramNameToken{Idx: 0, Name: "program"},
+			want: []nparser.Value{
+				nparser.ValueProgramName{
+					Name: "program",
+					Tok:  scanner.ProgramNameToken{Idx: 0, Name: "program"},
 				},
-				parser.OptionItem{
-					Name:    "v",
-					Token:   scanner.OptionToken{Idx: 2, Name: "v", Prefix: "-"},
-					Value:   "true",
-					IsShort: true,
-					Type:    parser.OptionTypeBool,
-					Prefix:  "-",
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						Name:   "v",
+						Prefix: "-",
+						Type:   nparser.OptionTypeGroupableArgumentNone,
+					},
+					Tok:   scanner.OptionToken{Idx: 2, Name: "v", Prefix: "-"},
+					Value: "",
 				},
-				parser.OptionItem{
-					Name:    "file",
-					Token:   scanner.OptionToken{Idx: 3, Name: "file=input.txt", Prefix: "--"},
-					Value:   "input.txt",
-					IsShort: false,
-					Type:    parser.OptionTypeString,
-					Prefix:  "--",
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						Name:   "file",
+						Prefix: "--",
+						Type:   nparser.OptionTypeStandaloneArgumentRequired,
+					},
+					Tok:   scanner.OptionToken{Idx: 3, Name: "file=input.txt", Prefix: "--"},
+					Value: "input.txt",
 				},
-				parser.OptionItem{
-					Name:    "verbose",
-					Token:   scanner.OptionToken{Idx: 4, Name: "verbose", Prefix: "--"},
-					Value:   "true",
-					IsShort: false,
-					Type:    parser.OptionTypeBool,
-					Prefix:  "--",
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						Prefix: "--",
+						Name:   "verbose",
+						Type:   nparser.OptionTypeStandaloneArgumentNone,
+					},
+					Tok:   scanner.OptionToken{Idx: 4, Name: "verbose", Prefix: "--"},
+					Value: "",
 				},
-				parser.ArgumentItem{
-					Token: scanner.PositionalArgumentToken{Idx: 1, Value: "subcommand"},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.PositionalArgumentToken{Idx: 1, Value: "subcommand"},
+					Value: "subcommand",
+				},
+			},
+		},
+
+		{
+			name: "options with optional arguments are possible",
+			argv: []string{
+				"program",
+				"subcommand",       // this gets moved after options in default mode
+				"-v",               // this gets reordered before subcommand
+				"--file=input.txt", // this gets reordered before subcommand
+				"--verbose=true",   // this gets reordered before subcommand
+			},
+			optstring: "v",
+			options: []Option{
+				{Name: "file", HasArg: true},
+				{Name: "verbose", HasArg: true, IsArgOptional: true, DefaultValue: "false"},
+			},
+			env: map[string]string{}, // no environment variables
+			want: []nparser.Value{
+				nparser.ValueProgramName{
+					Name: "program",
+					Tok:  scanner.ProgramNameToken{Idx: 0, Name: "program"},
+				},
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						Name:   "v",
+						Prefix: "-",
+						Type:   nparser.OptionTypeGroupableArgumentNone,
+					},
+					Tok:   scanner.OptionToken{Idx: 2, Name: "v", Prefix: "-"},
+					Value: "",
+				},
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						Name:   "file",
+						Prefix: "--",
+						Type:   nparser.OptionTypeStandaloneArgumentRequired,
+					},
+					Tok:   scanner.OptionToken{Idx: 3, Name: "file=input.txt", Prefix: "--"},
+					Value: "input.txt",
+				},
+				nparser.ValueOption{
+					Option: &nparser.Option{
+						DefaultValue: "false",
+						Prefix:       "--",
+						Name:         "verbose",
+						Type:         nparser.OptionTypeStandaloneArgumentOptional,
+					},
+					Tok:   scanner.OptionToken{Idx: 4, Name: "verbose=true", Prefix: "--"},
+					Value: "true",
+				},
+				nparser.ValuePositionalArgument{
+					Tok:   scanner.PositionalArgumentToken{Idx: 1, Value: "subcommand"},
 					Value: "subcommand",
 				},
 			},
