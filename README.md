@@ -57,23 +57,23 @@ And [clip](.) provides the necessary functionality to implement that. In fact,
 
 ## Main Concepts
 
-1. **clip/pkg/nflag.FlagSet**: parses command-line arguments
+1. *clip/pkg/nflag.FlagSet*: parses command-line arguments
 using an API similar to the standard library’s [flag](https://pkg.go.dev/flag)
 package. It supports both short and long options, positional arguments,
 and automatic help generation. You can configure option
 prefixes (e.g., `-`, `--`, `+`, `/`) per flag.
 
-2. **clip.RootCommand**: the root command of your CLI application.
+2. *clip.RootCommand*: the root command of your CLI application.
 
-3. **clip.DispatcherCommand**: a command that dispatches to
+3. *clip.DispatcherCommand*: a command that dispatches to
 subcommands. It can be used to implement a top-level command
 that handles subcommands, like `git`, or `docker`.
 
-4. **clip.LeafCommand**: a command that does not have subcommands
-and should parse flags using a **FlagSet**.
+4. *clip.LeafCommand*: a command that does not have subcommands
+and should parse flags using a *FlagSet*.
 
-The **RootCommand**, **DispatcherCommand**, and **LeafCommand** are
-generic over an **ExecEnv** type, which is an environment mocking
+The *RootCommand*, *DispatcherCommand*, and *LeafCommand* are
+generic over an *ExecEnv* type, which is an environment mocking
 selected standard library I/O functions, such as `os.Stdout`, `os.Stderr`,
 thus facilitating writing unit tests for your commands.
 
