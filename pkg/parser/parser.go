@@ -4,6 +4,8 @@
 /*
 Package parser provides high-level command-line argument parsing.
 
+Deprecated: Use [github.com/bassosimone/clip/pkg/nparser] instead.
+
 The [*Parser.Parse] method parses command-line arguments into structured
 options and arguments implementing [CommandLineItem]. It supports various
 command-line styles through configurable prefixes and option types.

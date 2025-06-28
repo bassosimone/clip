@@ -173,7 +173,7 @@ flowchart TD
 
 | Package                                                                 | Docs                                                                 | Description                                                      |
 |-------------------------------------------------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------|
-| [clip](https://github.com/bassosimone/clip)                             | [Docs](https://pkg.go.dev/github.com/bassosimone/clip)              | Top-level API integrating [./pkg/flag](./pkg/flag) with subcommands. |
+| [clip](https://github.com/bassosimone/clip)                             | [Docs](https://pkg.go.dev/github.com/bassosimone/clip)              | Top-level API integrating [./pkg/nflag](./pkg/nflag) with subcommands. |
 | [pkg/nflag](https://github.com/bassosimone/clip/tree/main/pkg/nflag)      | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/nflag)     | Stdlib-inspired flag implementation (uses the parser).                  |
 | [pkg/getopt](https://github.com/bassosimone/clip/tree/main/pkg/getopt)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)   | GNU getopt compatible implementation (uses the parser).           |
 | [pkg/nparser](https://github.com/bassosimone/clip/tree/main/pkg/nparser)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/nparser)   | Parser for CLI options (uses the scanner).                       |
