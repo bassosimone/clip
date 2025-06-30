@@ -27,8 +27,8 @@ library's [flag](https://pkg.go.dev/flag) package.
 
 6. Customizable option prefixes for short and long flags,
 allowing to implement subcommands that emulate different command
-line tools' flag parsing styles (e.g., using `+` to introduce
-long options, like in the [dig](https://linux.die.net/man/1/dig)).
+flag parsing styles (e.g., using `+` to introduce long options,
+like in the [dig](https://linux.die.net/man/1/dig)).
 
 ## Use Cases
 
