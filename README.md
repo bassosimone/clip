@@ -2,6 +2,8 @@
 
 [![Package-level Go docs](https://pkg.go.dev/badge/github.com/bassosimone/clip)](https://pkg.go.dev/github.com/bassosimone/clip) [![Build Status](https://github.com/bassosimone/clip/actions/workflows/go.yml/badge.svg)](https://github.com/bassosimone/clip/actions) [![codecov](https://codecov.io/gh/bassosimone/clip/branch/main/graph/badge.svg)](https://codecov.io/gh/bassosimone/clip)
 
+![Don’t mind me… I just organize command line parsing!](docs/clip.png)
+
 Clip is a flexible command line parser written in Go.
 
 ## Features
