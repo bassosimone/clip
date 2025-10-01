@@ -43,10 +43,6 @@ const (
 // These methods usually add two flags per invocation: a long
 // flag and a short flag. See also their documentation.
 type Flag struct {
-	// Modified indicates whether the flag was modified as
-	// a side effect of parsing the command line.
-	Modified bool
-
 	// Option is the related parser option.
 	Option *nparser.Option
 
@@ -360,11 +356,8 @@ func (fx *FlagSet) parse(args []string) error {
 				return err
 			}
 
-			// mark the flag as modified
-			flag.Modified = true
-
 			// detect [helpValue] and transform it to [ErrHelp]
-			if _, ok := flag.Value.(helpValue); ok {
+			if _, ok := flag.Value.(*helpValue); ok {
 				return ErrHelp
 			}
 		}

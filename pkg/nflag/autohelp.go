@@ -43,10 +43,12 @@ func (fx *FlagSet) AutoHelp(longName string, shortName byte, usage string) {
 		value bool
 	)
 
+	// create a single underlying value for both flags
+	mvalue := &helpValue{false, &value}
+
 	// possibly create the long flag value
 	if longName != "" {
 		long = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeEarlyArgumentNone,
 				Prefix: fx.LongFlagPrefix,
@@ -54,21 +56,20 @@ func (fx *FlagSet) AutoHelp(longName string, shortName byte, usage string) {
 			},
 			TakesArg: false,
 			Usage:    usage,
-			Value:    helpValue{&value},
+			Value:    mvalue,
 		}
 	}
 
 	// possibly create the short flag value
 	if shortName != 0 {
 		short = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeEarlyArgumentNone,
 				Prefix: fx.ShortFlagPrefix,
 				Name:   string(shortName),
 			},
 			TakesArg: false,
-			Value:    helpValue{&value},
+			Value:    mvalue,
 			Usage:    usage,
 		}
 	}
@@ -78,16 +79,22 @@ func (fx *FlagSet) AutoHelp(longName string, shortName byte, usage string) {
 }
 
 type helpValue struct {
-	valuep *bool
+	modified bool
+	valuep   *bool
 }
 
-var _ Value = helpValue{}
+var _ Value = &helpValue{}
 
-func (v helpValue) Set(value string) error {
+func (v *helpValue) Modified() bool {
+	return v.modified
+}
+
+func (v *helpValue) Set(value string) error {
 	*v.valuep = true
+	v.modified = true
 	return nil
 }
 
-func (v helpValue) String() string {
+func (v *helpValue) String() string {
 	return strconv.FormatBool(*v.valuep)
 }

@@ -5,6 +5,10 @@ package nflag
 
 // Value represents a generic flag value.
 type Value interface {
+	// Modified returns whether the flag was modified as
+	// a side effect of parsing the command line.
+	Modified() bool
+
 	// Set sets the value of the flag.
 	//
 	// This method MAY be called multiple times if

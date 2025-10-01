@@ -40,17 +40,19 @@ func (fx *FlagSet) Int64FlagVar(valuep *int64, longName string, shortName byte, 
 	// be prepared for potentially adding two flags
 	var long, short *Flag
 
+	// create a single underlying value for both flags
+	mvalue := &int64Value{false, valuep}
+
 	// possibly create the long flag value
 	if longName != "" {
 		long = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeStandaloneArgumentRequired,
 				Prefix: fx.LongFlagPrefix,
 				Name:   longName,
 			},
 			TakesArg: true,
-			Value:    int64Value{valuep},
+			Value:    mvalue,
 			Usage:    usage,
 		}
 	}
@@ -58,14 +60,13 @@ func (fx *FlagSet) Int64FlagVar(valuep *int64, longName string, shortName byte, 
 	// possibly create the short flag value
 	if shortName != 0 {
 		short = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeGroupableArgumentRequired,
 				Prefix: fx.ShortFlagPrefix,
 				Name:   string(shortName),
 			},
 			TakesArg: true,
-			Value:    int64Value{valuep},
+			Value:    mvalue,
 			Usage:    usage,
 		}
 	}
@@ -75,20 +76,26 @@ func (fx *FlagSet) Int64FlagVar(valuep *int64, longName string, shortName byte, 
 }
 
 type int64Value struct {
-	valuep *int64
+	modified bool
+	valuep   *int64
 }
 
-var _ Value = int64Value{}
+var _ Value = &int64Value{}
 
-func (v int64Value) Set(value string) error {
+func (v *int64Value) Modified() bool {
+	return v.modified
+}
+
+func (v *int64Value) Set(value string) error {
 	parsed, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		return err
 	}
 	*v.valuep = parsed
+	v.modified = true
 	return nil
 }
 
-func (v int64Value) String() string {
+func (v *int64Value) String() string {
 	return strconv.FormatInt(*v.valuep, 10)
 }

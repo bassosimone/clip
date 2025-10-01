@@ -40,17 +40,19 @@ func (fx *FlagSet) StringFlagVar(valuep *string, longName string, shortName byte
 	// be prepared for potentially adding two flags
 	var long, short *Flag
 
+	// create a single underlying value for both flags
+	mvalue := &stringValue{false, valuep}
+
 	// possibly create the long flag value
 	if longName != "" {
 		long = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeStandaloneArgumentRequired,
 				Prefix: fx.LongFlagPrefix,
 				Name:   longName,
 			},
 			TakesArg: true,
-			Value:    stringValue{valuep},
+			Value:    mvalue,
 			Usage:    usage,
 		}
 	}
@@ -58,14 +60,13 @@ func (fx *FlagSet) StringFlagVar(valuep *string, longName string, shortName byte
 	// possibly create the short flag value
 	if shortName != 0 {
 		short = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeGroupableArgumentRequired,
 				Prefix: fx.ShortFlagPrefix,
 				Name:   string(shortName),
 			},
 			TakesArg: true,
-			Value:    stringValue{valuep},
+			Value:    mvalue,
 			Usage:    usage,
 		}
 	}
@@ -75,16 +76,22 @@ func (fx *FlagSet) StringFlagVar(valuep *string, longName string, shortName byte
 }
 
 type stringValue struct {
-	valuep *string
+	modified bool
+	valuep   *string
 }
 
-var _ Value = stringValue{}
+var _ Value = &stringValue{}
 
-func (v stringValue) Set(value string) error {
+func (v *stringValue) Modified() bool {
+	return v.modified
+}
+
+func (v *stringValue) Set(value string) error {
 	*v.valuep = value
+	v.modified = true
 	return nil
 }
 
-func (v stringValue) String() string {
+func (v *stringValue) String() string {
 	return *v.valuep
 }

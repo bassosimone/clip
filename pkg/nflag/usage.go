@@ -91,7 +91,7 @@ func (fx *FlagSet) PrintUsage(w io.Writer) {
 // This method panics in case of I/O error.
 func (fx *FlagSet) PrintHelpHint(w io.Writer) {
 	ishelp := func(fp *Flag) bool {
-		_, ok := fp.Value.(helpValue)
+		_, ok := fp.Value.(*helpValue)
 		return ok
 	}
 

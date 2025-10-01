@@ -67,8 +67,20 @@ func ExampleFlagSet_curlHelp() {
 		panic("mocked exit invocation")
 	}
 
-	// Handle the panic by caused by Exit by simply ignoring it
-	defer func() { recover() }()
+	// Handle the panic and verify help was modified
+	defer func() {
+		recover()
+		// Check if help flag was modified
+		// Since we called with --help, we expect it to be modified
+		for _, pair := range fset.Flags() {
+			if pair.LongFlag != nil && pair.LongFlag.Option.Name == "help" {
+				if !pair.Value.Modified() {
+					panic("help flag should have been modified but was not")
+				}
+				break
+			}
+		}
+	}()
 
 	// Invoke with `--help`
 	fset.Parse([]string{"--help"})
@@ -182,6 +194,19 @@ func ExampleFlagSet_curlSuccess() {
 		fmt.Printf("%s %s: %s\n", pair.LongFlag.Option.Name,
 			pair.ShortFlag.Option.Name, pair.Value.String())
 	}
+
+	// Check Modified status for all flag types (bool, string, int64)
+	// Command line was: -fsSL -m1024 -o index.html
+	// So: fail, silent, show-error, location, max-filesize, output should be modified
+	// But: help should NOT be modified (wasn't in command line)
+	fmt.Println("---")
+	fmt.Printf("fail modified: %v\n", fset.Flags()[0].Value.Modified())
+	fmt.Printf("location modified: %v\n", fset.Flags()[1].Value.Modified())
+	fmt.Printf("max-filesize modified: %v\n", fset.Flags()[2].Value.Modified())
+	fmt.Printf("help modified: %v\n", fset.Flags()[3].Value.Modified())
+	fmt.Printf("output modified: %v\n", fset.Flags()[4].Value.Modified())
+	fmt.Printf("show-error modified: %v\n", fset.Flags()[5].Value.Modified())
+	fmt.Printf("silent modified: %v\n", fset.Flags()[6].Value.Modified())
 	fmt.Println("---")
 
 	// Print the positional arguments
@@ -203,6 +228,14 @@ func ExampleFlagSet_curlSuccess() {
 	// output o: index.html
 	// show-error S: true
 	// silent s: true
+	// ---
+	// fail modified: true
+	// location modified: true
+	// max-filesize modified: true
+	// help modified: false
+	// output modified: true
+	// show-error modified: true
+	// silent modified: true
 	// ---
 	// positional arguments: [https://example.com/]
 }

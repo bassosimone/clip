@@ -39,17 +39,19 @@ func (fx *FlagSet) BoolFlagVar(valuep *bool, longName string, shortName byte, us
 	// be prepared for potentially adding two flags
 	var long, short *Flag
 
+	// create a single underlying value for both flags
+	mvalue := &boolValue{false, valuep}
+
 	// possibly create the long flag value
 	if longName != "" {
 		long = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeStandaloneArgumentNone,
 				Prefix: fx.LongFlagPrefix,
 				Name:   longName,
 			},
 			TakesArg: false,
-			Value:    boolValue{valuep},
+			Value:    mvalue,
 			Usage:    usage,
 		}
 	}
@@ -57,14 +59,13 @@ func (fx *FlagSet) BoolFlagVar(valuep *bool, longName string, shortName byte, us
 	// possibly create the short flag value
 	if shortName != 0 {
 		short = &Flag{
-			Modified: false,
 			Option: &nparser.Option{
 				Type:   nparser.OptionTypeGroupableArgumentNone,
 				Prefix: fx.ShortFlagPrefix,
 				Name:   string(shortName),
 			},
 			TakesArg: false,
-			Value:    boolValue{valuep},
+			Value:    mvalue,
 			Usage:    usage,
 		}
 	}
@@ -74,16 +75,22 @@ func (fx *FlagSet) BoolFlagVar(valuep *bool, longName string, shortName byte, us
 }
 
 type boolValue struct {
-	valuep *bool
+	modified bool
+	valuep   *bool
 }
 
-var _ Value = boolValue{}
+var _ Value = &boolValue{}
 
-func (v boolValue) Set(value string) error {
+func (v *boolValue) Modified() bool {
+	return v.modified
+}
+
+func (v *boolValue) Set(value string) error {
 	*v.valuep = true
+	v.modified = true
 	return nil
 }
 
-func (v boolValue) String() string {
+func (v *boolValue) String() string {
 	return strconv.FormatBool(*v.valuep)
 }
