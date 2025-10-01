@@ -1,4 +1,4 @@
-// string.go - Stringean flag implementation
+// string.go - String flag implementation
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 package nflag
@@ -8,15 +8,17 @@ import (
 	"github.com/bassosimone/clip/pkg/nparser"
 )
 
-// String is like [*FlagSet.StringVar] but returns a string variable
+// StringFlag is like [*FlagSet.StringFlagVar] but returns a string variable
 // rather than accepting the variable as its first argument.
-func (fx *FlagSet) String(longName string, shortName byte, usage string) *string {
+func (fx *FlagSet) StringFlag(longName string, shortName byte, usage string) *string {
 	var value string
-	fx.StringVar(&value, longName, shortName, usage)
+	fx.StringFlagVar(&value, longName, shortName, usage)
 	return &value
 }
 
-// StringVar adds flags for setting the given string variable.
+// StringFlagVar adds flags for setting the given string variable.
+//
+// The flag default value is set to the *valuep value.
 //
 // With longName="header" and shortName='h', the default configuration creates:
 //
@@ -28,9 +30,12 @@ func (fx *FlagSet) String(longName string, shortName byte, usage string) *string
 //
 // If longName and shortName are empty, this method will panic. If just one
 // of them is empty, this method skips creating the related flag.
-func (fx *FlagSet) StringVar(valuep *string, longName string, shortName byte, usage string) {
+func (fx *FlagSet) StringFlagVar(valuep *string, longName string, shortName byte, usage string) {
 	// make sure at least one of the two names is set
 	assert.True(longName != "" || shortName != 0, "longName and shortName cannot be both zero values")
+
+	// make sure the pointer is not nil
+	assert.True(valuep != nil, "valuep cannot be nil")
 
 	// be prepared for potentially adding two flags
 	var long, short *Flag

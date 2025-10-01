@@ -10,15 +10,17 @@ import (
 	"github.com/bassosimone/clip/pkg/nparser"
 )
 
-// Int64 is like [*FlagSet.Int64Var] but returns a int64 variable
+// Int64Flag is like [*FlagSet.Int64FlagVar] but returns an int64 variable
 // rather than accepting the variable as its first argument.
-func (fx *FlagSet) Int64(longName string, shortName byte, usage string) *int64 {
+func (fx *FlagSet) Int64Flag(longName string, shortName byte, usage string) *int64 {
 	var value int64
-	fx.Int64Var(&value, longName, shortName, usage)
+	fx.Int64FlagVar(&value, longName, shortName, usage)
 	return &value
 }
 
-// Int64Var adds flags for setting the given int64 variable.
+// Int64FlagVar adds flags for setting the given int64 variable.
+//
+// The flag default value is set to the *valuep value.
 //
 // Assuming longName="count" and shortName='c', the default configuration creates:
 //
@@ -31,7 +33,7 @@ func (fx *FlagSet) Int64(longName string, shortName byte, usage string) *int64 {
 //
 // If longName and shortName are empty, this method will panic. If just one
 // of them is empty, this method skips creating the related flag.
-func (fx *FlagSet) Int64Var(valuep *int64, longName string, shortName byte, usage string) {
+func (fx *FlagSet) Int64FlagVar(valuep *int64, longName string, shortName byte, usage string) {
 	// make sure at least one of the two names is set
 	assert.True(longName != "" || shortName != 0, "longName and shortName cannot be both zero values")
 

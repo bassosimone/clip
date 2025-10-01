@@ -28,16 +28,16 @@ func curlMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) 
 	fset.Stdout = args.Env.Stdout()
 
 	// Add the --cacert flag
-	cacertFlag := fset.String("cacert", 0, "Add part to the CA certificate file.")
+	cacertFlag := fset.StringFlag("cacert", 0, "Add part to the CA certificate file.")
 
 	// Add the -c, --cookiejar flag
-	cookieJarFlag := fset.String("cookiejar", 'c', "Path of the file containing cookies data")
+	cookieJarFlag := fset.StringFlag("cookiejar", 'c', "Path of the file containing cookies data")
 
 	// Add the --help flag
 	fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 	// Add the -v, --verbose flag
-	verboseFlag := fset.Bool("verbose", 'v', "Run in verbose mode.")
+	verboseFlag := fset.BoolFlag("verbose", 'v', "Run in verbose mode.")
 
 	// Parse the flags
 	assert.NotError(fset.Parse(args.Args))

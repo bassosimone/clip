@@ -28,7 +28,7 @@ var gzipSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 		fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 		// Add the `-v` option
-		vflag := fset.Bool("verbose", 'v', "verbose mode")
+		vflag := fset.BoolFlag("verbose", 'v', "verbose mode")
 
 		// Parse command line arguments
 		assert.NotError(fset.Parse(args.Args))
@@ -52,19 +52,19 @@ var tarSubcommand = &clip.LeafCommand[*clip.StdlibExecEnv]{
 		fset.MaxPositionalArgs = math.MaxInt
 
 		// Add the `-c` option
-		cflag := fset.Bool("create", 'c', "create a new archive")
+		cflag := fset.BoolFlag("create", 'c', "create a new archive")
 
 		// Add the `-f` option
-		fflag := fset.String("file", 'f', "archive file name")
+		fflag := fset.StringFlag("file", 'f', "archive file name")
 
 		// Add the --help flag
 		fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 		// Add the `-v` option
-		vflag := fset.Bool("verbose", 'v', "verbose mode")
+		vflag := fset.BoolFlag("verbose", 'v', "verbose mode")
 
 		// Add the `-z` option
-		zflag := fset.Bool("gzip", 'z', "gzip compression")
+		zflag := fset.BoolFlag("gzip", 'z', "gzip compression")
 
 		// Parse command line arguments
 		assert.NotError(fset.Parse(args.Args))

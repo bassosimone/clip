@@ -29,13 +29,13 @@ func digMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv]) e
 	fset.Stdout = args.Env.Stdout()
 
 	// Add the -4 flag
-	fourFlag := fset.Bool("", '4', "Only use IPv4")
+	fourFlag := fset.BoolFlag("", '4', "Only use IPv4")
 
 	// Add the -h flag
 	fset.AutoHelp("", 'h', "Print this help message and exit.")
 
 	// Add the +short flag
-	shortFlag := fset.Bool("short", 0, "Print a terse query representation.")
+	shortFlag := fset.BoolFlag("short", 0, "Print a terse query representation.")
 
 	// Parse the flags
 	assert.NotError(fset.Parse(args.Args))

@@ -27,13 +27,13 @@ func gitInitMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEnv
 	fset.Stdout = args.Env.Stdout()
 
 	// Add the --branch, -b flag
-	branchFlag := fset.String("branch", 'b', "Branch name")
+	branchFlag := fset.StringFlag("branch", 'b', "Branch name")
 
 	// Add the --help flag
 	fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 	// Add the -q, --quiet flag
-	quietFlag := fset.Bool("quiet", 'q', "Run in quiet mode.")
+	quietFlag := fset.BoolFlag("quiet", 'q', "Run in quiet mode.")
 
 	// Parse the flags
 	assert.NotError(fset.Parse(args.Args))
@@ -62,13 +62,13 @@ func gitCloneMain(ctx context.Context, args *clip.CommandArgs[*clip.StdlibExecEn
 	fset.Stdout = args.Env.Stdout()
 
 	// Add the -b flag
-	branchFlag := fset.String("branch", 'b', "Branch name")
+	branchFlag := fset.StringFlag("branch", 'b', "Branch name")
 
 	// Add the --help flag
 	fset.AutoHelp("help", 'h', "Print this help message and exit.")
 
 	// Add the -q, --quiet flag
-	quietFlag := fset.Bool("quiet", 'q', "Run in quiet mode.")
+	quietFlag := fset.BoolFlag("quiet", 'q', "Run in quiet mode.")
 
 	// Parse the flags
 	assert.NotError(fset.Parse(args.Args))

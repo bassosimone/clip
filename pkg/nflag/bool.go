@@ -10,15 +10,17 @@ import (
 	"github.com/bassosimone/clip/pkg/nparser"
 )
 
-// Bool is like [*FlagSet.BoolVar] but returns a bool variable
+// BoolFlag is like [*FlagSet.BoolFlagVar] but returns a bool variable
 // rather than accepting the variable as its first argument.
-func (fx *FlagSet) Bool(longName string, shortName byte, usage string) *bool {
+func (fx *FlagSet) BoolFlag(longName string, shortName byte, usage string) *bool {
 	var value bool
-	fx.BoolVar(&value, longName, shortName, usage)
+	fx.BoolFlagVar(&value, longName, shortName, usage)
 	return &value
 }
 
-// BoolVar adds flags for setting the given boolean variable.
+// BoolFlagVar adds flags for setting the given boolean variable.
+//
+// The flag default value is set to the *valuep value.
 //
 // Assuming longName="verbose" and shortName='v', the default configuration creates:
 //
@@ -30,7 +32,7 @@ func (fx *FlagSet) Bool(longName string, shortName byte, usage string) *bool {
 //
 // If longName and shortName are empty, this method will panic. If just one
 // of them is empty, this method skips creating the related flag.
-func (fx *FlagSet) BoolVar(valuep *bool, longName string, shortName byte, usage string) {
+func (fx *FlagSet) BoolFlagVar(valuep *bool, longName string, shortName byte, usage string) {
 	// make sure at least one of the two names is set
 	assert.True(longName != "" || shortName != 0, "longName and shortName cannot be both zero values")
 

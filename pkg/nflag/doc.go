@@ -11,11 +11,11 @@ long (--flag) option names. The package supports GNU-style flag parsing with
 customizable prefixes and separators through the [*FlagSet] type.
 
 The [NewFlagSet] function creates a new flag set with configurable error
-handling behavior. Use [*FlagSet.Bool], [*FlagSet.String], and their variants
+handling behavior. Use [*FlagSet.BoolFlag], [*FlagSet.StringFlag], and their variants
 to define flags, then call [*FlagSet.Parse] to parse command-line arguments.
 
-The package provides comprehensive flag definition methods including [*FlagSet.Bool],
-[*FlagSet.Int64], [*FlagSet.String], etc. and their corresponding Var variants that
+The package provides comprehensive flag definition methods including [*FlagSet.BoolFlag],
+[*FlagSet.Int64Flag], [*FlagSet.StringFlag], etc. and their corresponding Var variants that
 accept existing pointers to variables rather than returning points. The [*FlagSet.AutoHelp]
 method helps to automatically generate and handle `--help` and `-h` like flags.
 */

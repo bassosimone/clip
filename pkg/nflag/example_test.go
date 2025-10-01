@@ -55,12 +55,12 @@ func ExampleFlagSet_curlHelp() {
 	fset.MinPositionalArgs = 1
 
 	// Add the supported flags
-	fset.Bool("fail", 'f', "Fail fast with no output at all on server errors.")
-	fset.Bool("location", 'L', "Follow HTTP redirections.")
+	fset.BoolFlag("fail", 'f', "Fail fast with no output at all on server errors.")
+	fset.BoolFlag("location", 'L', "Follow HTTP redirections.")
 	fset.AutoHelp("help", 'h', "Show this help message and exit.")
-	fset.String("output", 'o', "Write output to the file indicated by VALUE.")
-	fset.Bool("show-error", 'S', "Show an error message, even when silent, on failure.")
-	fset.Bool("silent", 's', "Silent or quiet mode.")
+	fset.StringFlag("output", 'o', "Write output to the file indicated by VALUE.")
+	fset.BoolFlag("show-error", 'S', "Show an error message, even when silent, on failure.")
+	fset.BoolFlag("silent", 's', "Silent or quiet mode.")
 
 	// Override Exit to transform it into a panic
 	fset.Exit = func(status int) {
@@ -113,12 +113,12 @@ func ExampleFlagSet_curlTooFewArguments() {
 	fset.MinPositionalArgs = 1
 
 	// Add the supported flags
-	fset.Bool("fail", 'f', "Fail fast with no output at all on server errors.")
-	fset.Bool("location", 'L', "Follow HTTP redirections.")
+	fset.BoolFlag("fail", 'f', "Fail fast with no output at all on server errors.")
+	fset.BoolFlag("location", 'L', "Follow HTTP redirections.")
 	fset.AutoHelp("help", 'h', "Show this help message and exit.")
-	fset.String("output", 'o', "Write output to the file indicated by VALUE.")
-	fset.Bool("show-error", 'S', "Show an error message, even when silent, on failure.")
-	fset.Bool("silent", 's', "Silent or quiet mode.")
+	fset.StringFlag("output", 'o', "Write output to the file indicated by VALUE.")
+	fset.BoolFlag("show-error", 'S', "Show an error message, even when silent, on failure.")
+	fset.BoolFlag("silent", 's', "Silent or quiet mode.")
 
 	// Override Exit to transform it into a panic
 	fset.Exit = func(status int) {
@@ -151,13 +151,13 @@ func ExampleFlagSet_curlSuccess() {
 	fset.MinPositionalArgs = 1
 
 	// Add the supported flags
-	ffail := fset.Bool("fail", 'f', "Fail fast with no output at all on server errors.")
-	flocation := fset.Bool("location", 'L', "Follow HTTP redirections.")
-	fmaxFilesize := fset.Int64("max-filesize", 'm', "Fail if the file is larger than VALUE bytes.")
+	ffail := fset.BoolFlag("fail", 'f', "Fail fast with no output at all on server errors.")
+	flocation := fset.BoolFlag("location", 'L', "Follow HTTP redirections.")
+	fmaxFilesize := fset.Int64Flag("max-filesize", 'm', "Fail if the file is larger than VALUE bytes.")
 	fset.AutoHelp("help", 'h', "Show this help message and exit.")
-	foutput := fset.String("output", 'o', "Write output to the file indicated by VALUE.")
-	fshowError := fset.Bool("show-error", 'S', "Show an error message, even when silent, on failure.")
-	fsilent := fset.Bool("silent", 's', "Silent or quiet mode.")
+	foutput := fset.StringFlag("output", 'o', "Write output to the file indicated by VALUE.")
+	fshowError := fset.BoolFlag("show-error", 'S', "Show an error message, even when silent, on failure.")
+	fsilent := fset.BoolFlag("silent", 's', "Silent or quiet mode.")
 
 	// Invoke with command line arguments
 	//
@@ -222,11 +222,11 @@ func ExampleFlagSet_digHelp() {
 	fset.LongFlagPrefix = "+"
 
 	// Add the supported flags
-	fset.Bool("", '4', "Enable using IPv4.")
-	fset.Bool("", '6', "Enable using IPv6.")
+	fset.BoolFlag("", '4', "Enable using IPv4.")
+	fset.BoolFlag("", '6', "Enable using IPv6.")
 	fset.AutoHelp("", 'h', "Show this help message and exit.")
-	fset.String("https", 0, "Use DNS-over-HTTPS optionally setting URL path to VALUE.")
-	fset.Bool("short", 0, "Write terse output.")
+	fset.StringFlag("https", 0, "Use DNS-over-HTTPS optionally setting URL path to VALUE.")
+	fset.BoolFlag("short", 0, "Write terse output.")
 
 	// Modify the "https" flag to *optionally* accept a value
 	assert.True1(fset.LookupFlagLong("https")).Option.Type = nparser.OptionTypeStandaloneArgumentOptional
@@ -282,11 +282,11 @@ func ExampleFlagSet_digInvalidFlag() {
 	fset.LongFlagPrefix = "+"
 
 	// Add the supported flags
-	fset.Bool("", '4', "Enable using IPv4.")
-	fset.Bool("", '6', "Enable using IPv6.")
+	fset.BoolFlag("", '4', "Enable using IPv4.")
+	fset.BoolFlag("", '6', "Enable using IPv6.")
 	fset.AutoHelp("", 'h', "Show this help message and exit.")
-	fset.String("https", 0, "Use DNS-over-HTTPS optionally setting URL path to VALUE.")
-	fset.Bool("short", 0, "Write terse output.")
+	fset.StringFlag("https", 0, "Use DNS-over-HTTPS optionally setting URL path to VALUE.")
+	fset.BoolFlag("short", 0, "Write terse output.")
 
 	// Modify the "https" flag to *optionally* accept a value
 	assert.True1(fset.LookupFlagLong("https")).Option.Type = nparser.OptionTypeStandaloneArgumentOptional
@@ -321,11 +321,11 @@ func ExampleFlagSet_tarHelp() {
 	fset.PositionalArgumentsUsage = "[FILE ...]"
 
 	// Add the supported flags
-	fset.Bool("", 'c', "Create a new archive.")
-	fset.String("", 'f', "Specify the output file path VALUE.")
+	fset.BoolFlag("", 'c', "Create a new archive.")
+	fset.StringFlag("", 'f', "Specify the output file path VALUE.")
 	fset.AutoHelp("help", 'h', "Show this help message and exit.")
-	fset.Bool("", 'v', "Print files added to the archive to the stdout.")
-	fset.Bool("", 'z', "Compress using gzip.")
+	fset.BoolFlag("", 'v', "Print files added to the archive to the stdout.")
+	fset.BoolFlag("", 'z', "Compress using gzip.")
 
 	// Override Exit to transform it into a panic
 	fset.Exit = func(status int) {
@@ -374,11 +374,11 @@ func ExampleFlagSet_tarMissingOptionArgument() {
 	fset.PositionalArgumentsUsage = "[FILE ...]"
 
 	// Add the supported flags
-	fset.Bool("", 'c', "Create a new archive.")
-	fset.String("", 'f', "Specify the output file path VALUE.")
+	fset.BoolFlag("", 'c', "Create a new archive.")
+	fset.StringFlag("", 'f', "Specify the output file path VALUE.")
 	fset.AutoHelp("help", 'h', "Show this help message and exit.")
-	fset.Bool("", 'v', "Print files added to the archive to the stdout.")
-	fset.Bool("", 'z', "Compress using gzip.")
+	fset.BoolFlag("", 'v', "Print files added to the archive to the stdout.")
+	fset.BoolFlag("", 'z', "Compress using gzip.")
 
 	// Override Exit to transform it into a panic
 	fset.Exit = func(status int) {
@@ -414,11 +414,11 @@ func ExampleFlagSet_goHelp() {
 	fset.LongFlagPrefix = "-"
 
 	// Add the supported flags
-	fset.Int64("count", 0, "Set VALUE to 1 to avoid using the test cache.")
+	fset.Int64Flag("count", 0, "Set VALUE to 1 to avoid using the test cache.")
 	fset.AutoHelp("h", 0, "Show this help message and exit.")
 	fset.AutoHelp("help", 0, "Alias for -h.")
-	fset.Bool("race", 0, "Run tests using the race detector.")
-	fset.Bool("v", 0, "Print details about the tests progress and results.")
+	fset.BoolFlag("race", 0, "Run tests using the race detector.")
+	fset.BoolFlag("v", 0, "Print details about the tests progress and results.")
 
 	// Override Exit to transform it into a panic
 	fset.Exit = func(status int) {
@@ -471,11 +471,11 @@ func ExampleFlagSet_goSuccess() {
 	fset.LongFlagPrefix = "-"
 
 	// Add the supported flags
-	fcount := fset.Int64("count", 0, "Set VALUE to 1 to avoid using the test cache.")
+	fcount := fset.Int64Flag("count", 0, "Set VALUE to 1 to avoid using the test cache.")
 	fset.AutoHelp("h", 0, "Show this help message and exit.")
 	fset.AutoHelp("help", 0, "Alias for -h.")
-	frace := fset.Bool("race", 0, "Run tests using the race detector.")
-	fv := fset.Bool("v", 0, "Print details about the tests progress and results.")
+	frace := fset.BoolFlag("race", 0, "Run tests using the race detector.")
+	fv := fset.BoolFlag("v", 0, "Print details about the tests progress and results.")
 
 	// Invoke with command line arguments.
 	//
@@ -532,11 +532,11 @@ func ExampleFlagSet_goStrconvError() {
 	fset.LongFlagPrefix = "-"
 
 	// Add the supported flags
-	fset.Int64("count", 0, "Set VALUE to 1 to avoid using the test cache.")
+	fset.Int64Flag("count", 0, "Set VALUE to 1 to avoid using the test cache.")
 	fset.AutoHelp("h", 0, "Show this help message and exit.")
 	fset.AutoHelp("help", 0, "Alias for -h.")
-	fset.Bool("race", 0, "Run tests using the race detector.")
-	fset.Bool("v", 0, "Print details about the tests progress and results.")
+	fset.BoolFlag("race", 0, "Run tests using the race detector.")
+	fset.BoolFlag("v", 0, "Print details about the tests progress and results.")
 
 	// Override Exit to transform it into a panic
 	fset.Exit = func(status int) {
