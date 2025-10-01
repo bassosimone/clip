@@ -313,7 +313,7 @@ func (fx *FlagSet) Parse(args []string) error {
 
 // ErrHelp is the error returned in case the user requested for `help`.
 //
-// Use [*Parser.AutoHelp] to enable recognizing help flags.
+// Use [*FlagSet.AutoHelp] to enable recognizing help flags.
 var ErrHelp = errors.New("help requested")
 
 func (fx *FlagSet) parse(args []string) error {

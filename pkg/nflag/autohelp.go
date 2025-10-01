@@ -18,7 +18,7 @@ import (
 //
 //  2. a `-h` short boolean flag.
 //
-// As a side effect of seeing either flag, the [*Parser] prints the usage message
+// As a side effect of seeing either flag, the [*FlagSet] prints the usage message
 // on the configured stdout and then implements this algorithm:
 //
 //  1. with [ContinueOnError], [ErrHelp] is returned.
