@@ -18,5 +18,8 @@ The package provides comprehensive flag definition methods including [*FlagSet.B
 [*FlagSet.Int64Flag], [*FlagSet.StringFlag], etc. and their corresponding Var variants that
 accept existing pointers to variables rather than returning points. The [*FlagSet.AutoHelp]
 method helps to automatically generate and handle `--help` and `-h` like flags.
+
+Use [github.com/bassosimone/clip/pkg/pflagcompat] to adapt a codebase using
+[github.com/spf13/pflag] to use this package instead.
 */
 package nflag

@@ -161,7 +161,7 @@ func ExampleFlagSet_curlSuccess() {
 
 	// Invoke with command line arguments
 	//
-	// Note that `-fsSL` is equivalent to [`-f`, `-s`, `-L`].
+	// Note that `-fsSL` is equivalent to [`-f`, `-s`, `-S`, `-L`].
 	//
 	// Note that `-m1024` is equivalent to [`-m`, `1024`].
 	fset.Parse([]string{"-fsSL", "-m1024", "-o", "index.html", "https://example.com/"})

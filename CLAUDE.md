@@ -59,7 +59,10 @@ API (uses nparser)
 4. **pkg/getopt**: GNU getopt-compatible
 implementation (uses nparser)
 
-5. **clip** (root): High-level command dispatcher
+5. **pkg/pflagcompat**: Provides spf13/pflag-compatible
+API subset wrapper around nflag (uses nflag)
+
+6. **clip** (root): High-level command dispatcher
 integrating nflag with subcommand support
 
 Supporting packages:
@@ -142,13 +145,28 @@ prefix to emulate dig's flag style.
 
 - Set Description, PositionalArgumentsUsage, Min/MaxPositionalArgs
 
-- Define flags with Bool(), String(), Int64()
+- Define flags with BoolFlag(), StringFlag(), Int64Flag()
 
 - Call AutoHelp() for automatic help handling
 
 - Parse with `fset.Parse(args.Args)`
 
 - Access parsed values and positional args
+
+### Migrating from spf13/pflag
+
+If migrating from spf13/pflag, use pkg/pflagcompat for mechanical migration (only
+works for a subset of the spf13/pflag package API):
+
+1. Replace import: `"github.com/spf13/pflag"` → `"github.com/bassosimone/clip/pkg/pflagcompat"`
+
+2. Replace constructor: `pflag.NewFlagSet()` → `pflagcompat.NewFlagSet()`
+
+3. Access underlying nflag.FlagSet via `fset.Set` field for nflag-specific features
+
+4. The API is identical: `Bool()`, `BoolP()`, `BoolVar()`, `BoolVarP()`, `String()`, `StringP()`, etc.
+
+See pkg/pflagcompat/example_test.go for comprehensive examples.
 
 ### Testing Commands
 

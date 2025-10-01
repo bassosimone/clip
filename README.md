@@ -58,18 +58,25 @@ And [clip](.) provides the necessary functionality to implement that. In fact,
 ## Main Concepts
 
 1. *clip/pkg/nflag.FlagSet*: parses command-line arguments
-using an API similar to the standard library’s [flag](https://pkg.go.dev/flag)
+using an API similar to the standard library's [flag](https://pkg.go.dev/flag)
 package. It supports both short and long options, positional arguments,
 and automatic help generation. You can configure option
 prefixes (e.g., `-`, `--`, `+`, `/`) per flag.
 
-2. *clip.RootCommand*: the root command of your CLI application.
+2. *clip/pkg/pflagcompat.FlagSet*: provides a [spf13/pflag](https://github.com/spf13/pflag)
+compatible API wrapper around *nflag.FlagSet* implementing a subset of the `pflag`
+API. This allows for mechanical migration
+from pflag to clip by simply changing import paths. It supports the same `Bool()`,
+`BoolP()`, `BoolVar()`, `BoolVarP()` methods (and equivalents for `String` and `Int64`)
+that pflag users are familiar with.
 
-3. *clip.DispatcherCommand*: a command that dispatches to
+3. *clip.RootCommand*: the root command of your CLI application.
+
+4. *clip.DispatcherCommand*: a command that dispatches to
 subcommands. It can be used to implement a top-level command
 that handles subcommands, like `git`, or `docker`.
 
-4. *clip.LeafCommand*: a command that does not have subcommands
+5. *clip.LeafCommand*: a command that does not have subcommands
 and should parse flags using a *FlagSet*.
 
 The *RootCommand*, *DispatcherCommand*, and *LeafCommand* are
@@ -211,6 +218,7 @@ The following table lists all the available, testable examples:
 | [pkg/getopt](./pkg/getopt)   | [pkg/getopt/example_test.go](pkg/getopt/example_test.go)                                   |
 | [pkg/nflag](./pkg/nflag)     | [pkg/nflag/example_test.go](pkg/nflag/example_test.go)                                       |
 | [pkg/nparser](./pkg/nparser)   | [pkg/nparser/example_test.go](pkg/nparser/example_test.go)                                   |
+| [pkg/pflagcompat](./pkg/pflagcompat)   | [pkg/pflagcompat/example_test.go](pkg/pflagcompat/example_test.go)                           |
 | [pkg/scanner](./pkg/scanner)  | [pkg/scanner/example_test.go](pkg/scanner/example_test.go)                                 |
 
 The [cmd/minirbmk](./cmd/minirbmk) example shows how to integrate
@@ -229,6 +237,7 @@ flowchart TD
     getopt[pkg/getopt]
     nflag[pkg/nflag]
     nparser[pkg/nparser]
+    pflagcompat[pkg/pflagcompat]
     scanner[pkg/scanner]
     textwrap[pkg/textwrap]
 
@@ -237,10 +246,12 @@ flowchart TD
     clip --> textwrap
     getopt --> nparser
     nflag --> nparser
+    pflagcompat --> nflag
     nparser --> scanner
     nflag --> assert
     getopt --> assert
     nparser --> assert
+    pflagcompat --> assert
     nflag --> textwrap
 ```
 
@@ -249,6 +260,7 @@ flowchart TD
 | [clip](https://github.com/bassosimone/clip)                             | [Docs](https://pkg.go.dev/github.com/bassosimone/clip)              | Top-level API integrating [./pkg/nflag](./pkg/nflag) with subcommands. |
 | [pkg/getopt](https://github.com/bassosimone/clip/tree/main/pkg/getopt)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/getopt)   | GNU getopt compatible implementation (uses the parser).           |
 | [pkg/nflag](https://github.com/bassosimone/clip/tree/main/pkg/nflag)      | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/nflag)     | Stdlib-inspired flag implementation (uses the parser).                  |
+| [pkg/pflagcompat](https://github.com/bassosimone/clip/tree/main/pkg/pflagcompat)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/pflagcompat)   | [spf13/pflag](https://github.com/spf13/pflag) compatible API wrapper around nflag.  |
 | [pkg/nparser](https://github.com/bassosimone/clip/tree/main/pkg/nparser)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/nparser)   | Parser for CLI options (uses the scanner).                       |
 | [pkg/scanner](https://github.com/bassosimone/clip/tree/main/pkg/scanner)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)  | Scanner for CLI options.                                         |
 | [pkg/textwrap](https://github.com/bassosimone/clip/tree/main/pkg/textwrap)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) | Utility code to wrap and indent text.                            |

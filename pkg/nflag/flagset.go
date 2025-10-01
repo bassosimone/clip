@@ -95,8 +95,8 @@ type LongShortFlag struct {
 //
 //	./program --verbose
 //
-// The [*FlagSet] will recognize the `--verbose` flag and emit an
-// error since you have not added any flag with such name.
+// The [*FlagSet] will recognize `--verbose` as a syntactically valid flag
+// that has not been configured and print an "unknown flag" error.
 type FlagSet struct {
 	// Description is the program description used when printing the usage.
 	//
@@ -242,7 +242,7 @@ type FlagSet struct {
 // NewFlagSet returns a new [*FlagSet] instance. We use the given progname as
 // the ProgramName field and the given handling as the ErrorHandling field. We
 // initialize all the other fields using sensible defaults. We document these
-// defaults in the documentation [*FlagSet].
+// defaults in the [*FlagSet] documentation.
 //
 // This function panics if the program name is empty. Using an unknown value
 // for the handling parameter is equivalent to using [PanicOnError].
@@ -360,7 +360,7 @@ func (fx *FlagSet) parse(args []string) error {
 				return err
 			}
 
-			// make the flag as modified
+			// mark the flag as modified
 			flag.Modified = true
 
 			// detect [helpValue] and transform it to [ErrHelp]
