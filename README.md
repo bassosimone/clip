@@ -245,11 +245,9 @@ flowchart TD
     nparser[pkg/nparser]
     pflagcompat[pkg/pflagcompat]
     scanner[pkg/scanner]
-    textwrap[pkg/textwrap]
 
     clip --> nflag
     clip --> assert
-    clip --> textwrap
     getopt --> nparser
     nflag --> nparser
     pflagcompat --> nflag
@@ -258,7 +256,6 @@ flowchart TD
     getopt --> assert
     nparser --> assert
     pflagcompat --> assert
-    nflag --> textwrap
 ```
 
 | Package                                                                 | Docs                                                                 | Description                                                      |
@@ -269,7 +266,6 @@ flowchart TD
 | [pkg/pflagcompat](https://github.com/bassosimone/clip/tree/main/pkg/pflagcompat)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/pflagcompat)   | [spf13/pflag](https://github.com/spf13/pflag) compatible API wrapper around nflag.  |
 | [pkg/nparser](https://github.com/bassosimone/clip/tree/main/pkg/nparser)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/nparser)   | Parser for CLI options (uses the scanner).                       |
 | [pkg/scanner](https://github.com/bassosimone/clip/tree/main/pkg/scanner)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/scanner)  | Scanner for CLI options.                                         |
-| [pkg/textwrap](https://github.com/bassosimone/clip/tree/main/pkg/textwrap)| [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/textwrap) | Utility code to wrap and indent text.                            |
 | [pkg/assert](https://github.com/bassosimone/clip/tree/main/pkg/assert)  | [Docs](https://pkg.go.dev/github.com/bassosimone/clip/pkg/assert)   | Code to write runtime assertions that panic in case of failure.   |
 
 ## Documentation
@@ -278,7 +274,7 @@ Read the package documentation at [pkg.go.dev/github.com/bassosimone/clip](https
 
 ## Minimum Supported Go Version
 
-Go 1.24
+Go 1.25
 
 ## Installation
 

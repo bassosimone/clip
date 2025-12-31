@@ -14,7 +14,7 @@ import (
 	"github.com/bassosimone/clip/pkg/assert"
 	"github.com/bassosimone/clip/pkg/nflag"
 	"github.com/bassosimone/clip/pkg/scanner"
-	"github.com/bassosimone/clip/pkg/textwrap"
+	"github.com/bassosimone/textwrap"
 	"github.com/kballard/go-shellquote"
 )
 

@@ -8,7 +8,7 @@ import (
 	"io"
 
 	"github.com/bassosimone/clip/pkg/assert"
-	"github.com/bassosimone/clip/pkg/textwrap"
+	"github.com/bassosimone/textwrap"
 )
 
 // PrintUsage prints the usage string to the given [io.Writer].

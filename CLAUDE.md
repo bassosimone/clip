@@ -69,9 +69,6 @@ Supporting packages:
 
 1. **pkg/assert**: Runtime assertions that panic on failure
 
-2. **pkg/textwrap**: Text wrapping and indentation
-utilities for help text
-
 ### Core Types
 
 The clip package uses a generic command system parameterized
@@ -184,7 +181,7 @@ See `dispatcher_test.go`, `leaf_test.go` for examples.
 
 ## Minimum Go Version
 
-Go 1.24
+Go 1.25
 
 ## License
 
