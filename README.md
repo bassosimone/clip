@@ -6,6 +6,9 @@
 
 Clip is a flexible command line parser written in Go.
 
+**Deprecation Notice:** this package is deprecated and the codebase has now
+evolved in the (simpler) [vclip](https://github.com/bassosimone/vclip) package.
+
 ## Features
 
 1. Intuitive flag parsing API modeled after the standard
