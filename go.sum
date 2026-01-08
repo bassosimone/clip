@@ -1,5 +1,5 @@
-github.com/bassosimone/textwrap v0.0.0-20251230023300-aabed485c498 h1:R7F7UMhOkAbFmUHloP9N9Wjvyq45WSjvQ4DXr99Hd4U=
-github.com/bassosimone/textwrap v0.0.0-20251230023300-aabed485c498/go.mod h1:SroxjmxXkIVaeta+FgkXfDe0NJQ8of3HOTevtTvLsKA=
+github.com/bassosimone/textwrap v0.0.0-20260108195239-92ec591d9770 h1:4DbsVeTsG6dvlZ2ldoGTMvH2ekKFSjo1wf+t+bkTVhE=
+github.com/bassosimone/textwrap v0.0.0-20260108195239-92ec591d9770/go.mod h1:SroxjmxXkIVaeta+FgkXfDe0NJQ8of3HOTevtTvLsKA=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
 github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 h1:Z9n2FFNUXsshfwJMBgNA0RU6/i7WVaAegv3PtuIHPMs=
